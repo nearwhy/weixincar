@@ -84,6 +84,10 @@ public class IndexController  extends BaseController {
 		return "changeList";
 	}
 	
+	@RequestMapping(value = "/productType", method = RequestMethod.GET)
+	public String productType(HttpServletRequest request, Map<String, Object> map) throws Exception{
+		return "productType";
+	}
 	
 	@RequestMapping(value = "/productDetail", method = RequestMethod.GET)
 	public String productDetail(HttpServletRequest request, Map<String, Object> map) throws Exception{

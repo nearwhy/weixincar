@@ -294,7 +294,7 @@
 							<i class="fa fa-tags" style="color: #ffffff"></i>
 						</div>
 						<div>
-							<span style="color: #ffffff">特惠</span>
+							<a href="productType.html"><span style="color: #ffffff">配件</span></a>
 						</div></td>
 					<td style="width: 25%; text-align: center"><div>
 							<i class="fa fa-shopping-cart" style="color: #ffffff"></i>
