@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="User">
+
+	<typeAlias alias="User"
+		type="com.aero.o2o.model.User" />
+	
+	<resultMap class="com.aero.o2o.model.Airport" id="AirportResult">
+		<result property="id" column="id" />
+		<result property="city" column="city"/>
+		<result property="airport" column="airportname" />
+		<result property="isHot" column="isPopular" />
+		<result property="threeCode" column="threeCode" />
+		<result property="englishName" column="englishName" />
+		<result property="airterminals" column="id" select="User.selectAirterminalByAirportId"/>
+	</resultMap>
+	
+	<insert id="insert" parameterClass="com.aero.o2o.model.User">
+		insert into user (mobileNumber,userName,realName,password) values(#mobileNumber#,#mobileNumber#,#mobileNumber#,#password#)
+		<selectKey resultClass="java.lang.Integer" keyProperty="id" type="post">
+			SELECT @@IDENTITY as id
+		</selectKey>
+	</insert>
+		
+	<insert id="insertThird" parameterClass="com.aero.o2o.model.User">
+		insert into user (third,thirdId,userName,realName,image,loginTime) values(#third#,#thirdId#,#userName#,#userName#,#image#,now())
+		<selectKey resultClass="java.lang.Integer" keyProperty="id" type="post">
+			SELECT @@IDENTITY as id
+		</selectKey>
+	</insert>
+	
+	<select id="queryDetail" resultClass="com.aero.o2o.model.User" parameterClass="com.aero.o2o.model.User">
+		select u.id,u.mobileNumber,u.userName,u.realName,a.airline ,u.qrcode,u.deviceToken,u.deviceType,u.appId,u.image
+		from user u left join airline a on u.airlineId = a.id 
+		 where 1=1 
+		 <isNotNull prepend="and" property="id">
+		 u.id = #id#
+		 </isNotNull>
+		 <isNotEmpty prepend="and" property="mobileNumber">
+		  u.mobileNumber = #mobileNumber# 
+		 </isNotEmpty>
+	</select>
+	
+	
+	<select id="userLogin" resultClass="com.aero.o2o.model.User" parameterClass="com.aero.o2o.model.QueryParam">
+		select memberid as userId,name as userName,password
+		where name = #name# and password = #password#
+	</select>
+	
+	
+	<select id="thirdUserLogin" resultClass="com.aero.o2o.model.User" parameterClass="com.aero.o2o.model.User">
+		select u.id,u.mobileNumber,u.userName,u.image,u.realName from user u 
+		 where 
+			u.thirdId = #thirdId# and u.third = #third#
+	</select>
+	
+	<select id="queryAllAirport" resultMap="AirportResult" parameterClass="com.aero.o2o.model.QueryParam">
+		
+		select id,airportName,englishName,isPopular,city,threeCode from airport where isforeign = 0 and is3D = 0 and isShow = 1
+	</select>
+	
+	
+	<select id="selectAirterminalByAirportId" resultClass="com.aero.o2o.model.Airterminal" parameterClass="java.lang.Integer">
+		select id,airterminalName as airterminal,llongitude,llatitude,rlongitude,rlatitude from airterminal where airportId = #id# order by id
+	</select>
+	
+	<update id="update" parameterClass="com.aero.o2o.model.QueryParam">
+		update member 
+   	 <dynamic prepend="set" >
+		<isNotEmpty prepend="," property="pojo.payPassword">
+			paypassword = #pojo.payPassword# 
+		</isNotEmpty>
+	</dynamic>
+			where memberId = #pojo.id#
+	</update>
+	
+	<select id="queryVoucherByUser" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Voucher">
+		select voucherId,voucherName,balance,voucherValue,memberId,voucherCode,remark
+		from vouchermember 
+		where memberid = #userId# 
+		<isNotEmpty property="voucherId">
+			and voucherid = #voucherId#
+		</isNotEmpty>
+	</select>
+	
+	<select id="queryVoucherByCode" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Voucher">
+		select voucherId,voucherCode,voucherName,balance,voucherValue,memberId,remark
+		from vouchermember 
+		where voucherCode = #voucherCode#
+	</select>
+	
+	<select id="PayValidate" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.User">
+			select MemberID as userId,password  from member where MemberID = #userId# and paypassword = #payPassword#
+	</select>
+	
+	<select id="PayValidateByCode" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Voucher">
+			select v.voucherId,v.memberId,v.balance
+			from vouchermember v inner join member m on v.memberid = m.memberid 
+			and v.voucherid = #voucherId# and m.paypassword = #payPassword#
+	</select>
+	
+	<update id="orderPay" parameterClass="com.aero.o2o.model.QueryParam">
+		update vouchermember set balance = #pojo.balance#,usedtimes = usedtimes+1
+		where memberid = #pojo.memberId# and voucherid = #pojo.voucherId#
+	</update>
+</sqlMap>

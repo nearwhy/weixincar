@@ -1,0 +1,16 @@
+package com.aero.o2o.dao.impl;
+
+import org.springframework.stereotype.Repository;
+
+import com.aero.o2o.dao.WaiterDao;
+import com.aero.o2o.model.Waiter;
+
+@Repository("WaiterDaoImpl")
+public class WaiterDaoImpl extends BaseDaoImpl implements WaiterDao{
+
+	@Override
+	public Waiter waiterLogin(Waiter waiter) {
+		return (Waiter)this.getSqlMapClientTemplate().queryForObject("Waiter.waiterLogin", waiter);
+	}
+
+}

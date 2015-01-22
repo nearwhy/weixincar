@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="UserOrder">
+	
+	<insert id="insertShopOrder" parameterClass="com.aero.o2o.model.QueryParam">
+		insert into shoporder (orderNo,shopId,waiterId,price,ctime,status)
+		values(#orderNo#,#shopId#,#waiterId#,#price#,getdate(),1)
+	</insert>
+	
+	<update id="payOrder" parameterClass="com.aero.o2o.model.QueryParam">
+		update shoporder set userId = #userId#,ptime = getdate(),voucherId = #voucherId#,status = 0
+		<isNotEmpty property="price">
+			,price = #price#
+		</isNotEmpty>
+		where orderNo = #orderNo#
+	</update>
+	
+	<select id="queryByOrderNo" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.ShopOrder">
+		select o.*,s.suppliername as shopName from shoporder o left join supplier s on o.supplierid = o.shopId
+		where orderNo = #orderNo#
+	</select>
+	
+</sqlMap>

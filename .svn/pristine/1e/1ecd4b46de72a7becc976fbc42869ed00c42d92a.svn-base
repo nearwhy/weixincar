@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Product">
+
+	<resultMap id="ProductDetailResult" class="com.aero.o2o.model.Product">
+		<result column="productid" property="id" jdbcType="INTEGER" />
+		<result column="productname" property="name" jdbcType="VARCHAR" />
+		<result column="mobiledesc" property="description" jdbcType="VARCHAR" />
+		<result column="icon" property="icon" jdbcType="VARCHAR" />
+		<result column="MemberPrice" property="price" jdbcType="Double" />
+		<result column="MarketPrice" property="oldPrice" jdbcType="Double" />
+		<result property="detail" column="mobiledesc" jdbcType="VARCHAR"/>
+		<result property="shop" column="supplierid" select="Shop.query4ProductDetail"/>
+		<result property="pics" column="productid" select="Product.queryPics"/>
+	</resultMap>
+	
+	<resultMap id="ProductIconResult" class="com.aero.o2o.model.Product">
+		<result column="productid" property="id" jdbcType="INTEGER" />
+		<result column="productname" property="name" jdbcType="VARCHAR" />
+		<result column="mobiledesc" property="description" jdbcType="VARCHAR" />
+		<result column="icon" property="icon" jdbcType="VARCHAR" />
+		<result column="MemberPrice" property="price" jdbcType="Double" />
+		<result column="MarketPrice" property="oldPrice" jdbcType="Double" />
+		<result property="shop" column="supplierid" select="Shop.query4ProductIcon"/>
+	</resultMap>
+	
+	<resultMap id="CategoryResult" class="com.aero.o2o.model.Category">
+		<result column="categoryno" property="id" jdbcType="INTEGER" />
+		<result column="name" property="name" jdbcType="VARCHAR" />
+		<result column="logo" property="image" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<select id="queryAll" resultClass="com.aero.o2o.model.Product" >
+		select * from product 
+	</select>
+
+	<select id="queryAllIds" resultClass="com.aero.o2o.model.Product" >
+		select id from product 
+	</select>
+	
+	<select id="queryDetail" resultMap="ProductDetailResult" parameterClass="com.aero.o2o.model.Product">
+		select p.productid,p.productname,p.mobiledesc,p.marketprice,p.memberprice,
+		p.supplierid,(i.folder+i.imageurl) as icon,p.mobiledesc
+		from product p left join productimage i on p.productid = i.productid and i.imagetype = 'MOBILE_LIST' and i.sort = 1
+		where p.productid = #id#
+		
+	</select>
+	
+	<select id="queryPics" resultClass="java.lang.String" parameterClass="java.lang.Integer">
+		select folder+imageurl from productimage 
+		where productid = #productId# and imagetype = 'MOBILE_BIG'
+	</select>
+	
+	<select id="queryByTopic" parameterClass="com.aero.o2o.model.QueryParam" resultMap="ProductIconResult">
+		select p.productid,p.productname,p.mobiledesc,p.marketprice,p.memberprice,p.supplierid,(i.folder+i.imageurl) as icon
+		from product p inner join pmtgoods pg on p.productid = pg.productid 
+		inner join topic t on pg.pmtid = t.pid and t.topicid = #topicId#
+		left join productimage i on p.productid = i.productid and i.imagetype = 'MOBILE_LIST' and i.sort = 1
+	</select>
+	
+	
+	<select id="queryByShop" parameterClass="com.aero.o2o.model.QueryParam" resultMap="ProductIconResult">
+		select * from (
+			select top $pageTop$ ROW_NUMBER() OVER(ORDER BY p.productid ASC) AS ROWID,
+			p.productid,p.productname,p.mobiledesc,p.marketprice,p.memberprice,p.supplierid,(i.folder+i.imageurl) as icon
+			from product p inner join supplier_yht y on p.supplierid = y.supplierid and y.shopid = #poiId# 
+			left join productimage i on p.productid = i.productid and i.imagetype = 'MOBILE_LIST' and i.sort = 1
+		) as temp1 
+		where rowid > #pageRow#
+	</select>
+	
+	<select id="queryRecommend" parameterClass="com.aero.o2o.model.QueryParam" resultMap="ProductIconResult">
+		select p.productid,p.productname,p.mobiledesc,p.marketprice,p.memberprice,p.supplierid,(i.folder+i.imageurl) as icon
+		from product p left join productimage i on p.productid = i.productid and i.imagetype = 'MOBILE_LIST' and i.sort = 1 
+			where p.productid between 690 and 700
+	</select>
+	
+	<select id="search" parameterClass="com.aero.o2o.model.QueryParam" resultMap="ProductIconResult">
+		select p.productid,p.productname,p.mobiledesc,p.marketprice,p.memberprice,p.supplierid
+		from product p where lower(p.productname) like '%'+lower(#key#)+'%'
+	</select>
+	
+	<select id="queryByCategory" parameterClass="com.aero.o2o.model.QueryParam" resultMap="ProductIconResult">
+		select * from (
+		select top $pageTop$ ROW_NUMBER() OVER(ORDER BY p.productid ASC) AS ROWID, p.productid,p.productname,p.mobiledesc,p.marketprice,p.memberprice,p.supplierid,
+		(i.folder+i.imageurl) as icon 
+			from product p left join productimage i on p.productid = i.productid and i.imagetype = 'MOBILE_LIST' and i.sort = 1
+			where p.categoryid = 351
+			) as temp1 
+			
+		where rowid > #pageRow#
+		
+	</select>
+	
+	<select id="queryFirstCategory" parameterClass="com.aero.o2o.model.QueryParam" resultMap="CategoryResult">
+		select categoryno,name,logo from category where parentno = 1
+	</select>
+	
+	<select id="querySecondCategory" parameterClass="com.aero.o2o.model.QueryParam" resultMap="CategoryResult">
+		select categoryid as categoryno,name,logo from category where parentno = #categoryno#
+	</select>
+	
+	
+</sqlMap>

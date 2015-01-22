@@ -1,0 +1,24 @@
+package com.aero.o2o.service;
+
+import java.util.List;
+
+import com.aero.o2o.model.Content;
+import com.aero.o2o.model.Product;
+import com.aero.o2o.model.QueryParam;
+
+public interface ProductService {
+	
+	public Product queryDetail(Integer productId);
+	
+	public List<Content> queryAllContent(QueryParam qp);
+	
+	public int queryContentCount(QueryParam qp);
+
+	public int queryCount(QueryParam qp);
+	
+	public List<Product> queryCollection(QueryParam qp); 
+	
+	public 	List<Product> queryProductByShop(QueryParam qp);
+	
+	public List<Product> queryProductsByQrcode(QueryParam qp);
+}

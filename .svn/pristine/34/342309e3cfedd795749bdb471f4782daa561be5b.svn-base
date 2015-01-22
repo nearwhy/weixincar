@@ -1,0 +1,101 @@
+package com.aero.o2o.service.impl;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.aero.o2o.dao.ProductDao;
+import com.aero.o2o.dao.UserDao;
+import com.aero.o2o.model.Airport;
+import com.aero.o2o.model.QueryParam;
+import com.aero.o2o.model.ShopOrder;
+import com.aero.o2o.model.User;
+import com.aero.o2o.model.Voucher;
+import com.aero.o2o.service.UserService;
+
+@Service("UserServiceImpl")
+public class UserServiceImpl extends BaseServiceImpl implements UserService{
+
+	@Autowired
+	private UserDao userDao;
+
+	@Autowired
+	private ProductDao productDao;
+	
+
+
+	@Override
+	public User queryUser(Integer userId) {
+		User user = new User();
+		user.setId(userId);
+		return (User)userDao.queryDetail(user);
+	}
+
+	@Override
+	public List<Airport> queryAllAirport(QueryParam qp) {
+		return userDao.queryAllAirport(qp);
+	}
+
+	@Override
+	public User queryUser(User user) {
+		return (User)userDao.queryDetail(user);
+	}
+
+	@Override
+	public User userRegister(User user) {
+		userDao.insert(user);
+		user.setLoginTime("1");
+		userDao.update(user);
+		return userDao.userLogin(user);
+	}
+
+	@Override
+	@Transactional
+	public User userLogin(User user) {
+		user.setLoginTime("1");
+		userDao.update(user);
+		return userDao.userLogin(user);
+	}
+
+	@Override
+	@Transactional
+	public User thirdUserLogin(User user) {
+		User u = userDao.thirdUserLogin(user);
+		user.setLoginTime("1");
+		userDao.update(user);
+		if(u==null){
+			userDao.insertThird(user);
+			return user;
+		}else{
+			return u;
+		}
+	}
+
+	@Override
+	public void updateUser(User user) {
+		userDao.update(user);
+	}
+
+	@Override
+	@Transactional
+	public void orderPayByUser(ShopOrder order, Voucher voucher) {
+		QueryParam qp = new QueryParam();
+		qp.setPojo(order);
+		o2oDao.update("ShopOrder.orderPay", qp);
+		qp.setPojo(voucher);
+		o2oDao.update("User.orderPay", qp);
+	}
+
+	@Override
+	@Transactional
+	public void orderPayByShop(ShopOrder order, Voucher voucher) {
+		QueryParam qp = new QueryParam();
+		qp.setPojo(order);
+		o2oDao.insert("ShopOrder.insert", qp);
+		o2oDao.update("ShopOrder.orderPay", qp);
+		qp.setPojo(voucher);
+		o2oDao.update("User.orderPay", qp);
+	}
+}

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="City" >
+
+  <resultMap id="CityResult" class="com.palm360.airport.model.City" >
+    <result column="CityID" property="cityid" jdbcType="INTEGER" />
+    <result column="ProvinceID" property="provinceid" jdbcType="INTEGER" />
+    <result column="CityName" property="cityname" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="queryAllCount" resultClass="Integer" >
+      select count(*) from City
+  </select>
+  
+  <select id="queryAll" resultMap="CityResult" parameterClass="com.palm360.airport.util.AirportQueryP">
+      select * from City limit #start#,#size#
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="CityResult" parameterClass="com.palm360.airport.model.City" >
+    select CityID, ProvinceID, CityName
+    from City
+    where CityID = #cityid:INTEGER#
+  </select>
+ 
+  <delete id="deleteByPrimaryKey" parameterClass="com.palm360.airport.model.City" >
+    delete from City
+    where CityID = #cityid:INTEGER#
+  </delete>
+ 
+  <insert id="insert" parameterClass="com.palm360.airport.model.City" >
+    insert into City (CityID, ProvinceID, CityName)
+    values (#cityid:INTEGER#, #provinceid:INTEGER#, #cityname:VARCHAR#)
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterClass="com.palm360.airport.model.City" >
+    update City
+    set ProvinceID = #provinceid:INTEGER#,
+      CityName = #cityname:VARCHAR#
+    where CityID = #cityid:INTEGER#
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterClass="com.palm360.airport.model.City" >
+    update City
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="provinceid" >
+        ProvinceID = #provinceid:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="cityname" >
+        CityName = #cityname:VARCHAR#
+      </isNotNull>
+    </dynamic>
+    where CityID = #cityid:INTEGER#
+  </update>
+  
+</sqlMap>

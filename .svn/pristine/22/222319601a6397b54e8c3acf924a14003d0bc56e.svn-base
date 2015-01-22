@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="AppClient">
+	<typeAlias alias="AppClient" type="com.aero.o2o.model.AppClient"/>
+	<resultMap class="AppClient" id="AppClientResult">
+		<result property="id" column="id"/>
+		<result property="appId" column="appId"/>
+		<result property="appKey" column="appKey"/>
+		<result property="threeCode" column="threeCode"/>
+		<result property="name" column="name"/>
+	</resultMap>
+	
+	<insert id="insert" parameterClass="com.aero.o2o.model.AppClient">
+		insert into appclient ( appId, appKey, name,threeCode,status)
+		values (#appId:VARCHAR#, #appKey:VARCHAR#, #name:VARCHAR#,#threeCode:VARCHAR#,#status:INTEGER#)
+	</insert>
+	
+	<select id="queryByAppId"  parameterClass="java.lang.String" resultClass="AppClient">
+		SELECT id, appId,appKey,name,threeCode,status
+		FROM appclient  WHERE appId = #appId:VARCHAR#
+	</select>
+	
+</sqlMap>

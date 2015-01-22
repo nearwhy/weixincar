@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="RegisterPromotions" >
+  
+  <resultMap id="RegisterPromotionsResult" class="com.palm360.airport.model.RegisterPromotions" >
+    <result column="PromotionsID" property="promotionsId" jdbcType="INTEGER" />
+    <result column="MerchantID" property="merchantId" jdbcType="INTEGER" />
+    <result column="PromotionsName" property="promotionsName" jdbcType="VARCHAR" />
+    <result column="OldPrice" property="oldPrice" jdbcType="REAL" />
+    <result column="NewPrice" property="newPrice" jdbcType="REAL" />
+    <result column="DisCount" property="disCount" jdbcType="REAL" />
+    <result column="RecordTime" property="recordTime" jdbcType="TIMESTAMP" />
+    <result column="isFree" property="isFree" jdbcType="INTEGER" />
+    <result column="Content" property="content" jdbcType="VARCHAR" />
+    <result column="OutOfDate" property="outOfDate" jdbcType="TIMESTAMP" />
+    <result column="count" property="count" jdbcType="INTEGER" />
+    <result column="Probability" property="probability" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <select id="queryAllCount" resultClass="Integer" >
+      select count(*) from RegisterPromotions
+  </select>
+  
+  <select id="queryAll" resultMap="RegisterPromotionsResult" parameterClass="com.palm360.airport.util.AirportQueryP">
+      select * from RegisterPromotions limit #start#,#size#
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="RegisterPromotionsResult" parameterClass="com.palm360.airport.model.RegisterPromotions" >
+    select PromotionsID, MerchantID, PromotionsTitle, OldPrice, NewPrice, DisCount, RecordTime, isFree,
+      Content, OutOfDate, count, Probability
+    from RegisterPromotions
+    where PromotionsID = #promotionsId:INTEGER#
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterClass="com.palm360.airport.model.RegisterPromotions" >
+    delete from RegisterPromotions
+    where PromotionsID = #promotionsId:INTEGER#
+  </delete>
+ 
+  <insert id="insert" parameterClass="com.palm360.airport.model.RegisterPromotions" >
+    insert into RegisterPromotions (PromotionsID, MerchantID, PromotionsName, OldPrice, NewPrice, DisCount, RecordTime, isFree,
+      Content, OutOfDate, count, Probability)
+    values (#promotionsId:INTEGER#, #merchantId:INTEGER#, #promotionsName:VARCHAR#,
+      #oldPrice:REAL#, #newPrice:REAL#, #disCount:REAL#, #recordTime:TIMESTAMP#, #isFree:INTEGER#, #content:VARCHAR#,
+      #outOfDate:TIMESTAMP#, #count:INTEGER#, #probability:INTEGER#)
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterClass="com.palm360.airport.model.RegisterPromotions" >
+    update RegisterPromotions
+    set MerchantID = #merchantId:INTEGER#,
+      PromotionsName = #promotionsName:VARCHAR#,
+      OldPrice = #oldPrice:REAL#,
+      NewPrice = #newPrice:REAL#,
+      DisCount = #disCount:REAL#,
+      RecordTime = #recordTime:TIMESTAMP#,
+      isFree = #isFree:INTEGER#,
+      Content = #content:VARCHAR#,
+      OutOfDate = #outOfDate:TIMESTAMP#,
+      count = #count:INTEGER#,
+      Probability = #probability:INTEGER#
+    where PromotionsID = #promotionsId:INTEGER#
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterClass="com.palm360.airport.model.RegisterPromotions" >
+    update RegisterPromotions
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="merchantId" >
+        MerchantID = #merchantId:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="promotionsName" >
+        PromotionsName = #promotionsName:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="oldPrice" >
+        OldPrice = #oldPrice:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="newPrice" >
+        NewPrice = #newPrice:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="disCount" >
+        DisCount = #disCount:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="recordTime" >
+        RecordTime = #recordTime:TIMESTAMP#
+      </isNotNull>
+      <isNotNull prepend="," property="isFree">
+      	isFree = #isFree:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="content" >
+        Content = #content:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="outOfDate" >
+        OutOfDate = #outOfDate:TIMESTAMP#
+      </isNotNull>
+      <isNotNull prepend="," property="count">
+      	count = #count:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="probability">
+      	Probability = #probability:INTEGER#
+      </isNotNull>
+    </dynamic>
+    where PromotionsID = #promotionsId:INTEGER#
+  </update>
+  
+  <statement id="queryRegisterPromotions" resultClass="com.palm360.airport.model.RegisterPromotions" parameterClass="com.palm360.airport.util.AirportQueryP" >
+  	select 
+	    <dynamic prepend="">
+	        <isNotNull property="value" >
+		        <iterate conjunction=","  property="value">
+		            $value[]$
+		        </iterate>
+	        </isNotNull >
+	        <isNull property="value" prepend="" >PromotionsID</isNull>
+	    </dynamic>
+    from RegisterPromotions
+    	<dynamic prepend="where">
+			<isNotEmpty prepend=" and " property="params.merchantId" >
+			  MerchantID = #params.merchantId:INTEGER#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.promotionsName" >
+			  PromotionsName = #params.promotionsName:VARCHAR#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.oldPrice" >
+			  OldPrice = #params.oldPrice:REAL#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.newPrice" >
+			  NewPrice = #params.newPrice:REAL#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.disCount" >
+			  DisCount = #params.disCount:REAL#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.recordTime" >
+			  RecordTime = #params.recordTime:TIMESTAMP#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.isFree">
+				isFree = #params.isFree:INTEGER#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.content" >
+			  Content = #params.content:VARCHAR#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.outOfDate" >
+			  OutOfDate = #params.outOfDate:TIMESTAMP#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.count">
+				count = #params.count:INTEGER#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.probability">
+	      		Probability = #probability:INTEGER#
+	      	</isNotEmpty>
+    	</dynamic>
+    	<dynamic>
+	       <isNotNull prepend="order by" property="orderBy">
+	            $orderBy$    
+		        <isEqual prepend=""  property="asc" compareValue="true">
+		        	asc
+		        </isEqual>
+		        <isEqual prepend="" property="asc" compareValue="false">
+		        	desc
+		        </isEqual>
+	        </isNotNull>    
+	       <isNotEqual prepend="" property="size" compareValue="0">
+	            <isGreaterEqual compareValue="0" property="start">
+	                limit #start#,#size#
+	            </isGreaterEqual>
+	        </isNotEqual>
+	    </dynamic>
+  </statement>
+  
+  <statement id="queryRegisterByCurrentTimestamp" resultClass="com.palm360.airport.model.RegisterPromotions" parameterClass="com.palm360.airport.util.AirportQueryP" >
+  	select 
+	    <dynamic prepend="">
+	        <isNotNull property="value" >
+		        <iterate conjunction=","  property="value">
+		            $value[]$
+		        </iterate>
+	        </isNotNull >
+	        <isNull property="value" prepend="" >PromotionsID</isNull>
+	    </dynamic>
+    from RegisterPromotions
+    	<dynamic prepend="where">
+			<isNotEmpty prepend=" and " property="params.merchantId" >
+			  MerchantID = #params.merchantId:INTEGER#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.isFree">
+				isFree = #params.isFree:INTEGER#
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.count">
+				<![CDATA[ count > #params.count:INTEGER# ]]>
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.currentTimeStamp">
+				<![CDATA[ (#params.currentTimeStamp:TIMESTAMP# <= OutOfDate or OutOfDate is null) ]]>
+			</isNotEmpty>
+			<isNotEmpty prepend=" and " property="params.currentTimeStamp">
+				<![CDATA[ RecordTime <= #params.currentTimeStamp:TIMESTAMP# ]]>
+			</isNotEmpty>
+    	</dynamic>
+    	<dynamic>
+	        <isNotNull prepend="order by" property="orderBy">
+	            $orderBy$    
+		        <isEqual prepend=""  property="asc" compareValue="true">
+		        	asc
+		        </isEqual>
+		        <isEqual prepend="" property="asc" compareValue="false">
+		        	desc
+		        </isEqual>
+	        </isNotNull>    
+	       <isNotEqual prepend="" property="size" compareValue="0">
+	            <isGreaterEqual compareValue="0" property="start">
+	                limit #start#,#size#
+	            </isGreaterEqual>
+	        </isNotEqual>
+	    </dynamic>
+  </statement>
+ 
+</sqlMap>

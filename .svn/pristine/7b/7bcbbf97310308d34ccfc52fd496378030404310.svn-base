@@ -1,0 +1,103 @@
+package com.aero.o2o.web.interceptor;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+
+import com.aero.o2o.AirportConstant;
+import com.aero.o2o.model.AppClient;
+import com.aero.o2o.redis.RedisUtilEx;
+import com.aero.o2o.service.AppClientService;
+import com.aero.o2o.util.SDKUtil;
+import com.aero.o2o.util.exception.AirportRuntimeException;
+
+
+public class SDKInterceptor extends HandlerInterceptorAdapter {
+	
+
+	@Autowired
+	private RedisUtilEx redisUtilEx;
+	
+	@Autowired
+	private AppClientService appClientService;
+
+	protected transient final Logger log = Logger.getLogger("SpecialPurpose");
+	
+	/**
+	 * 执行controller方法之前进行拦截判断
+	 * 对appID进行授权认证，日志记录，机场过滤
+	 */
+	@Override
+	public boolean preHandle(HttpServletRequest request,
+			HttpServletResponse response, Object handler) throws Exception {
+
+		String url = request.getRequestURI();
+		if(url.indexOf("alipayNotify.json")>=0||url.indexOf("tenpayNotify.json")>=0){
+			return true;
+		}
+		String appId = request.getParameter("appId");
+		String token = request.getParameter("token");
+		if("airport_management".equals(appId)){
+			return true;
+		}
+		if(token==null||"".equals(token)){
+			throw new AirportRuntimeException("system.err.sdk.notoken");
+		}
+		if(appId==null||"".equals(appId.trim())){
+			throw new AirportRuntimeException("system.err.sdk.noappid");
+		}
+		String appRedisKey = AirportConstant.REDIS_SDK_APP + "_" + appId;
+		AppClient app = (AppClient)redisUtilEx.getObject(appRedisKey);
+		if(app==null){
+			app= appClientService.queryByAppId(appId);
+			if(app==null){
+				throw new AirportRuntimeException("system.err.sdk.appunaccess");
+			}else{
+				redisUtilEx.setObject(appRedisKey,app);
+				redisUtilEx.expire(appRedisKey, 300);//设置过期时间为5min
+			}
+		}
+		//appID授权认证，机场授权认证
+		boolean result = SDKUtil.verify(app, request);
+		if(!result){
+			throw new AirportRuntimeException("system.err.sdk.illegaltoken");
+		}
+		//机场数据过滤
+//		String allThreeCode = (String)redisUtilEx.getObject(AirportConstant.REDIS_AIRPORT_THREECODE);
+//		if(allThreeCode==null){
+//			List<Airport> list = airportService.queryThreeCode(new HashMap());
+//			for(Airport airport:list){
+//				if(airport.getThreeCode()!=null){
+//					allThreeCode += airport.getThreeCode()+",";
+//				}
+//			}
+//			allThreeCode = allThreeCode.substring(0, allThreeCode.length()-1);
+//			redisUtilEx.setObject(AirportConstant.REDIS_AIRPORT_THREECODE,allThreeCode);
+//			redisUtilEx.expire(AirportConstant.REDIS_AIRPORT_THREECODE, 86400);
+//		}
+//
+//		String rThreeCode = request.getParameter("threeCode");
+//		if(rThreeCode!=null){
+//			if(allThreeCode.indexOf(rThreeCode)<0){
+//				result = false;
+//				throw new AirportRuntimeException("system.err.sdk.noairport");
+//			}
+//		}
+//		if(!app.getThreeCode().equals("ALL")){
+//			if(rThreeCode!=null){
+//				if(app.getThreeCode().indexOf(rThreeCode)<0){
+//					result = false;
+//					throw new AirportRuntimeException("system.err.sdk.airportunaccess");
+//				}
+//			}
+//		}
+		
+		//记录日志
+//		log.info(SDKUtil.url+url+SDKUtil.appId+appId);
+		return result;
+	}
+
+}

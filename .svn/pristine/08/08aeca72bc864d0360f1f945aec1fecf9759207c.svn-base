@@ -1,0 +1,126 @@
+package com.aero.o2o.util.json;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.aero.o2o.model.BasePojo;
+import com.aero.o2o.model.Category;
+import com.aero.o2o.model.Content;
+import com.aero.o2o.model.JSONPojo;
+import com.aero.o2o.model.Product;
+import com.aero.o2o.model.ShopOrder;
+import com.aero.o2o.model.SubCategory;
+import com.aero.o2o.model.Voucher;
+import com.aero.o2o.util.QrcodeUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+public class PojoJSONUtil {
+
+	public static JSONObject content2Index(Content content){
+		JSONObject json = new JSONObject();
+		json.put("topicId", content.getContentId());
+		json.put("topicImageUrl", content.getServletContextPath() + content.getIcon());
+		json.put("topicTime", content.getTime());
+		json.put("topicContent", content.getTitle());
+		json.put("topicType", content.getContentType());
+		return json;
+	}
+	
+	public static JSONObject content2Active(Content content){
+		JSONObject json = new JSONObject();
+		json.put("activeId", content.getContentId());
+		json.put("activeName", content.getTitle());
+		json.put("activeImageUrl",content.getServletContextPath() + content.getIcon());
+		return json;
+	}
+	
+	public static JSONObject category2JSON(Category category){
+		JSONObject json = new JSONObject();
+		json.put("classId", category.getId());
+		json.put("className", category.getName());
+		json.put("classImageUrl", category.getYhtcloudPath()+category.getImage());
+		return json;
+	}
+
+	public static JSONObject product2List(Product product){
+		JSONObject json = new JSONObject();
+		json.put("id",product.getId());
+		json.put("name",product.getName());
+		json.put("icon",product.getYhtcloudPath()+product.getIcon());
+		json.put("description",product.getDescription());
+		json.put("price",product.getPrice());
+		json.put("oldPrice",product.getOldPrice());
+		json.put("shortAddress",product.getShop()==null?"":product.getShop().getAddressShort());
+		json.put("shopName",product.getShop()==null?"":product.getShop().getShopName());
+		json.put("poiId",product.getShop()==null?"":product.getShop().getPoiId());
+		return json;
+	}
+	
+	public static JSONObject product2Detail(Product product){
+		JSONObject json = new JSONObject();
+		json.put("id",product.getId());
+		json.put("name",product.getName());
+		json.put("icon",product.getYhtcloudPath()+product.getIcon());
+		json.put("description",product.getDescription());
+		json.put("topImageUrl",product.getYhtcloudPath()+product.getImage());
+		json.put("price",product.getPrice());
+		json.put("oldPrice",product.getOldPrice());
+		json.put("shortAddress",product.getShop()==null?"":product.getShop().getAddressShort());
+		json.put("shopName",product.getShop()==null?"":product.getShop().getShopName());
+		json.put("poiId",product.getShop()==null?"":product.getShop().getPoiId());
+		json.put("address",product.getShop()==null?"":product.getShop().getAddress());
+		json.put("shopId",product.getShop()==null?"":product.getShop().getId());
+		json.put("bhours",product.getShop()==null?"":product.getShop().getBhours());
+		json.put("airterminal",product.getShop()==null?"":product.getShop().getAirterminal());
+		json.put("threeCode",product.getShop()==null?"":product.getShop().getThreeCode());
+		json.put("floor",product.getShop()==null?"":product.getShop().getFloor());
+		json.put("phone",product.getShop()==null?"":product.getShop().getPhone());
+		json.put("title",product.getShop()==null?"":product.getShop().getShopName());
+		json.put("detail",product.getDetail()==null?null:product.getDetail().replaceAll("\"", "'").replaceAll("/upload", "http://yhtcloud.cn/upload"));
+		return json;
+	}
+
+
+	public static JSONObject voucher2JSON(Voucher voucher){
+		JSONObject json = new JSONObject();
+		json.put("accountId", voucher.getVoucherId());
+		json.put("accountNo", voucher.getVoucherCode());
+		json.put("name", voucher.getVoucherName());
+		json.put("balance", voucher.getBalance());
+		json.put("total", voucher.getVoucherValue());
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("voucherCode", voucher.getVoucherCode()+"");
+		json.put("qrcode",QrcodeUtil.qrcodeEncode(map));
+		json.put("accountDesc", voucher.getRemark());
+		return json;
+	}
+
+
+	public static JSONObject shopOrder2JSON(ShopOrder order){
+		JSONObject json = new JSONObject();
+		json.put("shopName",order.getShopName());
+		json.put("cost", order.getCost());
+		json.put("time", order.getPtime());
+		json.put("accountName", order.getVoucherName());
+		return json;
+	}
+
+
+	public static JSONObject subCategory2JSON(SubCategory category){
+		JSONObject json = new JSONObject();
+		json.put("id",category.getCid());
+		json.put("type",category.getCname());
+		return json;
+	}
+	
+	public static JSONArray list2Array(List<BasePojo> list,JSONPojo jsonPojo){
+		JSONArray array = new JSONArray();
+		for(BasePojo pojo:list){
+			array.add(jsonPojo.pojo2JSON(pojo));
+		}
+		return array;
+	}
+	
+}

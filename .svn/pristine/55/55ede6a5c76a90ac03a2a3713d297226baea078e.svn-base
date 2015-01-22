@@ -1,0 +1,18 @@
+package com.aero.o2o.dao;
+
+import java.util.List;
+
+import com.aero.o2o.model.Airport;
+import com.aero.o2o.model.QueryParam;
+import com.aero.o2o.model.User;
+
+public interface UserDao extends BaseDao<User>{
+
+	List<Airport> queryAllAirport(QueryParam qp);
+
+	User userLogin(User user);
+	
+	User thirdUserLogin(User user);
+	
+	void insertThird(User user);
+}

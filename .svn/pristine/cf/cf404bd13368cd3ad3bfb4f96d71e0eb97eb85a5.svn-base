@@ -1,0 +1,381 @@
+package com.aero.o2o.util;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
+
+import net.lingala.zip4j.core.ZipFile;
+import net.lingala.zip4j.exception.ZipException;
+import net.lingala.zip4j.model.ZipParameters;
+import net.lingala.zip4j.util.Zip4jConstants;
+
+public class FileUtil {
+	/**
+	 * 
+	 * @param fileNane
+	 * @throws IOException
+	 */
+	public synchronized static void unZip(String fileNane) {
+		if (fileNane == null || "".equals(fileNane))
+			return;
+		File file = new File(fileNane);
+		unZip(file);
+	}
+
+	/**
+	 * 
+	 * @param file
+	 * @throws IOException
+	 */
+	public synchronized static void unZip(File filePath) {
+		String destination = filePath.getParent();
+		String password = "";
+
+		try {
+			ZipFile zipFile = new ZipFile(filePath);
+			if (zipFile.isEncrypted()) {
+				zipFile.setPassword(password);
+			}
+			zipFile.extractAll(destination);
+		} catch (ZipException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 
+	 * @param fileNane
+	 * @throws IOException
+	 */
+	public synchronized static void unZip2Dir(String fileNane) {
+		if (fileNane == null || "".equals(fileNane))
+			return;
+		File file = new File(fileNane);
+		unZip2Dir(file);
+	}
+
+	/**
+	 * 
+	 * @param filePath
+	 */
+	public synchronized static void unZip2Dir(File filePath) {
+		String path = filePath.getPath();
+		String destination = path.substring(0, path.lastIndexOf("."));
+		String password = "";
+
+		try {
+			ZipFile zipFile = new ZipFile(filePath);
+			if (zipFile.isEncrypted()) {
+				zipFile.setPassword(password);
+			}
+			zipFile.extractAll(destination);
+		} catch (ZipException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 
+	 * @param dir
+	 */
+	public synchronized static void zip(String dir, String suffix) {
+		if (dir == null || "".equals(dir))
+			return;
+		try {
+			// Initiate ZipFile object with the path/name of the zip file.
+
+			ZipFile zipFile = new ZipFile(dir + suffix);
+
+			// Folder to add
+			String folderToAdd = dir;
+
+			// Initiate Zip Parameters which define various properties such
+			// as compression method, etc.
+			ZipParameters parameters = new ZipParameters();
+
+			// set compression method to store compression
+			parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+
+			// Set the compression level
+			parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
+
+			// Add folder to the zip file
+			zipFile.addFolder(folderToAdd, parameters);
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 
+	 * @param bfr
+	 * @param aft
+	 * @return
+	 */
+	public synchronized static int encryptionFile(String bfr, String aft) {
+		Process pos = null;
+		try {
+			pos = Runtime.getRuntime().exec(
+					"/opt/gcc/xdes/xdes_encoder -e " + bfr + " " + aft + "");
+			pos.waitFor();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return pos.exitValue();
+	}
+
+	/**
+	 * 
+	 * @param bfr
+	 * @param aft
+	 * @return
+	 */
+	public synchronized static int decryptionFile(String bfr, String aft) {
+		Process pos = null;
+		try {
+			pos = Runtime.getRuntime().exec(
+					"/opt/gcc/xdes/xdes_encoder -d " + bfr + " " + aft + "");
+			pos.waitFor();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return pos.exitValue();
+	}
+
+	/**
+	 * 
+	 * @param filePath
+	 * @return
+	 */
+	public synchronized static boolean processZipFile(String filePath) {
+		if (filePath == null || "".equals(filePath))
+			return false;
+		unZip(filePath);
+		File file = new File(filePath);
+		String parentPath = file.getParent();
+		String fileName = file.getName();
+		String name = fileName.substring(0, fileName.lastIndexOf("."));
+		File dir = new File(parentPath + "/" + name);
+		if (!dir.exists() || !dir.isDirectory())
+			return false;
+		File sDir = new File(parentPath + "/s_" + name);
+		if (!sDir.exists())
+			sDir.mkdir();
+		File[] children = dir.listFiles();
+		for (File child : children)
+			if (child.isFile()) {
+				String nm = child.getName();
+				String bfr = parentPath + "/" + name + "/" + nm;
+				String aft = parentPath + "/s_" + name + "/" + nm;
+				encryptionFile(bfr, aft);
+				// child.delete();
+			}
+		delFile(parentPath + "/" + name);
+		zip(parentPath + "/s_" + name,
+				fileName.substring(fileName.lastIndexOf(".")));
+		delFile(parentPath + "/s_" + name);
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param filePath
+	 * @return
+	 */
+	public synchronized static boolean processZipFile2(String filePath) {
+		if (filePath == null || "".equals(filePath))
+			return false;
+		unZip2Dir(filePath);
+		File file = new File(filePath);
+		String parentPath = file.getParent();
+		String fileName = file.getName();
+		String name = fileName.substring(0, fileName.lastIndexOf("."));
+		File dir = new File(parentPath + "/" + name);
+		if (!dir.exists() || !dir.isDirectory())
+			return false;
+		File sDir = new File(parentPath + "/s_" + name);
+		if (!sDir.exists())
+			sDir.mkdir();
+		// File usDir = new File(parentPath + "/us_" + name);
+		// if (!usDir.exists())
+		// usDir.mkdir();
+		File[] children = dir.listFiles();
+		for (File child : children)
+			if (child.isFile()) {
+				String nm = child.getName();
+				String bfr = parentPath + "/" + name + "/" + nm;
+				String aft = parentPath + "/s_" + name + "/" + nm;
+				encryptionFile(bfr, aft);
+				// String daft = parentPath + "/us_" + name + "/" + nm;
+				// decryptionFile(aft, daft);
+				// child.delete();
+			}
+		delFile(parentPath + "/" + name);
+		zipFiles(parentPath + "/s_" + name,
+				fileName.substring(fileName.lastIndexOf(".")));
+		delFile(parentPath + "/s_" + name);
+		// zipFiles(parentPath + "/us_" + name,
+		// fileName.substring(fileName.lastIndexOf(".")));
+		// delFile(parentPath + "/us_" + name);
+		return true;
+	}
+
+	/**
+	 * 
+	 * @param dir
+	 */
+	public synchronized static void zipFiles(String dir, String suffix) {
+		if (dir == null || "".equals(dir))
+			return;
+		File exstFile = new File(dir + suffix);
+		if(exstFile.exists())
+			exstFile.delete();
+		try {
+			// Initiate ZipFile object with the path/name of the zip file.
+
+			ZipFile zipFile = new ZipFile(dir + suffix);
+
+			// Initiate Zip Parameters which define various properties such
+			// as compression method, etc.
+			ZipParameters parameters = new ZipParameters();
+
+			// set compression method to store compression
+			parameters.setCompressionMethod(Zip4jConstants.COMP_DEFLATE);
+
+			// Set the compression level
+			parameters.setCompressionLevel(Zip4jConstants.DEFLATE_LEVEL_NORMAL);
+
+			// Add files to the zip file
+			File dire = new File(dir);
+			for (File f : dire.listFiles()) {
+				zipFile.addFile(f, parameters);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * 
+	 * @param filepath
+	 * @throws IOException
+	 */
+	public synchronized static void delFile(String filepath) {
+		File f = new File(filepath);
+		if (f.exists() && f.isDirectory()) {
+			if (f.listFiles().length == 0) {
+				f.delete();
+			} else {
+				File delFile[] = f.listFiles();
+				int i = f.listFiles().length;
+				for (int j = 0; j < i; j++) {
+					if (delFile[j].isDirectory()) {
+						delFile(delFile[j].getAbsolutePath());
+					}
+					delFile[j].delete();
+				}
+				f.delete();
+			}
+		}
+	}
+
+	/**
+	 * 
+	 * @param filepath
+	 * @throws IOException
+	 */
+	public synchronized static void pickFile2Proc(String filepath) {
+		File f = new File(filepath);
+		if (f.exists() && f.isDirectory()) {
+			if (f.listFiles().length == 0) {
+				return;
+			} else {
+				File delFile[] = f.listFiles();
+				int i = f.listFiles().length;
+				for (int j = 0; j < i; j++) {
+					if (delFile[j].isDirectory()) {
+						pickFile2Proc(delFile[j].getAbsolutePath());
+					} else {
+
+						String filePath = delFile[j].getAbsolutePath();
+						if (filePath.substring(filePath.lastIndexOf("/"))
+								.equals("/map.data"))
+							// System.out.println(filePath);
+							processZipFile2(delFile[j].getAbsolutePath());
+
+						else if (filePath.substring(filePath.lastIndexOf("/"))
+								.startsWith("/s_s")
+								|| filePath
+										.substring(filePath.lastIndexOf("/"))
+										.startsWith("/us_"))
+							new File(filePath).delete();
+					}
+
+				}
+			}
+		}
+	}
+	
+	/**
+	 * 写文件
+	 * @param fileName	文件名
+	 * @param content	文件内容
+	 * @param encoding	文件编码
+	 */
+	 public static void writeFile(String fileName,String content,String encoding){
+	     File file = new File(fileName);
+	      if (!file.exists()) {
+	             try {
+	                   file.createNewFile();
+	              } catch (IOException e) {
+	                    // TODO Auto-generated catch block
+	                   e.printStackTrace();
+	              }
+	         }
+	 
+	      BufferedWriter writer = null;
+	      try {
+	         OutputStreamWriter write = new OutputStreamWriter(new FileOutputStream(file),encoding);
+	         writer= new BufferedWriter(write);  
+	         writer.write(content);
+	     } catch (UnsupportedEncodingException e) {
+	         e.printStackTrace();
+	     } catch (IOException e) {
+	         e.printStackTrace();
+	     } finally{
+	         if(writer != null){
+	             try {
+	                 writer.close();
+	             } catch (IOException e) {
+	                 e.printStackTrace();
+	             }
+	          }
+	     }
+	}
+
+
+	/**
+	 * @param args
+	 * @throws IOException
+	 */
+	public static void main(String[] args) {
+//		processZipFile2(args[0]);
+		// encryptionFile("","");
+		// delFile("F:/test/easymock-3.1");
+		// pickFile2Proc("F:/test/");
+	}
+
+}

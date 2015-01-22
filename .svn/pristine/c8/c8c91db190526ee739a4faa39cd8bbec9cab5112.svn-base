@@ -1,0 +1,52 @@
+package com.aero.o2o.dao.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.orm.ibatis.SqlMapClientTemplate;
+import org.springframework.stereotype.Repository;
+
+import com.aero.o2o.dao.ProductDao;
+import com.aero.o2o.model.Content;
+import com.aero.o2o.model.Product;
+import com.aero.o2o.model.QueryParam;
+
+@Repository("ProductDaoImpl")
+public  class ProductDaoImpl extends BaseDaoImpl implements ProductDao{
+	
+	@Override
+	public List<Product> queryAll() {
+		return (List<Product>)this.getSqlMapClientTemplate().queryForList("Product.queryAll");
+	}
+
+	@Override
+	public List<Integer> queryAllIds() {
+		return (List<Integer>)this.getSqlMapClientTemplate().queryForList("Product.queryAllIds");
+	}
+
+	@Override
+	public List<Content> queryAllContent(QueryParam qp) {
+		return (List<Content>)this.getSqlMapClientTemplate().queryForList("Product.queryAllContent",qp);
+	}
+
+	@Override
+	public List<String> queryPics(Integer productId) {
+		return (List<String>)this.getSqlMapClientTemplate().queryForList("Product.queryPics",productId);
+	}
+
+	@Override
+	public List<Product> queryCollection(QueryParam qp) {
+		return (List<Product>)this.getSqlMapClientTemplate().queryForList("Product.queryCollection",qp);
+	}
+
+	@Override
+	public List<Product> queryProductByShop(QueryParam qp) {
+		return (List<Product>)this.getSqlMapClientTemplate().queryForList("Product.queryProductByShop",qp);
+	}
+
+	@Override
+	public List<Product> queryProductsByQrcode(QueryParam qp) {
+		return (List<Product>)this.getSqlMapClientTemplate().queryForList("Product.queryProductsByQrcode",qp);
+	}
+	
+}

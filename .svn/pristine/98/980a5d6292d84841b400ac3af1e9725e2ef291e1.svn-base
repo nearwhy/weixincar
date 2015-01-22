@@ -1,0 +1,92 @@
+package com.aero.o2o.util;
+
+import java.util.Map;
+
+
+/**
+ * 查询Mongdb时候的传入参数
+ * @author tan
+ */
+public class AirportQueryM {
+	/**
+	 * 页数
+	 */
+	private int page;
+	/**
+	 * 分页大小
+	 */
+	private int size;
+	/**
+	 * 查询条件
+	 */
+	private String queryName;
+	/**
+	 * 查询值
+	 */
+	private Object queryValue;
+	/**
+	 * 更新条件
+	 */
+	private String updateName;
+	/**
+	 * 更新值
+	 */
+	private String updateValue;
+	
+	private Map<String, Double> numParams;
+	public int getPage() {
+		return page;
+	}
+
+	public void setPage(int page) {
+		this.page = page;
+	}
+
+	public int getSize() {
+		return size;
+	}
+
+	public void setSize(int size) {
+		this.size = size;
+	}
+
+	public String getQueryName() {
+		return queryName;
+	}
+
+	public void setQueryName(String queryName) {
+		this.queryName = queryName;
+	}
+
+	public Object getQueryValue() {
+		return queryValue;
+	}
+
+	public void setQueryValue(Object queryValue) {
+		this.queryValue = queryValue;
+	}
+
+	public String getUpdateName() {
+		return updateName;
+	}
+
+	public void setUpdateName(String updateName) {
+		this.updateName = updateName;
+	}
+
+	public String getUpdateValue() {
+		return updateValue;
+	}
+
+	public void setUpdateValue(String updateValue) {
+		this.updateValue = updateValue;
+	}
+
+	public Map<String, Double> getNumParams() {
+		return numParams;
+	}
+
+	public void setNumParams(Map<String, Double> numParams) {
+		this.numParams = numParams;
+	}
+}

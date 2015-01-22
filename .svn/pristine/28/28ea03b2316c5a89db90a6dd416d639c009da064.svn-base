@@ -1,0 +1,89 @@
+package com.aero.o2o.util;
+
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import com.aero.o2o.model.AppClient;
+
+
+public class SDKUtil {
+	
+	public static final String appId = "&appId=";
+	public static final String url = "url=";
+
+	//用appId生成key
+	public static String appId2Key(String appId)throws NoSuchAlgorithmException{
+		String key = null;
+		String md5 = Encryption.md5(appId);
+		key = Encryption.md5(md5.substring(0,md5.length()/2));
+		return key;
+	}
+	
+	//验证token
+	public static boolean verify(AppClient app,HttpServletRequest request) throws Exception{
+		boolean result = false;
+		Map params=request.getParameterMap();
+		if(params.size()>0){
+			Iterator it = params.keySet().iterator();
+			List<String> list = new ArrayList<String>();
+			while(it.hasNext()){
+			    String paramName = (String) it.next();
+			    String paramValue = request.getParameter(paramName);
+			    //处理你得到的参数名与值
+			    if(!paramName.equals("token")){
+				    list.add(paramName+"="+paramValue);
+			    }
+			}
+			Collections.sort(list);
+			String paramsString = "";
+			for(String s:list){
+				paramsString += s+",";
+			}
+			
+			System.out.println("paramsString=="+paramsString);
+			System.out.println("appkey=="+app.getAppKey());
+			
+			String paramMD5 = Encryption.md5(paramsString.substring(0, paramsString.length()-1));
+			System.out.println("paramMD5=="+paramMD5);
+			String newMD5 = paramMD5.substring(paramMD5.length()-1, paramMD5.length())
+					+paramMD5.substring(1, paramMD5.length()-1)+paramMD5.substring(0,1)
+					+app.getAppKey();
+			System.out.println("newMD5=="+newMD5);
+			String token = request.getParameter("token");
+			System.out.println("token=="+token);
+			String md5 = Encryption.md5(newMD5);
+			System.out.println("md5=="+md5);
+			result =  token.equals(md5);
+			
+			
+		}
+		return result; 
+	}
+	
+	
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args) {
+		try {
+			String key = appId2Key("com.palm360.android.szxairport");
+			System.out.println(key);
+			String paramsString = "appId=com.palm360.android.szxairport,sdkVersion=1.0,threeCode=SZX,ts=1388463144320,";
+			String paramMD5 = Encryption.md5(paramsString.substring(0, paramsString.length()-1));
+			String newMD5 = paramMD5.substring(paramMD5.length()-1, paramMD5.length())
+					+paramMD5.substring(1, paramMD5.length()-1)+paramMD5.substring(0,1)
+					+key;
+			String md5 = Encryption.md5(newMD5);
+			System.out.println(md5);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+}

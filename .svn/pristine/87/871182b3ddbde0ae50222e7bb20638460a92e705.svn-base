@@ -1,0 +1,8 @@
+package com.aero.o2o.dao;
+
+import com.aero.o2o.model.Waiter;
+
+public interface WaiterDao extends BaseDao<Waiter>{
+	
+	Waiter waiterLogin(Waiter waiter);
+}

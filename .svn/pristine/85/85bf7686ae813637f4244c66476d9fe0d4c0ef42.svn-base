@@ -1,0 +1,21 @@
+package com.aero.o2o.dao.impl;
+
+import org.springframework.stereotype.Repository;
+
+import com.aero.o2o.dao.AppClientDao;
+import com.aero.o2o.model.AppClient;
+
+@Repository("AppClientDao")
+public class AppClientDaoImpl extends BaseDaoImpl  implements AppClientDao {
+	
+	@Override
+	public void insert(AppClient ac) {
+		this.getSqlMapClientTemplate().insert("AppClient.insert", ac);
+	}
+
+	@Override
+	public AppClient queryByAppId(String appId){
+		return (AppClient)this.getSqlMapClientTemplate().queryForObject("AppClient.queryByAppId", appId);
+	}
+
+}

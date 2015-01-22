@@ -1,0 +1,12 @@
+package com.aero.o2o.model;
+
+import com.aero.o2o.redis.RedisUtilEx;
+
+public abstract class RedisPojo extends BasePojo{
+	
+	public abstract void saveRedis(RedisUtilEx redisUtilEx);
+	
+
+	public abstract void getFromRedis(RedisUtilEx redisUtilEx);
+	
+}

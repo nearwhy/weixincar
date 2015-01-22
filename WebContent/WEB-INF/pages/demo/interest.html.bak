@@ -1,0 +1,149 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>兴趣班</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<!-- 最新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+
+<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script
+	src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+
+
+<!-- 最新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script
+	src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<style type="text/css">
+.index {
+	width: 100%;
+}
+
+.table1 {
+	border: 2;
+	width: 100%;
+	cellspacing: 2;
+}
+
+.out {
+	background: #eee;
+}
+
+.my {
+	width: 20%;
+	height: 50%;
+	background: #049cdb;
+}
+</style>
+</head>
+<body>
+<div class="container">
+	<div class="row-fluid">
+		<div class="span12">
+		
+		
+		<div class="list-group">
+
+		  <a href="#" class="list-group-item active">
+			英语社团
+		  </a>
+<div id="carousel-example-captions" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#carousel-example-captions" data-slide-to="0" class=""></li>
+          <li class="" data-target="#carousel-example-captions" data-slide-to="1"></li>
+          <li class="active" data-target="#carousel-example-captions" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+          <div class="item">
+             <img src="http://app.airport360.com.cn/upload/photos/a.jpg"  style="max-width:100%" class="img-rounded">
+            <div class="carousel-caption">
+              <h3>英语兴趣班</h3>
+              <p>脱离枯燥的课本，让孩子享受英语交流的乐趣</p>
+            </div>
+          </div>
+          <div class="item">
+              <img src="http://app.airport360.com.cn/upload/photos/b.jpg"  style="max-width:100%" class="img-rounded">
+            <div class="carousel-caption">
+              <h3>美术兴趣班</h3>
+              <p>用画笔和颜料绽放天马行空的想象力</p>
+            </div>
+          </div>
+          <div class="item active">
+              <img src="http://app.airport360.com.cn/upload/photos/c.jpg"  style="max-width:100%" class="img-rounded">
+            <div class="carousel-caption">
+              <h3>钢琴兴趣班</h3>
+              <p>在黑白的世界里，沐浴音乐的洗礼</p>
+            </div>
+          </div>
+        </div>
+         <a class="left carousel-control" href="#carousel-example-captions" data-slide="prev">
+          <span class="glyphicon glyphicon-chevron-left"></span>
+        </a>
+        <a class="right carousel-control" href="#carousel-example-captions" data-slide="next">
+          <span class="glyphicon glyphicon-chevron-right"></span>
+        </a>
+      </div>
+			
+			 <a href="#" class="list-group-item">
+			<h4 class="list-group-item-heading"><span class="glyphicon glyphicon-star"></span>授课内容</h4>
+			<p class="list-group-item-text">
+			最畅销---中外教听力口语营
+			</p>
+			 </a>
+
+			 <a href="#" class="list-group-item">
+			<h4 class="list-group-item-heading"><span class="glyphicon glyphicon-star"></span>适用学员</h4>
+			<p class="list-group-item-text">
+			1-6年级
+			</p>
+			 </a>
+			 
+			 <a href="#" class="list-group-item">
+			<h4 class="list-group-item-heading"><span class="glyphicon glyphicon-star"></span>上课时间</h4>
+			<p class="list-group-item-text">
+			每周二下午15:00--16:30
+			</p>
+			 </a>
+
+			 
+			 <a href="#" class="list-group-item">
+			<h4 class="list-group-item-heading"><span class="glyphicon glyphicon-star"></span>报名人数</h4>
+			<p class="list-group-item-text">
+				每班30人，每年级共3个班
+			</p>
+			 </a>
+ 
+			 <a href="#" class="list-group-item">
+	<button type="button" class="btn btn-primary btn-lg btn-block">点击报名</button>
+			 </a>
+
+		</div>
+		<p></p>
+		</div>
+	</div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,38 @@
+package com.aero.o2o.redis;
+
+public class RedisKeys {
+
+
+	public static final String PRODUCT_KEY = "o2o_product_";
+	
+	public static final String SHOP_KEY = "o2o_shop_";
+	
+	public static final String PRODUCT_PAGE_KEY = "o2o_product_page";
+	
+	public static final String THEME_CONTENT_PRODUCT_KEY = "o2o_theme_content_product_";
+	
+	public static final String CONTENT_KEY = "o2o_content_";
+	
+	public static final String THEME_KEY = "o2o_theme_";
+	
+	public static final String ADTHEME_KEY = "o2o_adTheme_";
+	
+	public static final String SUBTHEME_KEY = "o2o_subTheme_";
+	
+	public static final String THEME_PRODUCT_KEY = "o2o_theme_product_";
+
+	public static final String THEME_ACTIVITY_KEY = "o2o_theme_activity_";
+	
+	public static final String ACTIVITY_KEY = "o2o_activity_";
+	
+	public static final String ACTIVITY_PAGE_KEY = "o2o_activity_page";
+	
+	public static final String THEME_CONTENT_ACTIVITY_KEY = "o2o_theme_content_activity_";
+
+	public static final String PRODUCT_PIC = "o2o_produt_pic_";
+
+	public static final String ACTIVITY_PIC = "o2o_activity_pic_";
+	
+	public static final String LOGIN_USER = "o2o_login_user_";
+	
+}

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Content">
+
+	<select id="queryTopArea" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Content">
+		select * from toparea 
+		order by sort
+	</select>
+	
+	<select id="queryCenterArea" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Content">
+		select * from centerarea 
+		order by sort
+	</select>
+	
+	<select id="queryTopicArea" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Content">
+		select * from
+		(select top $pageTop$ ROW_NUMBER() OVER(ORDER BY a.sort ASC) AS ROWID,a.contentId,t.title,t.icon from topicarea a left join topic t on a.contentid = t.topicid
+		order by a.sort) as tmp
+		where rowid > #pageRow#
+	</select>
+	
+	<select id="queryTopic" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Product">
+		select * from product
+		where id = #topicId#
+	</select>
+	
+	
+	<select id="queryTopicByTheme" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Content">
+		select p.topicId as contentId,p.icon,p.title
+		from themetopic t inner join topic p on p.topicid = t.topicid and t.themeid = #themeId#  
+	</select>
+
+</sqlMap>

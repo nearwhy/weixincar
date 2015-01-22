@@ -1,0 +1,10 @@
+package com.aero.o2o.model;
+
+
+public class Topic extends Content{
+	
+	private Integer pmtId;
+	
+	private Integer topicId;
+	
+}

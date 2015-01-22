@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Shop">
+	
+	
+	<resultMap id="Shop4ProductDetail" class="com.aero.o2o.model.Shop">
+		<result column="supplierid" property="id" jdbcType="INTEGER" />
+		<result column="suppliername" property="shopName" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="bhours" property="bhours" jdbcType="VARCHAR" />
+		<result column="threeCode" property="threeCode" jdbcType="VARCHAR" />
+		<result column="airterminalname" property="airterminal" jdbcType="VARCHAR" />
+		<result column="floorname" property="floor" jdbcType="VARCHAR" />
+		<result column="shopid" property="poiId" jdbcType="VARCHAR" />
+	</resultMap>
+	
+	<resultMap id="Shop4ProductIcon" class="com.aero.o2o.model.Shop">
+		<result column="supplierid" property="id" jdbcType="INTEGER" />
+		<result column="suppliername" property="shopName" jdbcType="VARCHAR" />
+		<result column="shopid" property="poiId" jdbcType="Integer" />
+		<result column="ShortName" property="addressShort" jdbcType="VARCHAR"/>
+	</resultMap>
+	
+	
+	<resultMap id="ShopDetail" class="com.aero.o2o.model.Shop">
+		<result column="supplierid" property="id" jdbcType="INTEGER" />
+		<result column="suppliername" property="shopName" jdbcType="VARCHAR" />
+		<result column="address" property="address" jdbcType="VARCHAR" />
+		<result column="shortname" property="addressShort" jdbcType="VARCHAR" />
+		<result column="threeCode" property="threeCode" jdbcType="VARCHAR" />
+		<result column="airterminalname" property="airterminal" jdbcType="VARCHAR" />
+		<result column="floorname" property="floor" jdbcType="VARCHAR" />
+		<result column="bhours" property="bhours" jdbcType="VARCHAR" />
+		<result column="bgimage" property="image" jdbcType="VARCHAR" />
+		<result column="logo" property="logo" jdbcType="VARCHAR" />
+		<result column="phone" property="phone" jdbcType="VARCHAR" />
+		<result column="description" property="detail" jdbcType="VARCHAR" />
+		<result column="shopid" property="poiId" jdbcType="INTEGER" />
+	</resultMap>
+	
+	<select id="queryShopDetail" parameterClass="com.aero.o2o.model.QueryParam" resultMap="ShopDetail">
+		select s.supplierid,s.suppliername,s.address,y.shortname,y.threeCode,y.airterminalname,y.floorname,
+		(convert(varchar(5), s.servicestarttime, 120) +'--'+convert(varchar(5), s.serviceendtime, 120) ) as bhours,
+		s.bgimage,s.logo,s.phone,y.shopid,s.description
+		from supplier s inner join Supplier_YHT y on s.supplierid = y.supplierid 
+		<isNotEmpty prepend="and" property="poiId">
+		 y.shopid = #poiId#
+		</isNotEmpty>
+		where 1=1
+		<isNotEmpty prepend="and" property="supplierId">
+		 s.supplierid = #supplierId#
+		</isNotEmpty>
+	</select>
+	
+	<select id="queryDetail" resultClass="com.aero.o2o.model.Shop" parameterClass="com.aero.o2o.model.Shop">
+		select s.*,count(p.id) as allCount,count(p.id) as newCount,count(c.id) as commentCount,sum(c.numStar)/count(c.id) as starRank
+		from shop s left join product p on s.id = p.shopId 
+		left join poicomment c on c.poiId = s.poiId
+		where 
+		<isNotNull property="id">
+			s.id = #id#
+		</isNotNull>
+		<isNotNull property="poiId">
+			s.id in (select shopId from shop_poi where poiId = #poiId#)
+		</isNotNull>
+	</select>
+	
+	
+	<select id="query4ProductDetail" parameterClass="java.lang.Integer" resultMap="Shop4ProductDetail">
+		select s.suppliername,s.address,s.supplierid,s.phone,(convert(varchar(5), s.servicestarttime, 120) +'--'+convert(varchar(5), s.serviceendtime, 120) ) as bhours,
+		y.threecode,y.airterminalname,y.floorname,y.shopid
+		from supplier s left join Supplier_YHT y on s.SupplierId = y.SupplierId
+		where s.supplierid = #supplierid#
+	</select>
+
+	<select id="query4ProductIcon" parameterClass="java.lang.Integer" resultMap="Shop4ProductIcon">
+		select s.supplierid,s.suppliername,s.address,y.shopid,y.ShortName 
+		from supplier s left join Supplier_YHT y on s.SupplierId = y.SupplierId
+		where s.supplierid = #supplierid#
+	</select>
+	
+	
+	<select id="queryShop4Pay" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Shop">
+		select s.suppliername as shopName,s.logo as logo 
+		from supplier s
+		where s.supplierid = #supplierId#
+	</select>
+	
+	<select id="search" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Shop">
+		select * from (
+			select top $pageTop$ ROW_NUMBER() OVER(ORDER BY s.supplierid ASC) AS ROWID, 
+			s.supplierid as id,s.suppliername as shopName ,s.description as detail from supplier s
+			where s.suppliername like '%'+lower(#key#)+'%'
+			) as temp1 
+		where rowid > #pageRow#
+	</select>
+	
+</sqlMap>

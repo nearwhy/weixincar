@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+<!DOCTYPE sqlMap 
+PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" 
+"http://ibatis.apache.org/dtd/sql-map-2.dtd">
+	<!-- Mysql 区分大小写 -->
+<sqlMap namespace="UserInfo">
+
+	<typeAlias alias="UserInfo" type="com.palm360.airport.model.UserInfo" />
+	
+	<select id="queryAllCount" resultClass="Integer" >
+	    select count(*) from UserInfo
+	</select>
+	 
+	<select id="queryAll" resultClass="UserInfo" parameterClass="com.palm360.airport.util.AirportQueryP">
+	    select * from UserInfo limit #start#,#size#
+	</select>
+	
+	<statement id="queryUserInfo" resultClass="UserInfo" parameterClass="com.palm360.airport.util.AirportQueryP">
+	    select 
+	    <dynamic prepend="">
+	        <isNotNull property="value" >
+		        <iterate conjunction=","  property="value">
+		            $value[]$
+		        </iterate>
+	        </isNotNull >
+	        <isNull property="value" prepend="" >UserID</isNull>
+	    </dynamic>
+	    from UserInfo 
+	    <dynamic prepend="where" >
+	        <isNotEmpty prepend="," property="params.nickName">
+				NickName = #params.nickName#
+			</isNotEmpty>
+	
+			<isNotEmpty prepend="," property="params.password">
+				Password = #params.password#
+			</isNotEmpty>
+	
+			<isNotEmpty prepend="," property="params.email">
+				EMail = #params.email#
+			</isNotEmpty>
+	
+			<isNotEmpty prepend="," property="params.mobile">
+				Mobile = #params.mobile#
+			</isNotEmpty>
+	
+			<isNotEmpty prepend="," property="params.integral">
+				Integral = #params.integral#
+			</isNotEmpty>
+	
+			<isNotEmpty prepend="," property="params.sex">
+				Sex = #params.sex#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="params.integralValidity">
+				IntegralValidity =
+				#params.integralValidity#
+			</isNotEmpty>
+			<isNotEmpty prepend="," property="params.regTime">
+				RegTime = #params.regTime#
+			</isNotEmpty>
+	
+			<isNotEmpty prepend="," property="params.uuid">
+				UUID = #params.uuid# 
+			</isNotEmpty>
+	
+			<isNotEmpty prepend="," property="params.comment">
+				Comment = #params.comment#
+			</isNotEmpty>
+	
+			<isNotEmpty prepend="," property="params.birth">
+				birth = #params.birth#
+			</isNotEmpty>
+	    </dynamic>
+	    <dynamic>
+	        <isNotNull prepend="order by" property="orderBy">
+	            $orderBy$    
+		        <isEqual prepend=""  property="asc" compareValue="true">
+		        	asc
+		        </isEqual>
+		        <isEqual prepend="" property="asc" compareValue="false">
+		        	desc
+		        </isEqual>
+	        </isNotNull>    
+	        <isNotEqual prepend="" property="size" compareValue="0">
+	            <isGreaterEqual compareValue="0" property="start">
+	                limit #start#,#size#
+	            </isGreaterEqual>
+	        </isNotEqual>
+	    </dynamic>
+	</statement>
+	<insert id="AddUser" parameterClass="com.palm360.airport.model.UserInfo">
+		<selectKey resultClass="Integer" keyProperty="userID" type="post">
+			SELECT @@IDENTITY AS UserID
+    	</selectKey>
+		insert into UserInfo( UserID, NickName, Password, EMail, Mobile, Integral, Sex, IntegralValidity, RegTime, UUID, Comment, birth )
+		values( #userID#, #nickName#, #password#, #email#, #mobile#, #integral#, #sex#, #integralValidity#, #regTime#, #uuid#, #comment#, #birth# )
+	</insert>
+	
+	<select id="GetUserInfo" resultClass="com.palm360.airport.model.UserInfo" parameterClass="com.palm360.airport.model.UserInfo">
+		select * from UserInfo where UserID = #userID:INTEGER#
+	</select>
+	
+	<select id="GetUserInfoFK" resultClass="com.palm360.airport.model.UserInfo" parameterClass="java.lang.Integer">
+		select UserID, NickName, EMail, Mobile, Integral, Sex, IntegralValidity, RegTime, UUID, Comment, birth 
+		from UserInfo 
+		where UserID = #userID:INTEGER#
+	</select>
+	
+	<delete id="DeleteUserInfo" parameterClass="UserInfo"  >
+		delete from UserInfo where UserID = #userID:INTEGER#
+	</delete>
+	
+	<update id="UpdateUserInfo" parameterClass="UserInfo">
+		update UserInfo
+		<dynamic prepend="set">
+			<isNotNull prepend="," property="nickName">
+				NickName = #nickName#
+			</isNotNull>
+	
+			<isNotNull prepend="," property="password">
+				Password = #password#
+			</isNotNull>
+	
+			<isNotNull prepend="," property="email">
+				EMail = #email#
+			</isNotNull>
+	
+			<isNotNull prepend="," property="mobile">
+				Mobile = #mobile#
+			</isNotNull>
+	
+			<isNotNull prepend="," property="integral">
+				Integral = #integral#
+			</isNotNull>
+	
+			<isNotNull prepend="," property="sex">
+				Sex = #sex#
+				</isNotNull>
+	
+			<isNotNull prepend="," property="integralValidity">
+				IntegralValidity =
+				#integralValidity#
+				</isNotNull>
+	
+			<isNotNull prepend="," property="regTime">
+				RegTime = #regTime#
+			</isNotNull>
+	
+			<isNotNull prepend="," property="uuid">
+				UUID = #uuid# 
+				</isNotNull>
+	
+			<isNotNull prepend="," property="comment">
+				Comment = #comment#
+			</isNotNull>
+	
+			<isNotNull prepend="," property="birth">
+				birth = #birth#
+				</isNotNull>
+		</dynamic>
+		where UserID = #userID#
+	</update>
+	
+</sqlMap>

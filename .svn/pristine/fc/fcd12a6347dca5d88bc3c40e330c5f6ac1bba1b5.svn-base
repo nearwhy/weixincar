@@ -1,0 +1,77 @@
+package com.aero.o2o.model;
+
+import java.io.Serializable;
+
+public class AppClient extends BasePojo implements Serializable {
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5460918599428637629L;
+	
+	public AppClient(){
+		
+	}
+	
+	private Integer id;
+	
+	private String appId;
+	
+	private String appKey;
+	
+	private String name;
+	
+	private String threeCode;
+	
+	private Integer status;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getAppId() {
+		return appId;
+	}
+
+	public void setAppId(String appId) {
+		this.appId = appId;
+	}
+
+	public String getAppKey() {
+		return appKey;
+	}
+
+	public void setAppKey(String appKey) {
+		this.appKey = appKey;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getThreeCode() {
+		return threeCode;
+	}
+
+	public void setThreeCode(String threeCode) {
+		this.threeCode = threeCode;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
+
+}

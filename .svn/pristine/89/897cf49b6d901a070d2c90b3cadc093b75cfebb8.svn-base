@@ -1,0 +1,25 @@
+package com.aero.o2o.service.impl;
+
+import java.sql.SQLException;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.aero.o2o.dao.AppClientDao;
+import com.aero.o2o.model.AppClient;
+import com.aero.o2o.service.AppClientService;
+
+
+@Service("AppClientService")
+public class AppClientServiceImpl  extends BaseServiceImpl implements AppClientService{
+
+	@Autowired
+	AppClientDao appClientDao;
+	
+	@Override
+	public AppClient queryByAppId(String appId) {
+		// TODO Auto-generated method stub
+		return appClientDao.queryByAppId(appId);
+	}
+
+}

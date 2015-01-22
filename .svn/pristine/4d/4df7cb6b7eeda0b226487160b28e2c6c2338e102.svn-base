@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Waiter">
+
+	<select id="waiterLogin" parameterClass="com.aero.o2o.model.Waiter" resultClass="com.aero.o2o.model.Waiter">
+		select w.id,w.shopId,s.shopName,w.appId from waiter w left join shop s on w.shopId = s.id
+		where w.loginName = #loginName#
+		and w.password = #password#
+	</select>
+	
+	<select id="queryDetail" parameterClass="com.aero.o2o.model.Waiter" resultClass="com.aero.o2o.model.Waiter">
+		select w.* from waiter w
+		where w.id =#id#
+	</select>
+	
+		<update id="update" parameterClass="com.aero.o2o.model.Waiter">
+		update waiter set deviceToken = #deviceToken# , deviceType = #deviceType#,appId=#appId# where id = #id#
+	
+	</update>
+</sqlMap>

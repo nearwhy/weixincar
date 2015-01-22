@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="AirPort" >
+
+  <resultMap id="AirportResult" class="com.palm360.airport.model.Airport" >
+    <result column="AirPortID" property="airportid" jdbcType="INTEGER" />
+    <result column="CountyID" property="countyid" jdbcType="INTEGER" />
+    <result column="AirPortName" property="airportname" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="queryAllCount" resultClass="Integer" >
+      select count(*) from AirPort
+  </select>
+  
+  <select id="queryAll" resultMap="AirportResult" parameterClass="com.palm360.airport.util.AirportQueryP">
+      select * from AirPort limit #start#,#size#
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="AirportResult" parameterClass="com.palm360.airport.model.Airport" >
+    select AirPortID, CountyID, AirPortName
+    from AirPort
+    where AirPortID = #airportid:INTEGER#
+  </select>
+ 
+  <delete id="deleteByPrimaryKey" parameterClass="com.palm360.airport.model.Airport" >
+    delete from AirPort
+    where AirPortID = #airportid:INTEGER#
+  </delete>
+  
+  <insert id="insert" parameterClass="com.palm360.airport.model.Airport" >
+    insert into AirPort (AirPortID, CountyID, AirPortName)
+    values (#airportid:INTEGER#, #countyid:INTEGER#, #airportname:VARCHAR#)
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterClass="com.palm360.airport.model.Airport" >
+    update AirPort
+    set CountyID = #countyid:INTEGER#,
+      AirPortName = #airportname:VARCHAR#
+    where AirPortID = #airportid:INTEGER#
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterClass="com.palm360.airport.model.Airport" >
+    update AirPort
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="countyid" >
+        CountyID = #countyid:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="airportname" >
+        AirPortName = #airportname:VARCHAR#
+      </isNotNull>
+    </dynamic>
+    where AirPortID = #airportid:INTEGER#
+  </update>
+
+</sqlMap>

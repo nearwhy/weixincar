@@ -1,0 +1,12 @@
+package com.aero.o2o.service;
+
+import java.sql.SQLException;
+
+import com.aero.o2o.model.AppClient;
+
+
+public interface AppClientService {
+	
+	public AppClient queryByAppId(String appId) throws SQLException;
+
+}

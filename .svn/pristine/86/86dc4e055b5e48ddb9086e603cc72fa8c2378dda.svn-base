@@ -1,0 +1,26 @@
+package com.aero.o2o.util.stereotype;
+
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
+
+import com.aero.o2o.util.StringUtils;
+
+public class LengthFixImpl implements ConstraintValidator<LengthFix, String> {
+
+	private int length;
+	
+	@Override
+	public void initialize(LengthFix fix) {
+		this.length = fix.length();
+	}
+
+	@Override
+	public boolean isValid(String str, ConstraintValidatorContext arg1) {
+		int strLength = StringUtils.strlength(str);
+		if (strLength < this.length) {
+			return true;
+		}
+		return false;
+	}
+
+}

@@ -1,0 +1,45 @@
+package com.aero.o2o.model;
+
+public class Category extends BasePojo{
+
+	private Integer id;
+	
+	private String name;
+	
+	private Integer deep;
+	
+	private String image;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public Integer getDeep() {
+		return deep;
+	}
+
+	public void setDeep(Integer deep) {
+		this.deep = deep;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+	
+}

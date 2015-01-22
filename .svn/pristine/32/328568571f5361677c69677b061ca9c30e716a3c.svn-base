@@ -1,0 +1,27 @@
+package com.aero.o2o.dao;
+
+import java.util.List;
+import java.util.Map;
+
+
+import com.aero.o2o.model.BasePojo;
+import com.aero.o2o.model.QueryParam;
+import com.aero.o2o.model.RedisPojo;
+import com.aero.o2o.redis.RedisUtilEx;
+
+public interface BaseDao<T> {
+	
+	BasePojo queryDetail(BasePojo pojo);
+	
+	RedisPojo queryDetail(RedisUtilEx redisUtilEx,BasePojo pojo);
+	
+	void insert(BasePojo pojo);
+	
+	void delete(BasePojo pojo);
+	
+	void update(BasePojo pojo);
+	
+	List<T> queryList(String statementName,QueryParam qp);
+	
+	int queryListCount(String className,QueryParam qp);
+}

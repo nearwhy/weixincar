@@ -1,0 +1,76 @@
+package com.aero.o2o.util.Encode;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import org.apache.commons.codec.digest.DigestUtils;
+import org.apache.commons.lang.time.StopWatch;
+import org.bouncycastle.crypto.BufferedBlockCipher;
+import org.bouncycastle.crypto.engines.AESFastEngine;
+import org.bouncycastle.crypto.modes.CBCBlockCipher;
+import org.bouncycastle.crypto.paddings.PaddedBufferedBlockCipher;
+import org.bouncycastle.crypto.params.KeyParameter;
+
+import com.aero.o2o.util.Encryption;
+
+public class Cipher {
+
+//	private final String password;  
+//	  
+//    public Cipher(String password) {  
+//        this.password = password;  
+//    }  
+  
+    public static byte[] encrypt(byte[] plainText, final String password) throws Exception {  
+        return transform(true, plainText, password);  
+    }  
+  
+    public static byte[] decrypt(byte[] cipherText, final String password) throws Exception {  
+        return transform(false, cipherText, password);  
+    }  
+  
+    private static byte[] transform(boolean encrypt, byte[] inputBytes, final String password) throws Exception {  
+        byte[] key = DigestUtils.md5(password.getBytes("UTF-8"));  
+  
+        BufferedBlockCipher cipher = new PaddedBufferedBlockCipher(new CBCBlockCipher(new AESFastEngine()));  
+        cipher.init(encrypt, new KeyParameter(key));  
+  
+        ByteArrayInputStream input = new ByteArrayInputStream(inputBytes);  
+        ByteArrayOutputStream output = new ByteArrayOutputStream();  
+  
+        int inputLen;  
+        int outputLen;  
+  
+        byte[] inputBuffer = new byte[1024];  
+        byte[] outputBuffer = new byte[cipher.getOutputSize(inputBuffer.length)];  
+  
+        while ((inputLen = input.read(inputBuffer)) > -1) {  
+            outputLen = cipher.processBytes(inputBuffer, 0, inputLen, outputBuffer, 0);  
+            if (outputLen > 0) {  
+                output.write(outputBuffer, 0, outputLen);  
+            }  
+        }  
+  
+        outputLen = cipher.doFinal(outputBuffer, 0);  
+        if (outputLen > 0) {  
+            output.write(outputBuffer, 0, outputLen);  
+        }  
+  
+        return output.toByteArray();  
+    }  
+
+    public static void main(String[] args) throws Exception {
+    	StopWatch sw = new StopWatch();
+    	sw.start();
+    	String str64 = "116.34582844";
+//    	System.out.println(str64);
+    	byte[] bt = encrypt(str64.getBytes("utf8"), "12345678");
+//    	System.out.println(bt);
+//    	System.out.println(bt.length);
+    	String strE = Encryption.getBASE64(bt);
+//    	System.out.println(strEx);
+    	System.out.println(strE);
+    	sw.stop();
+    	System.out.println(sw.getTime());
+    }
+}

@@ -1,0 +1,30 @@
+package com.aero.o2o.service;
+
+import java.util.List;
+
+import com.aero.o2o.model.Airport;
+import com.aero.o2o.model.QueryParam;
+import com.aero.o2o.model.ShopOrder;
+import com.aero.o2o.model.User;
+import com.aero.o2o.model.Voucher;
+
+public interface UserService {
+
+	public User queryUser(Integer userId);
+	
+	public List<Airport> queryAllAirport(QueryParam qp);
+	
+	public User userLogin(User user);
+	
+	public User thirdUserLogin(User user);
+	
+	public User queryUser(User user);
+	
+	public User userRegister(User user);
+	
+	public void updateUser(User user);
+	
+	public void orderPayByUser(ShopOrder order,Voucher voucher);
+	
+	public void orderPayByShop(ShopOrder order,Voucher voucher);
+}

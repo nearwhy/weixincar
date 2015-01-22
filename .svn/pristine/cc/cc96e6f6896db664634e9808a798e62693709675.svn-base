@@ -1,0 +1,295 @@
+package com.aero.o2o.model;
+
+import java.io.Serializable;
+import java.util.Locale;
+
+import com.aero.o2o.redis.RedisKeys;
+import com.aero.o2o.redis.RedisUtilEx;
+import com.aero.o2o.util.ErrorBundleReader;
+
+public class Shop extends RedisPojo implements Serializable {
+
+	private String supplierImagePath = ErrorBundleReader.getMessageSource().getMessage(
+			"o2o.supplierImagePath",
+			new Object[] {},
+			Locale.CHINA);
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1742918508550971433L;
+
+	private Integer id;
+	
+	private String shopName;
+	
+	private Integer poiId;
+	
+	private String address;
+	
+	private String phone;
+	
+	private String bhours;
+	
+	private String threeCode;
+	
+	private String airterminal;
+	
+	private String floor;
+	
+	private String title;
+	
+	private String addressShort;
+	
+	private String image;
+	
+	private String logo;
+	
+	private String introduce;
+	
+	private Integer allCount;
+	
+	private Integer newCount;
+	
+	private Integer commentCount;
+	
+	private Float startRank;
+	
+	private String detail;
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = supplierImagePath+id+"/"+image;
+	}
+
+	public String getLogo() {
+		return supplierImagePath+id+"/"+logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+
+	public String getIntroduce() {
+		return introduce;
+	}
+
+	public void setIntroduce(String introduce) {
+		this.introduce = introduce;
+	}
+
+	public Integer getAllCount() {
+		return allCount;
+	}
+
+	public void setAllCount(Integer allCount) {
+		this.allCount = allCount;
+	}
+
+	public Integer getNewCount() {
+		return newCount;
+	}
+
+	public void setNewCount(Integer newCount) {
+		this.newCount = newCount;
+	}
+
+	public Integer getCommentCount() {
+		return commentCount;
+	}
+
+	public void setCommentCount(Integer commentCount) {
+		this.commentCount = commentCount;
+	}
+
+	public Float getStartRank() {
+		return startRank;
+	}
+
+	public void setStartRank(Float startRank) {
+		this.startRank = startRank;
+	}
+
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getShopName() {
+		return shopName;
+	}
+
+	public void setShopName(String shopName) {
+		this.shopName = shopName;
+	}
+
+	public Integer getPoiId() {
+		return poiId;
+	}
+
+	public void setPoiId(Integer poiId) {
+		this.poiId = poiId;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+	public String getBhours() {
+		return bhours;
+	}
+
+	public void setBhours(String bhours) {
+		this.bhours = bhours;
+	}
+
+
+	public String getThreeCode() {
+		return threeCode;
+	}
+
+	public void setThreeCode(String threeCode) {
+		this.threeCode = threeCode;
+	}
+
+	public String getAirterminal() {
+		return airterminal;
+	}
+
+	public void setAirterminal(String airterminal) {
+		this.airterminal = airterminal;
+	}
+
+	public String getFloor() {
+		return floor;
+	}
+
+	public void setFloor(String floor) {
+		this.floor = floor;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	public void setPhone(RedisUtilEx redisUtilEx) {
+		this.phone = redisUtilEx.hgetHash(RedisKeys.SHOP_KEY+id, "phone");
+	}
+
+	public void setShopName(RedisUtilEx redisUtilEx) {
+		this.shopName = redisUtilEx.hgetHash(RedisKeys.SHOP_KEY+id, "shopName");
+	}
+	
+	public void setThreeCode(RedisUtilEx redisUtilEx) {
+		this.threeCode = redisUtilEx.hgetHash(RedisKeys.SHOP_KEY+id, "threeCode");
+	}
+	
+	public void setAirterminal(RedisUtilEx redisUtilEx) {
+		this.airterminal = redisUtilEx.hgetHash(RedisKeys.SHOP_KEY+id, "airterminal");
+	}
+	
+	public void setFloor(RedisUtilEx redisUtilEx) {
+		this.floor = redisUtilEx.hgetHash(RedisKeys.SHOP_KEY+id, "floor");
+	}
+	
+	public void setTitle(RedisUtilEx redisUtilEx) {
+		this.title = redisUtilEx.hgetHash(RedisKeys.SHOP_KEY+id, "title");
+	}
+	
+	public void setAddress(RedisUtilEx redisUtilEx) {
+		this.address = redisUtilEx.hgetHash(RedisKeys.SHOP_KEY+id, "address");
+	}
+
+	public void setBhours(RedisUtilEx redisUtilEx) {
+		this.bhours = redisUtilEx.hgetHash(RedisKeys.SHOP_KEY+id, "bhours");
+	}
+
+
+	public void setPoiId(RedisUtilEx redisUtilEx) {
+		this.poiId = Integer.valueOf(redisUtilEx.hgetHash(RedisKeys.SHOP_KEY+id, "poiId"));
+	}
+	
+	public String getAddressShort() {
+		return addressShort;
+	}
+
+	public void setAddressShort(String addressShort) {
+		this.addressShort = addressShort;
+	}
+
+	public void setAddressShort(RedisUtilEx redisUtilEx) {
+		this.addressShort = redisUtilEx.hgetHash(RedisKeys.SHOP_KEY+id, "addressShort");
+	}
+	
+
+	public void shop2Product(Product product){
+		product.setShopName(shopName);
+		product.setPhone(phone);
+		product.setAddress(address);
+		product.setAirterminal(airterminal);
+		product.setFloor(floor);
+		product.setThreeCode(threeCode);
+		product.setTitle(shopName);
+		product.setPoiId(poiId);
+		product.setBhours(bhours);
+		product.setAddressShort(addressShort);
+	}
+
+	@Override
+	public void saveRedis(RedisUtilEx redisUtilEx) {
+		redisUtilEx.hsetHash(RedisKeys.SHOP_KEY+id, "shopName", shopName);
+		redisUtilEx.hsetHash(RedisKeys.SHOP_KEY+id, "phone", phone);
+		redisUtilEx.hsetHash(RedisKeys.SHOP_KEY+id, "address", address);
+		redisUtilEx.hsetHash(RedisKeys.SHOP_KEY+id, "airterminal", airterminal);
+		redisUtilEx.hsetHash(RedisKeys.SHOP_KEY+id, "floor", floor);
+		redisUtilEx.hsetHash(RedisKeys.SHOP_KEY+id, "threeCode", threeCode);
+		redisUtilEx.hsetHash(RedisKeys.SHOP_KEY+id, "title", shopName);
+		redisUtilEx.hsetHash(RedisKeys.SHOP_KEY+id, "poiId", poiId+"");
+		redisUtilEx.hsetHash(RedisKeys.SHOP_KEY+id, "bhours", bhours);
+		redisUtilEx.hsetHash(RedisKeys.SHOP_KEY+id, "addressShort", addressShort);
+	}
+
+	@Override
+	public void getFromRedis(RedisUtilEx redisUtilEx) {
+		this.setThreeCode(redisUtilEx);
+		this.setAddress(redisUtilEx);
+		this.setAirterminal(redisUtilEx);
+		this.setShopName(redisUtilEx);
+		this.setPhone(redisUtilEx);
+		this.setFloor(redisUtilEx);
+		this.setTitle(redisUtilEx);
+		this.setBhours(redisUtilEx);
+		this.setPoiId(redisUtilEx);
+		this.setAddressShort(redisUtilEx);
+	}
+}

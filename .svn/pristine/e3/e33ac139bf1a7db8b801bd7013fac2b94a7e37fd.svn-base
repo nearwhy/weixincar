@@ -1,0 +1,46 @@
+log4j.rootLogger =debug,info,error, root_file, root_console
+#log4j.rootLogger = info, root_file, root_console
+log4j.logger.SpecialPurpose=info,o2o_file
+
+log4j.appender.root_console=org.apache.log4j.ConsoleAppender
+log4j.appender.root_console.layout = org.apache.log4j.PatternLayout
+log4j.appender.root_console.layout.ConversionPattern = %-d{yyyy-MM-dd HH:mm:ss} -[%p]-[%c] %m%n
+#log4j.appender.root_console.encoding=utf-8
+
+log4j.appender.root_file=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.root_file.DatePattern='.'yyyy-MM-dd
+#log4j.appender.root_file.File=d:/analyze/root/root.log
+log4j.appender.root_file.File=/var/logs/airport/root/root.log
+log4j.appender.root_file.Append=true
+log4j.appender.root_file.layout=org.apache.log4j.PatternLayout
+log4j.appender.root_file.layout.ConversionPattern= [%-d{yyyy-MM-dd HH:mm:ss}] [%p][%c] %x - %m%n
+log4j.appender.root_file.encoding=gb2312
+
+log4j.category.system = debug, system_file
+log4j.appender.system_file=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.system_file.DatePattern='.'yyyy-MM-dd
+#log4j.appender.system_file.File=d:/analyze/system/system.log 
+log4j.appender.system_file.File=/var/logs/airport/system/system.log
+log4j.appender.system_file.Append=true
+log4j.appender.system_file.layout=org.apache.log4j.PatternLayout
+log4j.appender.system_file.layout.ConversionPattern= [%-d{yyyy-MM-dd HH:mm:ss}] [%p][%c] - %m%n
+log4j.appender.system_file.encoding=gb2312  
+ 
+log4j.category.data = debug, data_file
+log4j.appender.data_file=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.data_file.DatePattern='.'yyyy-MM-dd
+#log4j.appender.data_file.File=d:/analyze/log/data.log ${catalina.home}/logs/airport/airport-log.txt
+log4j.appender.data_file.File=/var/logs/airport/data/data.log
+log4j.appender.data_file.Append=true
+log4j.appender.data_file.layout=org.apache.log4j.PatternLayout
+log4j.appender.data_file.layout.ConversionPattern= [%-d{yyyy-MM-dd HH:mm:ss}] [%p][%c] - %m%n
+log4j.appender.data_file.encoding=gb2312
+
+#O2OLog
+log4j.appender.o2o_file=org.apache.log4j.DailyRollingFileAppender
+log4j.appender.o2o_file.DatePattern='.'yyyy-MM-dd
+log4j.appender.o2o_file.File=/var/logs/airport/data/o2o_log.log
+log4j.appender.o2o_file.Append=true
+log4j.appender.o2o_file.layout=org.apache.log4j.PatternLayout
+log4j.appender.o2o_file.layout.ConversionPattern= [%-d{yyyy-MM-dd HH:mm:ss}] [%p][%c] - %m%n
+log4j.appender.o2o_file.encoding=gb2312

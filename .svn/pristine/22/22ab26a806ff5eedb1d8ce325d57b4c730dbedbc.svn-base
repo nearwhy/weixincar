@@ -1,0 +1,10 @@
+package com.aero.o2o.test;
+
+public class Sun extends Father{
+
+	private String name = "sun";
+	
+	public Sun(){
+		super.name = name;
+	}
+}

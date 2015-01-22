@@ -1,0 +1,49 @@
+package com.aero.o2o.model;
+
+import java.util.HashMap;
+
+import com.aero.o2o.util.json.O2OJSON;
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.parser.ParserConfig;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
+public class O2OResult extends HashMap<String, Object>{
+	
+	public O2OResult(){
+		this.put("code","0");
+		this.put("message","");
+	}
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7918191448672698717L;
+	
+
+	public void setCode(Integer code) {
+		this.put("code",code+"");
+	}
+	
+
+	public void setResult(Integer code) {
+		this.put("result",code);
+	}
+
+	public void setMsg(String msg) {
+		this.put("message",msg);
+	}
+	
+	public void setEnd(int count,int pageIndex,int pageSize){
+		this.put("end", count>pageIndex*pageSize?1:0);
+	}
+	
+	public String toJSON(){
+//		JSONObject json = new JSONObject();
+//		json.put("JSON", this);
+//		JSON.toJSON(this,new ParserConfig());
+//		System.out.println(s);
+		return null;
+//		return super.toString();
+	}
+}

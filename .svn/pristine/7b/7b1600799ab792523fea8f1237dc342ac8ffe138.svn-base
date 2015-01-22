@@ -1,0 +1,44 @@
+package com.aero.o2o.model;
+
+import java.io.Serializable;
+
+public class ProductPic implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2209649036790700202L;
+	
+	
+	private Integer id;
+	
+	private String path;
+	
+	private Integer productId;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getPath() {
+		return path;
+	}
+
+	public void setPath(String path) {
+		this.path = path;
+	}
+
+	public Integer getProductId() {
+		return productId;
+	}
+
+	public void setProductId(Integer productId) {
+		this.productId = productId;
+	}
+	
+	
+}

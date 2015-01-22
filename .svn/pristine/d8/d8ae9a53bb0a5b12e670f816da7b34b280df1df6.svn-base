@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="VerificationCode" >
+  
+  <resultMap id="VerificationcodeResult" class="com.palm360.airport.model.Verificationcode" >
+    <result column="VerificationID" property="verificationid" jdbcType="INTEGER" />
+    <result column="UserID" property="userid" jdbcType="INTEGER" />
+    <result column="PromotionsID" property="promotionsId" jdbcType="INTEGER" />
+    <result column="Content" property="content" jdbcType="VARCHAR" />
+    <result column="path" property="path" jdbcType="VARCHAR" />
+    <result column="ValidityDate" property="validitydate" jdbcType="TIMESTAMP" />
+    <result column="ReleaseDate" property="releasedate" jdbcType="TIMESTAMP" />
+    <result column="Flag" property="flag" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <select id="queryAllCount" resultClass="Integer" >
+      select count(*) from VerificationCode
+  </select>
+  
+  <select id="queryAll" resultMap="VerificationcodeResult" parameterClass="com.palm360.airport.util.AirportQueryP">
+      select * from VerificationCode limit #start#,#size#
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="VerificationcodeResult" parameterClass="com.palm360.airport.model.Verificationcode" >
+    select VerificationID, UserID, PromotionsID, Content, path, ValidityDate,
+      ReleaseDate, Flag
+    from VerificationCode
+    <dynamic prepend="WHERE">
+    	<isNotEmpty prepend="AND" property="verificationid">
+    		VerificationID = #verificationid:INTEGER#
+    	</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="userid">
+    		UserID = #userid:INTEGER#
+    	</isNotEmpty>
+    	<isNotEmpty prepend="AND" property="promotionsId">
+    		PromotionsID = #promotionsId:INTEGER#
+    	</isNotEmpty>
+    </dynamic>
+  </select>
+ 
+  <delete id="deleteByPrimaryKey" parameterClass="com.palm360.airport.model.Verificationcode" >
+    delete from VerificationCode
+    where VerificationID = #verificationid:INTEGER#
+  </delete>
+ 
+  <insert id="insert" parameterClass="com.palm360.airport.model.Verificationcode" >
+  	<selectKey resultClass="int" keyProperty="verificationid" type="post">
+		SELECT @@IDENTITY AS VerificationCode
+   	</selectKey>
+    insert into VerificationCode (UserID, PromotionsID, Content, path,
+      ValidityDate, ReleaseDate, Flag)
+    values (#userid:INTEGER#, #promotionsId:INTEGER#,
+      #content:VARCHAR#, #path:VARCHAR#, #validitydate:TIMESTAMP#, #releasedate:TIMESTAMP#,
+      #flag:INTEGER#)
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterClass="com.palm360.airport.model.Verificationcode" >
+    update VerificationCode
+    set UserID = #userid:INTEGER#,
+      PromotionsID = #promotionsId:INTEGER#,
+      Content = #content:VARCHAR#,
+      path = #path:VARCHAR#,
+      ValidityDate = #validitydate:TIMESTAMP#,
+      ReleaseDate = #releasedate:TIMESTAMP#,
+      Flag = #flag:INTEGER#
+    where VerificationID = #verificationid:INTEGER#
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterClass="com.palm360.airport.model.Verificationcode" >
+    update VerificationCode
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="userid" >
+        UserID = #userid:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="promotionsId" >
+        PromotionsID = #promotionsId:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="content" >
+        Content = #content:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="path" >
+        path = #path:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="validitydate" >
+        ValidityDate = #validitydate:TIMESTAMP#
+      </isNotNull>
+      <isNotNull prepend="," property="releasedate" >
+        ReleaseDate = #releasedate:TIMESTAMP#
+      </isNotNull>
+      <isNotNull prepend="," property="flag" >
+        Flag = #flag:INTEGER#
+      </isNotNull>
+    </dynamic>
+    where VerificationID = #verificationid:INTEGER#
+  </update>
+ 
+</sqlMap>

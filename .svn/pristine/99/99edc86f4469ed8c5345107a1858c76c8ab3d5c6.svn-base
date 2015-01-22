@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="LoginHistroy" >
+  
+  <resultMap id="LoginhistroyResult" class="com.palm360.airport.model.Loginhistroy" >
+    <result column="ID" property="id" jdbcType="INTEGER" />
+    <result column="UserID" property="userid" jdbcType="INTEGER" />
+    <result column="UUID" property="uuid" jdbcType="VARCHAR" />
+    <result column="LoginTime" property="logintime" jdbcType="TIMESTAMP" />
+    <result column="LogOutTIme" property="logouttime" jdbcType="TIMESTAMP" />
+    <result column="isLogined" property="islogined" jdbcType="INTEGER" />
+    <result column="Longitude" property="longitude" jdbcType="REAL" />
+    <result column="Latitude" property="latitude" jdbcType="REAL" />
+    <result column="SessionID" property="sessionid" jdbcType="VARCHAR" />
+    <result column="ClientType" property="clienttype" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <select id="queryAllCount" resultClass="Integer" >
+      select count(*) from LoginHistroy
+  </select>
+  
+  <select id="queryAll" resultMap="LoginhistroyResult" parameterClass="com.palm360.airport.util.AirportQueryP">
+      select * from LoginHistroy limit #start#,#size#
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="LoginhistroyResult" parameterClass="com.palm360.airport.model.Loginhistroy" >
+    select ID, UserID, UUID, LoginTime, LogOutTIme, isLogined, Longitude, Latitude, SessionID,
+      ClientType
+    from LoginHistroy
+    where ID = #id:INTEGER#
+  </select>
+  <delete id="deleteByPrimaryKey" parameterClass="com.palm360.airport.model.Loginhistroy" >
+    delete from LoginHistroy
+    where ID = #id:INTEGER#
+  </delete>
+  
+  <insert id="insert" parameterClass="com.palm360.airport.model.Loginhistroy" >
+    insert into LoginHistroy (ID, UserID, UUID, LoginTime, LogOutTIme, isLogined, Longitude,
+      Latitude, SessionID, ClientType)
+    values (#id:INTEGER#, #userid:INTEGER#, #uuid:VARCHAR#, #logintime:TIMESTAMP#,
+      #logouttime:TIMESTAMP#, #islogined:INTEGER#, #longitude:REAL#, #latitude:REAL#,
+      #sessionid:VARCHAR#, #clienttype:INTEGER#)
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterClass="com.palm360.airport.model.Loginhistroy" >
+    update LoginHistroy
+    set UserID = #userid:INTEGER#,
+      UUID = #uuid:VARCHAR#,
+      LoginTime = #logintime:TIMESTAMP#,
+      LogOutTIme = #logouttime:TIMESTAMP#,
+      isLogined = #islogined:INTEGER#,
+      Longitude = #longitude:REAL#,
+      Latitude = #latitude:REAL#,
+      SessionID = #sessionid:VARCHAR#,
+      ClientType = #clienttype:INTEGER#
+    where ID = #id:INTEGER#
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterClass="com.palm360.airport.model.Loginhistroy" >
+    update LoginHistroy
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="userid" >
+        UserID = #userid:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="uuid" >
+        UUID = #uuid:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="logintime" >
+        LoginTime = #logintime:TIMESTAMP#
+      </isNotNull>
+      <isNotNull prepend="," property="logouttime" >
+        LogOutTIme = #logouttime:TIMESTAMP#
+      </isNotNull>
+      <isNotNull prepend="," property="islogined" >
+        isLogined = #islogined:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="longitude" >
+        Longitude = #longitude:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="latitude" >
+        Latitude = #latitude:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="sessionid" >
+        SessionID = #sessionid:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="clienttype" >
+        ClientType = #clienttype:INTEGER#
+      </isNotNull>
+    </dynamic>
+    where ID = #id:INTEGER#
+  </update>
+</sqlMap>

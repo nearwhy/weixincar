@@ -1,0 +1,109 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>考试&成绩</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+
+<!-- 最新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+
+<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script
+	src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+
+
+<!-- 最新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script
+	src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+<style type="text/css">
+.index {
+	width: 100%;
+}
+
+.table1 {
+	border: 2;
+	width: 100%;
+	cellspacing: 2;
+}
+
+.out {
+	background: #eee;
+}
+
+.my {
+	width: 20%;
+	height: 50%;
+	background: #049cdb;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+	<div class="jumbotron">
+		  <h1>三年一班大事记</h1>
+		  <p>这里记录了三年一班大家庭的点点滴滴。让每一次欢笑，每一次泪水见证我们的成长</p>
+		  <p>点击事件标题可查看详情</p>
+		</div>
+		<div class="panel-group" id="accordion">
+		  
+		  <div class="panel panel-success">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
+				 <span class="glyphicon glyphicon-hand-right"></span>&nbsp;&nbsp<strong> 三年一班获篮球联赛第一名
+				</a>
+			  </h4>
+			</div>
+			<div id="collapseTwo" class="panel-collapse collapse">
+			  <div class="panel-body">
+				<p>在这次三年级篮球联赛中，我班篮球队表现神勇，勇夺第一。其中白小力同学更是获得联赛MVP。其余的张小号，姚小心，王小超同学也表现不俗。他们配合默契。顽强拼搏。是所有三年一班同学的骄傲<p>
+					<img src="http://www.sxcm.net/pd/sports/images/attachement/jpg/site2/20100407/00016ca38f9f0d26614022.jpg" style="max-width:100%"></img>
+			  </div>
+			</div>
+		  </div>
+		  <div class="panel panel-info">
+			<div class="panel-heading">
+			  <h4 class="panel-title">
+				<a data-toggle="collapse" data-toggle="collapse" data-parent="#accordion" href="#collapseThree">
+				   <span class="glyphicon glyphicon-hand-right"></span>&nbsp;&nbsp<strong>白小力同学在校园漫画大赛中获得三年级组第二名</strong> 
+				</a>
+			  </h4>
+			</div>
+			<div id="collapseThree" class="panel-collapse collapse">
+			  <div class="panel-body">
+				<p>白小力同学在第三届校园漫画大赛中，喜获三年级组第二名的好成绩。为我班争光添彩。</p>
+				<img src="http://app.airport360.com.cn/upload/photos/woniu.jpg" style="max-width:100%"></img>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	</div>
+<p></p><p></p>
+<div class="btn-group btn-group-lg">
+  <button type="button" class="btn btn-default">上一页</button>
+  <button type="button" class="btn btn-default">下一页</button>
+  <button type="button" class="btn btn-default">最后一页</button>
+</div>
+</body>
+</html>

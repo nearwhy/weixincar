@@ -1,0 +1,125 @@
+package com.aero.o2o.util.stereotype;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+/**
+ * 用于复制的元数据
+ * 
+ * @author zhangtong
+ * 
+ */
+@Target( { ElementType.METHOD, ElementType.ANNOTATION_TYPE })
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface Replication {
+
+	/**
+	 * 是否新增，默认false
+	 * 
+	 * @return
+	 */
+	boolean isInsert() default false;
+
+	/**
+	 * 是否修改，默认false
+	 * 
+	 * @return
+	 */
+	boolean isUpdate() default false;
+
+	/**
+	 * 是否查询，默认false
+	 * 
+	 * @return
+	 */
+	boolean isQuery() default false;
+
+	/**
+	 * 是否删除，默认false
+	 * 
+	 * @return
+	 */
+	boolean isDelete() default false;
+
+	/**
+	 * 是否自定义主键，默认false
+	 * 
+	 * @return
+	 */
+	boolean isCustomKey() default false;
+
+	/**
+	 * 主键，默认""
+	 * 
+	 * @return
+	 */
+	String key() default "";
+
+	/**
+	 * 是否在执行DB之后，默认false
+	 * 
+	 * @return
+	 */
+	boolean isAfterDB() default false;
+
+	/**
+	 * 是否在执行DB之前，默认false
+	 * 
+	 * @return
+	 */
+	boolean isBeforeDB() default false;
+
+	/**
+	 * 是否查询外键，默认false
+	 * 
+	 * @return
+	 */
+	boolean isQueryFK() default false;
+
+	/**
+	 * 外键名称，默认""
+	 * 
+	 * @return
+	 */
+	String fkName() default "";
+
+	/**
+	 * 是否查询所有，默认false
+	 * 
+	 * @return
+	 */
+	boolean isQueryAll() default false;
+
+	/**
+	 * 如果其他结构无法用默认结构解析 可以指定一个类的方法来进行同步操作
+	 * 
+	 * @return
+	 */
+	String replicationMethod() default "";
+	
+	/**
+	 * 是否是利用主键检索
+	 * @return
+	 */
+	boolean isPkQuery() default false;
+//	
+	/**
+	 * 是否利用聚合索引检索
+	 */
+	boolean isIndexQuery() default false;
+	/**
+	 * 聚合索引名称
+	 * @return
+	 */
+	String indexFiled() default "";
+	
+	/**
+	 * 是否是加载时候调用
+	 * @return
+	 */
+	boolean isLoad() default false;
+}

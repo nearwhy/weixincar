@@ -1,0 +1,305 @@
+package com.aero.o2o.model;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Locale;
+
+import com.aero.o2o.redis.RedisKeys;
+import com.aero.o2o.redis.RedisUtilEx;
+import com.aero.o2o.util.ErrorBundleReader;
+
+public class Product extends BasePojo implements Serializable{
+	
+	private String productImagePath = ErrorBundleReader.getMessageSource().getMessage(
+			"o2o.productImagePath",
+			new Object[] {},
+			Locale.CHINA);
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -5919179096622727743L;
+
+	private Integer id;
+	
+	private String name;
+	
+	private String description;
+	
+	private String icon;
+	
+	private Double price;
+	
+	private Double oldPrice;
+	
+	private String address;
+	
+	private Integer poiId;
+	
+	private String shopName;
+	
+	private String bhours;
+	
+	private Integer status;
+	
+	private List<String> pics;
+
+	private String phone;
+	
+	private Integer count;
+	
+	private Integer shopId;
+	
+	private Integer isCollection;
+	
+	private String threeCode;
+	
+	private String airterminal;
+	
+	private String floor;
+	
+	private String title;
+	
+	private String addressShort;
+	
+	private Integer supplierId;
+	
+	private String detail;
+	
+	private Shop shop;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+
+	public void setName(RedisUtilEx redisUtilEx) {
+		this.name = redisUtilEx.hgetHash(RedisKeys.PRODUCT_KEY+id, "name");
+	}
+	
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public void setDescription(RedisUtilEx redisUtilEx) {
+		this.description = redisUtilEx.hgetHash(RedisKeys.PRODUCT_KEY+id, "description");
+	}
+	
+	public String getIcon() {
+		return productImagePath+icon;
+	}
+
+	public void setIcon(String icon) {
+		this.icon = icon;
+	}
+
+	public void setIcon(RedisUtilEx redisUtilEx) {
+		this.icon = redisUtilEx.hgetHash(RedisKeys.PRODUCT_KEY+id, "icon");
+	}
+	
+	public Double getPrice() {
+		return price;
+	}
+
+	public void setPrice(RedisUtilEx redisUtilEx) {
+		this.price = Double.valueOf(redisUtilEx.hgetHash(RedisKeys.PRODUCT_KEY+id, "price"));
+	}
+	
+	public void setPrice(Double price) {
+		this.price = price;
+	}
+
+	public Double getOldPrice() {
+		return oldPrice;
+	}
+
+	public void setOldPrice(Double oldPrice) {
+		this.oldPrice = oldPrice;
+	}
+
+	public void setOldPrice(RedisUtilEx redisUtilEx) {
+		this.oldPrice = Double.valueOf(redisUtilEx.hgetHash(RedisKeys.PRODUCT_KEY+id, "oldPrice"));
+	}
+	
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
+	}
+	
+	public Integer getPoiId() {
+		return poiId;
+	}
+
+	public void setPoiId(Integer poiId) {
+		this.poiId = poiId;
+	}
+	
+	public String getShopName() {
+		return shopName;
+	}
+	
+	public void setShopName(String shopName) {
+		this.shopName = shopName;
+	}
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+	
+	public List<String> getPics() {
+		return pics;
+	}
+
+	public void setPics(List<String> pics) {
+		this.pics = pics;
+	}
+
+	public String getPhone() {
+		return phone;
+	}
+
+	public void setPhone(String phone) {
+		this.phone = phone;
+	}
+
+
+	public Integer getCount() {
+		return count;
+	}
+
+	public void setCount(Integer count) {
+		this.count = count;
+	}
+
+	public Integer getShopId() {
+		return shopId;
+	}
+
+	public void setShopId(Integer shopId) {
+		this.shopId = shopId;
+	}
+
+	public void setShopId(RedisUtilEx redisUtilEx) {
+		this.shopId = Integer.valueOf(redisUtilEx.hgetHash(RedisKeys.PRODUCT_KEY+id, "shopId"));
+	}
+
+	public Integer getIsCollection() {
+		return isCollection;
+	}
+
+	public void setIsCollection(Integer isCollection) {
+		this.isCollection = isCollection;
+	}
+	
+	public String getThreeCode() {
+		return threeCode;
+	}
+
+	public void setThreeCode(String threeCode) {
+		this.threeCode = threeCode;
+	}
+	
+	public String getAirterminal() {
+		return airterminal;
+	}
+
+	public void setAirterminal(String airterminal) {
+		this.airterminal = airterminal;
+	}
+
+
+	
+	public String getFloor() {
+		return floor;
+	}
+
+	public void setFloor(String floor) {
+		this.floor = floor;
+	}
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+	
+	public String getBhours() {
+		return bhours;
+	}
+
+	public void setBhours(String bhours) {
+		this.bhours = bhours;
+	}
+
+	public String getAddressShort() {
+		return addressShort;
+	}
+
+	public void setAddressShort(String addressShort) {
+		this.addressShort = addressShort;
+	}
+
+	public Integer getSupplierId() {
+		return supplierId;
+	}
+
+	public void setSupplierId(Integer supplierId) {
+		this.supplierId = supplierId;
+	}
+
+	public Shop getShop() {
+		return shop;
+	}
+
+	public void setShop(Shop shop) {
+		this.shop = shop;
+	}
+
+	public String getDetail() {
+		return detail;
+	}
+
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+
+	public void shop2Product(){
+		this.setShopName(shop.getShopName());
+		this.setPhone(shop.getPhone());
+		this.setAddress(shop.getAddress());
+		this.setAirterminal(shop.getAirterminal());
+		this.setFloor(shop.getFloor());
+		this.setThreeCode(shop.getThreeCode());
+		this.setTitle(shopName);
+		this.setPoiId(shop.getPoiId());
+		this.setBhours(shop.getBhours());
+		this.setAddressShort(shop.getAddressShort());
+	}
+	
+}

@@ -1,0 +1,113 @@
+package com.aero.o2o.web.controller;
+
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.aero.o2o.model.BasePojo;
+import com.aero.o2o.model.Content;
+import com.aero.o2o.model.JSONPojo;
+import com.aero.o2o.model.O2OResult;
+import com.aero.o2o.model.Product;
+import com.aero.o2o.model.QueryParam;
+import com.aero.o2o.service.ProductService;
+import com.aero.o2o.util.O2OConstant;
+import com.aero.o2o.util.json.PojoJSONUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+@Controller("IndexController")
+public class IndexController  extends BaseController {
+	
+	@Autowired
+	private ProductService productService;
+	
+	//首页顶部中部主题专题商品接口
+	@RequestMapping(value = "indexList", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView indexList(HttpServletRequest request ) {
+		
+		List<BasePojo> top = o2oDao.queryForList("Content.queryTopArea", null);
+		List<BasePojo> center = o2oDao.queryForList("Content.queryCenterArea", null);
+
+		JSONArray topicTopArray = PojoJSONUtil.list2Array(top,new JSONPojo() {
+			@Override
+			public JSONObject pojo2JSON(BasePojo pojo) {
+				return PojoJSONUtil.content2Index((Content)pojo);
+			}
+		});
+		JSONArray topicButtomArray = PojoJSONUtil.list2Array(center,new JSONPojo() {
+			@Override
+			public JSONObject pojo2JSON(BasePojo pojo) {
+				return PojoJSONUtil.content2Index((Content)pojo);
+			}
+		});
+		O2OResult result = new O2OResult();
+		result.put("topicTopArray", topicTopArray);
+		result.put("topicButtomArray", topicButtomArray);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+	
+	//首页底部专题接口
+	@RequestMapping(value = "activeList", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView activeList(HttpServletRequest request ) {
+		Integer pageIndex = Integer.valueOf(fetchStringParameterNotNull("pageIndex", request));
+		Integer pageSize = Integer.valueOf(fetchStringParameterNotNull("pageSize", request));
+		QueryParam qp = new QueryParam();
+		qp.setPage(pageIndex, pageSize);
+		List<BasePojo> top = o2oDao.queryListPage("Content.queryTopicArea", qp);
+		JSONArray activeListArray = PojoJSONUtil.list2Array(top,new JSONPojo() {
+			@Override
+			public JSONObject pojo2JSON(BasePojo pojo) {
+				return PojoJSONUtil.content2Active((Content)pojo);
+			}
+		});
+		O2OResult result = new O2OResult();
+		result.put("end",qp.get("end"));
+		result.put("activeListArray", activeListArray);
+		
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+	
+	
+	@RequestMapping(value = "themeDetail", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView themeDetail(HttpServletRequest request){
+		Integer themeId = Integer.valueOf(fetchStringParameterNotNull("themeId", request));
+		QueryParam qp = new QueryParam();
+		qp.put("themeId", themeId);
+		List<BasePojo> topicList = o2oDao.queryForList("Content.queryTopicByTheme", qp);
+		JSONArray activeListArray = PojoJSONUtil.list2Array(topicList,new JSONPojo() {
+			@Override
+			public JSONObject pojo2JSON(BasePojo pojo) {
+				return PojoJSONUtil.content2Active((Content)pojo);
+			}
+		});
+		O2OResult result = new O2OResult();
+		result.put("activeListArray", activeListArray);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+	
+	@RequestMapping(value = "activeDetail", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView activeDetail(HttpServletRequest request){
+
+		Integer activeId = Integer.valueOf(fetchStringParameterNotNull("activeId", request));
+		QueryParam qp = new QueryParam();
+		qp.put("topicId", activeId);
+		List<BasePojo> productList = o2oDao.queryForList("Product.queryByTopic", qp);
+		JSONArray productsArray = PojoJSONUtil.list2Array(productList,new JSONPojo() {
+			@Override
+			public JSONObject pojo2JSON(BasePojo pojo) {
+				return PojoJSONUtil.product2List((Product)pojo);
+			}
+		});
+		O2OResult result = new O2OResult();
+		result.put("productsArray", productsArray);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+	
+}

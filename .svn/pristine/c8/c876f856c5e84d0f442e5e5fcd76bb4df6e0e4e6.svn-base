@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="OprationContent" >
+
+  <resultMap id="OprationcontentResult" class="com.palm360.airport.model.Oprationcontent" >
+    <result column="OprationContentID" property="oprationcontentid" jdbcType="INTEGER" />
+    <result column="OprationContent" property="oprationcontent" jdbcType="VARCHAR" />
+  </resultMap>
+  
+  <select id="queryAllCount" resultClass="Integer" >
+      select count(*) from OprationContent
+  </select>
+  
+  <select id="queryAll" resultMap="OprationcontentResult" parameterClass="com.palm360.airport.util.AirportQueryP">
+      select * from OprationContent limit #start#,#size#
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="OprationcontentResult" parameterClass="com.palm360.airport.model.Oprationcontent" >
+    select OprationContentID, OprationContent
+    from OprationContent
+    where OprationContentID = #oprationcontentid:INTEGER#
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterClass="com.palm360.airport.model.Oprationcontent" >
+    delete from OprationContent
+    where OprationContentID = #oprationcontentid:INTEGER#
+  </delete>
+  
+  <insert id="insert" parameterClass="com.palm360.airport.model.Oprationcontent" >
+    insert into OprationContent (OprationContentID, OprationContent)
+    values (#oprationcontentid:INTEGER#, #oprationcontent:VARCHAR#)
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterClass="com.palm360.airport.model.Oprationcontent" >
+    update OprationContent
+    set OprationContent = #oprationcontent:VARCHAR#
+    where OprationContentID = #oprationcontentid:INTEGER#
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterClass="com.palm360.airport.model.Oprationcontent" >
+    update OprationContent
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="oprationcontent" >
+        OprationContent = #oprationcontent:VARCHAR#
+      </isNotNull>
+    </dynamic>
+    where OprationContentID = #oprationcontentid:INTEGER#
+  </update>
+  
+</sqlMap>

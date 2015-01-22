@@ -1,0 +1,19 @@
+package com.aero.o2o.util.exception;
+
+/**
+ * 
+ * redis出现错误时 抛出的异常
+ * @author zhangtong
+ *
+ */
+public class AirportRedisException extends AirportRuntimeException{
+
+	public AirportRedisException(String string, Exception e) {
+		super(string,e);
+	}
+
+	public AirportRedisException(String string) {
+		super(string);
+	}
+
+}

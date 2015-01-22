@@ -1,0 +1,68 @@
+package com.aero.o2o.web.controller;
+
+import java.sql.Timestamp;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import net.sf.json.JsonConfig;
+import net.sf.json.processors.JsonValueProcessor;
+import net.sf.json.util.PropertyFilter;
+
+import org.springframework.web.servlet.view.json.MappingJacksonJsonView;
+
+import com.aero.o2o.model.O2OResult;
+import com.aero.o2o.util.Encryption;
+import com.aero.o2o.util.json.O2OJSON;
+import com.alibaba.fastjson.JSONObject;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+
+/**
+ * 导出JSON解析类
+ * 优化JSON数据导出时 数据value为null的数据不导出
+ * @author zhangtong
+ * 修改加密 xzl
+ * 过滤链接 xzl
+ */
+public class MappingJacksonJsonViewEx extends MappingJacksonJsonView {
+//	private Logger log = Logger.getLogger(getClass());
+	private static JsonConfig jc = null;
+	
+	@Override
+	protected void renderMergedOutputModel(Map<String, Object> model,
+			HttpServletRequest request, HttpServletResponse response)
+			throws Exception {
+
+//		if (jc == null) {
+//			jc = new JsonConfig();
+//			jc.registerJsonValueProcessor(Timestamp.class, new JsonValueProcessor() {
+//				
+//				@Override
+//				public Object processObjectValue(String arg0, Object arg1, JsonConfig arg2) {
+//					if (null != arg1) {
+//						Timestamp ts = (Timestamp) arg1;
+//						return ts.getTime();
+//					}
+//					return null;
+//				}
+//				
+//				@Override
+//				public Object processArrayValue(Object arg0, JsonConfig arg1) {
+//					return null;
+//				}
+//			});
+//			jc.setJsonPropertyFilter(new PropertyFilter() {
+//				public boolean apply(Object jsonString, String field,
+//						Object value) {
+//					if (value == null)
+//						return true;
+//					return false;
+//				}
+//			});
+//		}
+		response.getOutputStream().write(
+				model == null ? "{}".toString().getBytes("utf-8")
+						: O2OJSON.toJSONString(model, SerializerFeature.WriteMapNullValue,SerializerFeature.DisableCircularReferenceDetect).getBytes("utf-8"));
+	}
+}

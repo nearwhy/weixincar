@@ -1,0 +1,343 @@
+package com.aero.o2o.web.controller;
+
+import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.aero.o2o.model.BasePojo;
+import com.aero.o2o.model.JSONPojo;
+import com.aero.o2o.model.O2OResult;
+import com.aero.o2o.model.Product;
+import com.aero.o2o.model.QueryParam;
+import com.aero.o2o.model.Shop;
+import com.aero.o2o.model.ShopOrder;
+import com.aero.o2o.model.SubCategory;
+import com.aero.o2o.model.Voucher;
+import com.aero.o2o.model.Waiter;
+import com.aero.o2o.pay.tenpay.util.TenpayUtil;
+import com.aero.o2o.service.ProductService;
+import com.aero.o2o.service.ShopService;
+import com.aero.o2o.service.UserService;
+import com.aero.o2o.util.O2OConstant;
+import com.aero.o2o.util.QrcodeUtil;
+import com.aero.o2o.util.json.PojoJSONUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+@Controller("ShopController")
+public class ShopController extends BaseController{
+
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private ShopService shopService;
+
+	@Autowired
+	private ProductService productService;
+	
+	@RequestMapping(value = "waiterLogin", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView waiterLogin(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+//		String loginName = fetchStringParameterNotNull("loginName", request);
+//		String password = fetchStringParameterNotNull("password", request);
+//		String deviceToken = request.getParameter("deviceToken");
+//		String deviceType = request.getParameter("deviceType");
+//		Waiter waiter = shopService.login(loginName, password);
+//		result.setCode(0);
+//		if(waiter!=null){
+//			result.put("waiter", waiter);
+//			if(deviceToken!=null&&!"".equals(deviceToken.trim())&&deviceType!=null&&!"".equals(deviceType.trim())){
+//				try {
+//					String path = super.pushMsgUrl;
+//					Map<String,String> map = new HashMap<String, String>();
+//					map.put("action", "reg");
+//					map.put("family", request.getParameter("appId"));
+//					map.put("uid", "waiter_"+waiter.getId());
+//					map.put("token", deviceToken);
+//					map.put("type",deviceType);
+//					pushGetMessage(path,map);
+//					waiter.setDeviceToken(deviceToken);
+//					waiter.setDeviceType(deviceType);
+//					waiter.setAppId(request.getParameter("appId"));
+//					shopService.updateWaiter(waiter);
+//				} catch (IOException e) {
+//					e.printStackTrace();
+//				}
+//			}
+//		}else{
+//			result.setCode(-1);
+//			result.setMsg("");
+//		}
+		Waiter waiter = new Waiter();
+		waiter.setId(1);
+		waiter.setShopId(0);
+		waiter.setShopName("测试店铺");
+		result.put("waiter", waiter);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+
+	@RequestMapping(value = "waiterLogout", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView waiterLogout(HttpServletRequest request) throws NoSuchAlgorithmException{
+		O2OResult result = new O2OResult();
+		Integer waiterId = Integer.valueOf(fetchStringParameterNotNull("waiterId", request));
+		Waiter waiter = new Waiter();
+		waiter.setId(waiterId);
+		shopService.updateWaiter(waiter);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+	
+
+	@RequestMapping(value = "collection", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView collection(HttpServletRequest request) throws NoSuchAlgorithmException{
+		O2OResult result = new O2OResult();
+		result.put("qrcode", "qrcode");
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "getTodayOrder", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView getTodayOrder(HttpServletRequest request) throws NoSuchAlgorithmException{
+		O2OResult result = new O2OResult();
+		JSONObject a1 = new JSONObject();
+		a1.put("accountName","机场券1");
+		a1.put("cost", "1000");
+		a1.put("shopName","测试店铺2");
+		a1.put("time","2014-10-12 14:00");
+		a1.put("userName","张三");
+		JSONObject a2 = new JSONObject();
+		a2.put("accountName","机场券2");
+		a2.put("cost", "500");
+		a2.put("shopName","测试店铺2");
+		a1.put("time","2014-10-12 15:00");
+		a2.put("userName","张三");
+		JSONArray array = new JSONArray();
+		array.add(a1);
+		array.add(a2);
+		result.put("histrory", array);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+
+	@RequestMapping(value = "getOrderHistory", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView getOrderHistory(HttpServletRequest request) throws NoSuchAlgorithmException{
+		O2OResult result = new O2OResult();
+		JSONObject a1 = new JSONObject();
+		a1.put("accountName","机场券1");
+		a1.put("cost", "1000");
+		a1.put("shopName","测试店铺2");
+		a1.put("time","2014-10-12 14:00");
+		a1.put("userName","张三");
+		JSONObject a2 = new JSONObject();
+		a2.put("accountName","机场券2");
+		a2.put("cost", "500");
+		a2.put("shopName","测试店铺2");
+		a1.put("time","2014-10-12 15:00");
+		a2.put("userName","张三");
+		JSONArray array = new JSONArray();
+		array.add(a1);
+		array.add(a2);
+		result.put("histrory", array);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+
+	@RequestMapping(value = "initPay", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView initPay(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer waiterId = Integer.valueOf(fetchStringParameterNotNull("waiterId", request));
+		Integer shopId = Integer.valueOf(fetchStringParameterNotNull("shopId", request));
+		String price = request.getParameter("price");
+		//当前时间 yyyyMMddHHmmss
+		String currTime = TenpayUtil.getCurrTime();
+		//8位日期
+		String strTime = currTime.substring(8, currTime.length());
+		//四位随机数
+		String strRandom = TenpayUtil.buildRandom(4) + "";
+		//10位序列号,可以自行调整。
+		String strReq = strTime + strRandom;
+		//订单号，此处用时间加随机数生成，商户根据自己情况调整，只要保持全局唯一就行
+		String orderNo = strReq;
+		QueryParam qp = new QueryParam();
+		ShopOrder order = new ShopOrder();
+		order.setOrderNo(orderNo);
+		order.setShopId(shopId);
+		order.setWaiterId(waiterId);
+		order.setStatus(1);
+		if (price!=null&&Double.valueOf(price)>0) {
+			order.setCost(Double.valueOf(price));
+		}
+		qp.setPojo(order);
+		o2oDao.insert("ShopOrder.insert", qp);
+		Map<String,String> map = new HashMap<String, String>();
+		map.put("waiterId", waiterId+"");
+		map.put("shopId", shopId+"");
+		map.put("orderNo", orderNo);
+		if(price!=null&&!"".equals(price.trim())){
+			map.put("price", price);
+		}
+		String qrcode = QrcodeUtil.qrcodeEncode(map);
+		result.put("qrcode", qrcode);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "queryVoucherByCode", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView queryVoucherByNo(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		String voucherCode = fetchStringParameterNotNull("accountNo", request);
+		QueryParam qp = new QueryParam();
+		qp.put("voucherCode", voucherCode);
+		Voucher voucher = (Voucher)o2oDao.queryForObject("User.queryVoucherByCode", qp);
+		if(voucher!=null){
+			result.put("accountId",voucher.getVoucherId());
+			result.put("accountNo",voucher.getVoucherCode());
+			result.put("balance",voucher.getBalance());
+			result.put("accountDesc",voucher.getRemark());
+		}else{
+			result.setCode(1);
+			result.setMsg("卡号输入有误");
+		}
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+		
+	}
+
+	@RequestMapping(value = "queryVoucherByQrcode", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView queryVoucherByQrcode(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		String qrcode = fetchStringParameterNotNull("qrcode", request);
+		QueryParam qp = new QueryParam();
+		String voucherCode = QrcodeUtil.qrcodeDecode(qrcode).get("voucherCode");
+		qp.put("voucherCode", voucherCode);
+		Voucher voucher = (Voucher)o2oDao.queryForObject("User.queryVoucherByCode", qp);
+		if(voucher!=null){
+			result.put("accountId",voucher.getVoucherId());
+			result.put("accountNo",voucher.getVoucherCode());
+			result.put("balance",voucher.getBalance());
+			result.put("accountDesc",voucher.getRemark());
+		}else{
+			result.setCode(1);
+			result.setMsg("卡号输入有误");
+		}
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+		
+	}
+	
+
+	@RequestMapping(value = "payByCode", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView payByCode(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer accountId = Integer.valueOf(fetchStringParameterNotNull("accountId", request));
+		Integer waiterId = Integer.valueOf(fetchStringParameterNotNull("waiterId", request));
+		Integer shopId = Integer.valueOf(fetchStringParameterNotNull("shopId", request));
+		Double price = Double.valueOf(fetchStringParameterNotNull("price", request));
+		String password = fetchStringParameterNotNull("password", request);
+		QueryParam qp = new QueryParam();
+		qp.put("shopId", shopId);
+		Shop shop = (Shop)o2oDao.queryForObject("Shop.queryShop4Pay", qp);
+		qp.put("payPassword", password);
+		qp.put("voucherId", accountId);
+		Voucher voucher = (Voucher)o2oDao.queryForObject("User.PayValidateByCode", qp);
+		if(shop!=null&&voucher!=null){
+			if(voucher.getBalance()>=price){
+				ShopOrder order = new ShopOrder();
+				order.setUserId(voucher.getMemberId());
+				order.setVoucherId(accountId);
+				order.setWaiterId(waiterId);
+				order.setCost(price);
+				order.setShopId(shopId);
+				order.setStatus(0);
+				//当前时间 yyyyMMddHHmmss
+				String currTime = TenpayUtil.getCurrTime();
+				//8位日期
+				String strTime = currTime.substring(8, currTime.length());
+				//四位随机数
+				String strRandom = TenpayUtil.buildRandom(4) + "";
+				//10位序列号,可以自行调整。
+				String strReq = strTime + strRandom;
+				//订单号，此处用时间加随机数生成，商户根据自己情况调整，只要保持全局唯一就行
+				String orderNo = strReq;
+				order.setOrderNo(orderNo);
+				voucher.setBalance(voucher.getBalance()-price);
+				userService.orderPayByShop(order, voucher);
+				result.put("price", price!=null?price:order.getCost());
+				result.put("shopName",shop.getShopName());
+			}else{
+				result.setCode(1);
+				result.setMsg("余额不足");
+			}
+		}else{
+			result.setCode(2);
+			result.setMsg("密码错误");
+		}
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "queryShopDetail", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView queryShopDetail(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		String shopId = request.getParameter("shopId");
+		QueryParam qp = new QueryParam();
+		if(shopId==null||"".equals(shopId.trim())){
+			Integer poiId = Integer.valueOf(fetchStringParameterNotNull("poiId",request));
+			qp.put("poiId",poiId);
+		}else{
+			qp.put("supplierId",Integer.valueOf(shopId));
+		}
+		Shop shop = (Shop)o2oDao.queryForObject("Shop.queryShopDetail", qp);
+		if(shop!=null){
+			result.put("shop", shop);
+		}
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "productTypeByShop", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView productTypeByShop(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer shopId = Integer.valueOf(fetchStringParameterNotNull("shopId", request));
+		QueryParam qp = new QueryParam();
+		qp.put("supplierId", shopId);
+		List<BasePojo> list = o2oDao.queryForList("Shop.queryServiceType", qp);
+		JSONArray array = PojoJSONUtil.list2Array(list, new JSONPojo() {
+			@Override
+			public JSONObject pojo2JSON(BasePojo pojo) {
+				return PojoJSONUtil.subCategory2JSON((SubCategory)pojo);
+			}
+		});
+		result.put("types", array);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "queryProductByShop", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView queryProductByShop(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer shopId = Integer.valueOf(fetchStringParameterNotNull("shopId", request));
+		Integer pageIndex = Integer.valueOf(fetchStringParameterNotNull("pageIndex", request));
+		Integer pageSize = Integer.valueOf(fetchStringParameterNotNull("pageSize", request));
+		String keyword = request.getParameter("keyword");
+		QueryParam qp = new QueryParam();
+		qp.put("supplierId",shopId );
+		qp.put("subCategoryId", request.getParameter("typeId")==null?null:request.getParameter("typeId"));
+		qp.put("keyword", keyword);
+		qp.setPage(pageIndex, pageSize);
+		List<BasePojo> list = o2oDao.queryListPage("Product.queryProductByShop", qp);
+		JSONArray productsArray = PojoJSONUtil.list2Array(list, new JSONPojo() {
+			@Override
+			public JSONObject pojo2JSON(BasePojo pojo) {
+				return PojoJSONUtil.product2List((Product)pojo);
+			}
+		});
+		result.put("end",qp.get("end"));
+		result.put("products", productsArray);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+}

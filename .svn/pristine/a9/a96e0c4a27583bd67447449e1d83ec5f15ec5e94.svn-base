@@ -1,0 +1,8 @@
+package com.aero.o2o.util.Encode;
+
+public enum EncodeEnum {
+	NONE,//none it is nothing to do
+	QRCODE,
+	MASKCODE,
+	QUICKCODE,
+}

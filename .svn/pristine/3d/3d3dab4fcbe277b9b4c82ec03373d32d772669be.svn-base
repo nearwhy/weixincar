@@ -1,0 +1,21 @@
+package com.aero.o2o.test;
+
+public class Son extends Father{
+	private String name = "son";
+	
+	 int a = 2;
+	
+	public Son(){
+		super.name = name;
+	}
+
+	public int getA() {
+		return a;
+	}
+
+	public void setA(int a) {
+		this.a = a;
+	}
+	
+	
+}

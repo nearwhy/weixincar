@@ -1,0 +1,75 @@
+package com.aero.o2o.model;
+
+public class Voucher extends BasePojo {
+	
+	private Integer voucherId;
+	
+	private Integer memberId;
+	
+	private String voucherName;
+	
+	private String voucherCode;
+	
+	private Double voucherValue;
+	
+	private Double balance;
+	
+	private String remark;
+
+	public Integer getVoucherId() {
+		return voucherId;
+	}
+
+	public void setVoucherId(Integer voucherId) {
+		this.voucherId = voucherId;
+	}
+
+	public String getVoucherName() {
+		return voucherName;
+	}
+
+	public void setVoucherName(String voucherName) {
+		this.voucherName = voucherName;
+	}
+
+	public Double getVoucherValue() {
+		return voucherValue;
+	}
+
+	public void setVoucherValue(Double voucherValue) {
+		this.voucherValue = voucherValue;
+	}
+
+	public Double getBalance() {
+		return balance;
+	}
+
+	public void setBalance(Double balance) {
+		this.balance = balance;
+	}
+
+	public Integer getMemberId() {
+		return memberId;
+	}
+
+	public void setMemberId(Integer memberId) {
+		this.memberId = memberId;
+	}
+
+	public String getVoucherCode() {
+		return voucherCode;
+	}
+
+	public void setVoucherCode(String voucherCode) {
+		this.voucherCode = voucherCode;
+	}
+
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	
+}

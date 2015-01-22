@@ -1,0 +1,16 @@
+package com.aero.o2o.service;
+
+import com.aero.o2o.model.Shop;
+import com.aero.o2o.model.Waiter;
+
+public interface ShopService {
+
+	public Waiter login(String loginName,String password);
+
+	public Waiter queryWaiter(Integer waiterId);
+	
+	public void updateWaiter(Waiter waiter);
+	
+	public Shop queryDetail(Shop shop);
+	
+}

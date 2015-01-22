@@ -1,0 +1,207 @@
+package com.aero.o2o.redis;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+
+import javax.annotation.PostConstruct;
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Service;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.JedisPool;
+import redis.clients.jedis.ShardedJedis;
+import redis.clients.jedis.ShardedJedisPool;
+
+/**
+ * 
+ * @author zhangtong
+ * @see <a
+ *      href="http://redis.readthedocs.org/en/latest/index.html">http://redis.readthedocs.org/en/latest/index.html</a>
+ * @since 1.1 追加了静态配置 ip主机
+ * @since 1.2 配置连接池数量
+ */
+@Service("redis")
+public class RedisUtil {
+
+	/**
+	 * 必须static否者注入为null 不知道为什呢
+	 */
+	// @Resource(name="shardedJedisPool")
+	private ShardedJedisPool shardedJedisPool;// JedisPool jedisPool;
+	@Resource(name = "jedisPool")
+	private JedisPool jedisPool;
+
+	@PostConstruct
+	public void initJedisPool() {
+		this.setJedisPool(jedisPool);
+		this.setShardedJedisPool(shardedJedisPool);
+	}
+
+	public RedisUtil() {
+
+	}
+
+	/**
+	 * 追加构造方法，并设定连接池大小
+	 * 
+	 * @param ip
+	 * @param port
+	 */
+	public RedisUtil(String ip, int port) {
+		redis.clients.jedis.JedisPoolConfig cf = new redis.clients.jedis.JedisPoolConfig();
+		cf.setMaxActive(50000);
+		cf.setMaxIdle(50);
+		cf.setMaxWait(50);
+
+		cf.setTestOnBorrow(true);
+		jedisPool = new JedisPool(cf, ip, port, 100000);
+	}
+
+	public ShardedJedis getConnectionEx() {
+		ShardedJedis jedis = null;
+		try {
+			// shardedJedisPool = new ShardedJedisPool(null, shards);
+			// JedisShardInfo js;
+			jedis = shardedJedisPool.getResource();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return jedis;
+	}
+
+	public Jedis getConnection() {
+		Jedis jedis = null;
+		try {
+			jedis = jedisPool.getResource();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return jedis;
+	}
+
+	public void closeConnectionEx(ShardedJedis jedis) {
+		if (null != jedis) {
+			try {
+				shardedJedisPool.returnResource(jedis);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public void closeConnection(Jedis jedis) {
+		if (null != jedis) {
+			try {
+				jedisPool.returnResource(jedis);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public boolean setData(String key, String value) {
+		try {
+			ShardedJedis jedis = getConnectionEx();
+			jedis.set(key, value);
+			returnResource(jedis);
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return false;
+	}
+
+	public void returnResource(ShardedJedis redis) {
+		if (jedisPool != null)
+			shardedJedisPool.returnResource(redis);
+	}
+
+	public void returnResource(Jedis redis) {
+		if (jedisPool != null)
+			jedisPool.returnResource(redis);
+	}
+
+	public String getData(String key) {
+		String value = null;
+		try {
+			ShardedJedis jedis = getConnectionEx();
+			value = jedis.get(key);
+			returnResource(jedis);
+			return value;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return value;
+	}
+	
+	//序列化
+	public static byte[] serialize(Object object) {
+		ObjectOutputStream oos = null;
+		ByteArrayOutputStream baos = null;
+		try {
+			// 序列化
+			baos = new ByteArrayOutputStream();
+			oos = new ObjectOutputStream(baos);
+			oos.writeObject(object);
+			byte[] bytes = baos.toByteArray();
+			return bytes;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (baos != null)
+					baos.close();
+				if (oos != null)
+					oos.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+	
+	//反序列化
+	public static Object unserialize(byte[] bytes) {
+		ByteArrayInputStream bais = null;
+		ObjectInputStream ois = null;
+		try {
+			// 反序列化
+			bais = new ByteArrayInputStream(bytes);
+			ois = new ObjectInputStream(bais);
+			return ois.readObject();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (bais != null)
+					bais.close();
+				if (ois != null)
+					ois.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return null;
+	}
+
+	// getters and setters==========================================
+	public void setJedisPool(JedisPool JedisPool) {
+		this.jedisPool = JedisPool;
+	}
+
+	public JedisPool getJedisPool() {
+		return jedisPool;
+	}
+
+	public void setShardedJedisPool(ShardedJedisPool shardedJedisPool) {
+		this.shardedJedisPool = shardedJedisPool;
+	}
+
+	public ShardedJedisPool getShardedJedisPool() {
+		return shardedJedisPool;
+	}
+}

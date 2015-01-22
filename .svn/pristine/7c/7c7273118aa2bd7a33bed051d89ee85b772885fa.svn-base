@@ -1,0 +1,72 @@
+package com.aero.o2o.util;
+
+public class ArithmeticUtil {
+
+	public static final double EARTH_RADIUS = 6378137.0;
+
+	
+	public static void main(String[] args) {
+		// TODO Auto-generated method stub
+		isInner(116.5881693363,40.0784901036,116.5857338905,40.0802140369,116.5936625004,40.0778990307);
+	}
+
+	/**
+	 * 判断所在航站楼，通过计算是否在矩形内，如果在矩形外，计算出该点到圆心-半径的距离
+	 * @param args
+	 * @return 0：在矩形内 其他为该点到圆心-半径的距离
+	 */
+	public static double isInner(double longitude, double latitude,
+			double llongitude, double llatitude, double rlongitude,
+			double rlatitude) {
+		//计算对角线
+		double diagonal = distance(llongitude, llatitude, rlongitude, rlatitude);
+//		System.out.println(diagonal);
+
+		//计算当前点与左上的距离
+		double ldistance = distance(llongitude, llatitude, longitude, latitude);
+//		System.out.println(ldistance);
+		
+		//计算当前点与右上的距离
+		double rdistance = distance(rlongitude, rlatitude, longitude, latitude);
+		//计算右下角角度
+		double rCos = (diagonal*diagonal+rdistance*rdistance-ldistance*ldistance)/(2*rdistance*diagonal);
+		double rdAngle = Math.acos(rCos)*180/Math.PI;
+
+		//计算左上角度
+		double lCos = (diagonal*diagonal+ldistance*ldistance-rdistance*rdistance)/(2*ldistance*diagonal);
+		double luAngle = Math.acos(lCos)*180/Math.PI; 
+		
+		if(rdAngle<=45&&luAngle<=45){
+			return 0;
+		}else{
+			//获取中点坐标
+			double mlongitude = Math.abs((llongitude+rlongitude)/2);
+			double mlatitude = Math.abs((llatitude+rlatitude)/2);
+//			System.out.println(mlongitude+" "+mlatitude);
+//			System.out.println(distance(llongitude, llatitude, mlongitude, mlatitude));
+//			System.out.println(distance( mlongitude, mlatitude,rlongitude, rlatitude));
+			//计算当前点到中点的距离-半径
+			double near = distance(longitude, latitude, mlongitude, mlatitude)-diagonal/2;
+			return near;
+		}
+		
+	}
+	/**
+	 * 计算两点间距离
+	 * @return
+	 */
+	public static double distance(double llongitude, double llatitude, double rlongitude,double rlatitude ){
+		double radLat1 = (llatitude * Math.PI / 180.0);
+		double radLat2 = (rlatitude * Math.PI / 180.0);
+		double a = radLat1 - radLat2;
+		double b = (llongitude - rlongitude) * Math.PI / 180.0;
+		// 对角线长度
+		double distance = 2 * Math.asin(Math.sqrt(Math.pow(Math.sin(a / 2), 2)
+				+ Math.cos(radLat1) * Math.cos(radLat2)
+				* Math.pow(Math.sin(b / 2), 2)));
+		distance = distance * EARTH_RADIUS;
+		distance = Math.round(distance * 10000) / 10000d;
+		return distance;
+	}
+}
+

@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="CommodityInfo" >
+  
+  <resultMap id="CommodityinfoResult" class="com.palm360.airport.model.Commodityinfo" >
+    <result column="CommodityID" property="commodityid" jdbcType="INTEGER" />
+    <result column="MerchantID" property="merchantid" jdbcType="INTEGER" />
+    <result column="ctID" property="ctid" jdbcType="INTEGER" />
+    <result column="CommodityName" property="commodityname" jdbcType="VARCHAR" />
+    <result column="OldPrice" property="oldprice" jdbcType="REAL" />
+    <result column="NewPrice" property="newprice" jdbcType="REAL" />
+    <result column="DisCount" property="discount" jdbcType="REAL" />
+    <result column="RecordTime" property="recordtime" jdbcType="TIMESTAMP" />
+    <result column="Content" property="content" jdbcType="VARCHAR" />
+    <result column="LongKey" property="longkey" jdbcType="VARCHAR" />
+    <result column="ShortKey" property="shortkey" jdbcType="VARCHAR" />
+    
+  </resultMap>
+    
+  <resultMap id="CommodityinfoResult2" class="com.palm360.airport.model.Commodityinfo" >
+    <result column="CommodityID" property="commodityid" jdbcType="INTEGER" />
+    <result column="MerchantID" property="merchantid" jdbcType="INTEGER" />
+    <result column="ctID" property="ctid" jdbcType="INTEGER" />
+    <result column="CommodityName" property="commodityname" jdbcType="VARCHAR" />
+    <result column="OldPrice" property="oldprice" jdbcType="REAL" />
+    <result column="NewPrice" property="newprice" jdbcType="REAL" />
+    <result column="DisCount" property="discount" jdbcType="REAL" />
+    <result column="RecordTime" property="recordtime" jdbcType="TIMESTAMP" />
+    <result column="Content" property="content" jdbcType="VARCHAR" />
+    <result column="LongKey" property="longkey" jdbcType="VARCHAR" />
+    <result column="ShortKey" property="shortkey" jdbcType="VARCHAR" />
+    <result column="CommodityID" property="commoditypics" select="CommodityPic.queryByFk2"/>
+  </resultMap>
+  
+  
+  <select id="queryAllCount" resultClass="Integer" >
+      select count(*) from CommodityInfo
+  </select>
+  
+  <select id="queryAll" resultMap="CommodityinfoResult" parameterClass="com.palm360.airport.util.AirportQueryP">
+      select * from CommodityInfo limit #start#,#size#
+  </select>
+  <select id="queryByPk" resultMap="CommodityinfoResult2" parameterClass="com.palm360.airport.model.Commodityinfo" >
+      select CommodityID, MerchantID, ctID, CommodityName, OldPrice, NewPrice, DisCount, RecordTime,
+      Content, LongKey, ShortKey
+    from CommodityInfo
+    where CommodityID = #commodityid:INTEGER#
+  </select>
+  <select id="queryCommodityinfoByFk" resultMap="CommodityinfoResult2" parameterClass="com.palm360.airport.util.AirportQueryP" >
+      select CommodityID, MerchantID, ctID, CommodityName, OldPrice, NewPrice, DisCount, RecordTime,
+      Content, LongKey, ShortKey
+    from CommodityInfo
+    where 1=1 
+    <dynamic>
+        <isNotEmpty prepend="and" property="params.merchantid">
+            MerchantID = #params.merchantid:INTEGER#
+        </isNotEmpty>
+    </dynamic>
+     
+    limit #start#,#size#
+  </select>
+  <select id="selectByPrimaryKey" resultMap="CommodityinfoResult" parameterClass="com.palm360.airport.model.Commodityinfo" >
+    select CommodityID, MerchantID, ctID, CommodityName, OldPrice, NewPrice, DisCount, RecordTime,
+      Content, LongKey, ShortKey
+    from CommodityInfo
+    where CommodityID = #commodityid:INTEGER#
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterClass="com.palm360.airport.model.Commodityinfo" >
+    delete from CommodityInfo
+    where CommodityID = #commodityid:INTEGER#
+  </delete>
+ 
+  <insert id="insert" parameterClass="com.palm360.airport.model.Commodityinfo" >
+    insert into CommodityInfo (CommodityID, MerchantID, ctID, CommodityName, OldPrice, NewPrice,
+      DisCount, RecordTime, Content, LongKey, ShortKey)
+    values (#commodityid:INTEGER#, #merchantid:INTEGER#, #ctid:INTEGER#, #commodityname:VARCHAR#,
+      #oldprice:REAL#, #newprice:REAL#, #discount:REAL#, #recordtime:TIMESTAMP#, #content:VARCHAR#,
+      #longkey:VARCHAR#, #shortkey:VARCHAR#)
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterClass="com.palm360.airport.model.Commodityinfo" >
+    update CommodityInfo
+    set MerchantID = #merchantid:INTEGER#,
+      ctID = #ctid:INTEGER#,
+      CommodityName = #commodityname:VARCHAR#,
+      OldPrice = #oldprice:REAL#,
+      NewPrice = #newprice:REAL#,
+      DisCount = #discount:REAL#,
+      RecordTime = #recordtime:TIMESTAMP#,
+      Content = #content:VARCHAR#,
+      LongKey = #longkey:VARCHAR#,
+      ShortKey = #shortkey:VARCHAR#
+    where CommodityID = #commodityid:INTEGER#
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterClass="com.palm360.airport.model.Commodityinfo" >
+    update CommodityInfo
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="merchantid" >
+        MerchantID = #merchantid:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="ctid" >
+        ctID = #ctid:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="commodityname" >
+        CommodityName = #commodityname:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="oldprice" >
+        OldPrice = #oldprice:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="newprice" >
+        NewPrice = #newprice:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="discount" >
+        DisCount = #discount:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="recordtime" >
+        RecordTime = #recordtime:TIMESTAMP#
+      </isNotNull>
+      <isNotNull prepend="," property="content" >
+        Content = #content:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="longkey" >
+        LongKey = #longkey:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="shortkey" >
+        ShortKey = #shortkey:VARCHAR#
+      </isNotNull>
+    </dynamic>
+    where CommodityID = #commodityid:INTEGER#
+  </update>
+ 
+  <select id="selectCommodityByRpId" resultClass="com.palm360.airport.model.Commodityinfo" parameterClass="com.palm360.airport.model.RegisterPromotions">
+  	SELECT ci.* from RegisterPromotions rp, RegisterPromotionsList rpl, CommodityInfo ci 
+	WHERE rp.PromotionsID = rpl.PromotionsID and ci.CommodityID = rpl.CommodityID and rp.PromotionsID = #promotionsId:INTEGER#
+  </select>
+  
+</sqlMap>

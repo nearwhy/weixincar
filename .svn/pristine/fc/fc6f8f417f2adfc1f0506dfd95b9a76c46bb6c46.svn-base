@@ -1,0 +1,19 @@
+package com.aero.o2o.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import com.aero.o2o.model.Airport;
+
+/**
+ * 机场.dao 
+ * 
+ * @author xzl
+ * @version 0.1
+ * 
+ */
+public interface AirportDao {
+	
+	List<Airport> query4AppInit();
+   
+}

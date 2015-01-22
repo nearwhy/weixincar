@@ -1,0 +1,23 @@
+package com.aero.o2o.util.exception;
+
+public class ExcelException extends Exception {
+	
+	private String msg;
+	public ExcelException(){
+		super();
+	}
+	
+	public ExcelException(String msg){
+		super(msg);
+		this.msg = msg;
+	}
+
+	//getter and setter
+	public String getMsg() {
+		return msg;
+	}
+	
+	public void setMsg(String msg) {
+		this.msg = msg;
+	}
+}

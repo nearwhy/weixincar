@@ -1,0 +1,26 @@
+package com.aero.o2o.dao;
+
+import java.util.List;
+import java.util.Map;
+
+import com.aero.o2o.model.Content;
+import com.aero.o2o.model.Product;
+import com.aero.o2o.model.QueryParam;
+
+public interface ProductDao extends BaseDao<Product>{
+	
+	List<Product> queryAll();
+	
+	List<Integer> queryAllIds();
+	
+	List<Content> queryAllContent(QueryParam qp);
+
+	List<String> queryPics(Integer productId);
+	
+	List<Product> queryCollection(QueryParam qp); 
+	
+	List<Product> queryProductByShop(QueryParam qp);
+
+	List<Product> queryProductsByQrcode(QueryParam qp);
+	
+}

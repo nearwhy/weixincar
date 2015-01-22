@@ -1,0 +1,10 @@
+package com.aero.o2o.test;
+
+public abstract class Father {
+	
+	String name = "Father";
+	
+	public void getName(){
+		System.out.println(name);
+	}
+}

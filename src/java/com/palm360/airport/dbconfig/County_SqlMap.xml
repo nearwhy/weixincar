@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="County" >
+
+  <resultMap id="CountyResult" class="com.palm360.airport.model.County" >
+    <result column="CountyID" property="countyid" jdbcType="INTEGER" />
+    <result column="CityID" property="cityid" jdbcType="INTEGER" />
+    <result column="CountyName" property="countyname" jdbcType="VARCHAR" />
+    <result column="llongitude" property="llongitude" jdbcType="REAL" />
+    <result column="llatitude" property="llatitude" jdbcType="REAL" />
+    <result column="rlongitude" property="rlongitude" jdbcType="REAL" />
+    <result column="rlatitude" property="rlatitude" jdbcType="REAL" />
+    <result column="LongKey" property="longkey" jdbcType="VARCHAR" />
+    <result column="SortKey" property="sortkey" jdbcType="VARCHAR" />
+  </resultMap>
+  
+   <select id="queryAllCount" resultClass="Integer" >
+      select count(*) from County
+  </select>
+  
+  <select id="queryAll" resultMap="CountyResult" parameterClass="com.palm360.airport.util.AirportQueryP">
+      select * from County limit #start#,#size#
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="CountyResult" parameterClass="com.palm360.airport.model.County" >
+    select CountyID, CityID, CountyName, llongitude, llatitude, rlongitude, rlatitude, LongKey,
+      SortKey
+    from County
+    where CountyID = #countyid:INTEGER#
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterClass="com.palm360.airport.model.County" >
+    delete from County
+    where CountyID = #countyid:INTEGER#
+  </delete>
+  
+  <insert id="insert" parameterClass="com.palm360.airport.model.County" >
+    insert into County (CountyID, CityID, CountyName, llongitude, llatitude, rlongitude, rlatitude,
+      LongKey, SortKey)
+    values (#countyid:INTEGER#, #cityid:INTEGER#, #countyname:VARCHAR#, #llongitude:REAL#,
+      #llatitude:REAL#, #rlongitude:REAL#, #rlatitude:REAL#, #longkey:VARCHAR#, #sortkey:VARCHAR#)
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterClass="com.palm360.airport.model.County" >
+    update County
+    set CityID = #cityid:INTEGER#,
+      CountyName = #countyname:VARCHAR#,
+      llongitude = #llongitude:REAL#,
+      llatitude = #llatitude:REAL#,
+      rlongitude = #rlongitude:REAL#,
+      rlatitude = #rlatitude:REAL#,
+      LongKey = #longkey:VARCHAR#,
+      SortKey = #sortkey:VARCHAR#
+    where CountyID = #countyid:INTEGER#
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterClass="com.palm360.airport.model.County" >
+    update County
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="cityid" >
+        CityID = #cityid:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="countyname" >
+        CountyName = #countyname:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="llongitude" >
+        llongitude = #llongitude:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="llatitude" >
+        llatitude = #llatitude:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="rlongitude" >
+        rlongitude = #rlongitude:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="rlatitude" >
+        rlatitude = #rlatitude:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="longkey" >
+        LongKey = #longkey:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="sortkey" >
+        SortKey = #sortkey:VARCHAR#
+      </isNotNull>
+    </dynamic>
+    where CountyID = #countyid:INTEGER#
+  </update>
+  
+</sqlMap>

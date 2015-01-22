@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>家庭作业</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="../../../bootstrap/css/bootstrap.css" rel="stylesheet">
+<link href="../../../bootstrap/css/bootstrap.min.css" rel="stylesheet"
+	media="screen">
+<link href="../../../bootstrap/css/bootstrap-datetimepicker.min.css"
+	rel="stylesheet" media="screen">
+
+<!-- 最新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap.min.css">
+
+<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script
+	src="http://cdn.bootcss.com/twitter-bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+
+
+<!-- 最新 Bootstrap 核心 CSS 文件 -->
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css">
+
+<!-- 可选的Bootstrap主题文件（一般不用引入） -->
+<link rel="stylesheet"
+	href="//netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap-theme.min.css">
+
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script
+	src="//netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+
+<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+<script src="http://cdn.bootcss.com/jquery/1.10.2/jquery.min.js"></script>
+
+<style type="text/css">
+.index {
+	width: 100%;
+}
+
+.table1 {
+	border: 2;
+	width: 100%;
+	cellspacing: 2;
+}
+
+.out {
+	background: #eee;
+}
+
+.my {
+	width: 20%;
+	height: 50%;
+	background: #049cdb;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="tabbable" id="tabs-534475">
+				<ul class="nav nav-tabs nav-stacked">
+					<li>
+						 <a href="#panel-551723" data-toggle="tab">Section 1</a>
+					</li>
+					<li class="active">
+						 <a href="#panel-583060" data-toggle="tab">Section 2</a>
+					</li>
+				</ul>
+				<div class="tab-content nav-stacked" >
+					<div class="tab-pane" id="panel-551723">
+						<p>
+							I'm in Section 1.
+						</p>
+					</div>
+					<div class="tab-pane active" id="panel-583060">
+						<p>
+							Howdy, I'm in Section 2.
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	
+
+	<script type="text/javascript"
+		src="../../../bootstrap/js/bootstrap.min.js"></script>
+	<script type="text/javascript"
+		src="../../../bootstrap/js/bootstrap-datetimepicker.js"
+		charset="UTF-8"></script>
+	<script type="text/javascript"
+		src="../../../bootstrap/js/locales/bootstrap-datetimepicker.zh-CN.js"
+		charset="UTF-8"></script>
+		<script src="../../../bootstrap/js/bootstrap-tooltip.js"></script>
+<script src="../../../bootstrap/js/bootstrap-popover.js"></script>
+	<script type="text/javascript">
+
+	$(function (){
+		$("#example1").popover();
+		$("#example2").popover();
+	});
+	
+$('.form_date').datetimepicker({
+    language:  'zh-CN',
+    weekStart: 1,
+    todayBtn:  1,
+	autoclose: 1,
+	todayHighlight: 1,
+	startView: 2,
+	minView: 2,
+	forceParse: 0
+});
+
+function change(){
+	$("p[name='today']").css("display","none");
+	$("p[name='other']").css("display","block");
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,155 @@
+package com.aero.o2o.util;
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class QrcodeUtil {
+
+	/**
+	 * @param args
+	 */
+	public static void main(String[] args)throws Exception {
+//		System.out.println("ab".substring(0, "ab".length()-1));
+//		System.out.println(products2Qrcode("1-1", 12, null));
+//		System.out.println(products2Qrcode("72-1", 52, null));
+//		System.out.println(products2Qrcode("73-1", 52, null));
+//		System.out.println(products2Qrcode("75-1", 52, null));
+//		System.out.println(Encryption.md5("SDK-BBX-010-211445-62[e-["));
+		Map<String,String> map = new HashMap<String, String>();
+		map.put("waiterId", "1");
+		map.put("shopId", "1");
+		map.put("orderNo", "1");
+		System.out.println(qrcodeEncode(map));
+		qrcodeDecode("exKF5FyeKmWkxN-xXY4gEhK17afY6im2nYyPwEDnnFQ=");
+	}
+
+	//用户信息生成二维码
+	public static String user2Qrcode(Integer userId){
+		String param = "userId="+userId+"&type=user";
+		String qrcode = null;
+		try {
+			String first = Encryption.aesBase64(param);
+			String second = first.substring(1, first.length())+first.substring(0,1);
+			qrcode = Encryption.aesBase64(second);
+			qrcode = qrcode.replace("+", "-");
+			qrcode = qrcode.replace("/", "_");
+			qrcode = qrcode.replace("\r", "");
+			qrcode = qrcode.replace("\n", "");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return qrcode;
+	}
+	
+	//订单生成二维码
+	public static String order2Qrcode(String orderNo,Integer productId,Integer userId){
+		String param = "orderNo="+orderNo+"&productId="+productId+"&userId="+userId+"&ts="+System.currentTimeMillis()+"&type=product";
+		String qrcode = null;
+		try {
+			String first = Encryption.aesBase64(param);
+			String second = first.substring(1, first.length())+first.substring(0,1);
+			qrcode = Encryption.aesBase64(second);
+			qrcode = qrcode.replace("+", "-");
+			qrcode = qrcode.replace("/", "_");
+			qrcode = qrcode.replace("\r", "");
+			qrcode = qrcode.replace("\n", "");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return qrcode;
+	}
+
+	//领取优惠券生成二维码
+	public static String activity2Qrcode(Integer activityId,Integer userId){
+		String param = "id="+activityId+"&userId="+userId+"&type=activity";
+		String qrcode = null;
+		try {
+			String first = Encryption.aesBase64(param);
+			String second = first.substring(1, first.length())+first.substring(0,1);
+			qrcode = Encryption.aesBase64(second);
+			qrcode = qrcode.replace("+", "-");
+			qrcode = qrcode.replace("/", "_");
+			qrcode = qrcode.replace("\r", "");
+			qrcode = qrcode.replace("\n", "");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return qrcode;
+	}
+
+	public static String product2Qrcode(Integer productId,Integer shopId){
+
+		String param = "id="+productId+"&shopId="+shopId+"&type=product";
+		String qrcode = null;
+		try {
+			String first = Encryption.aesBase64(param);
+			String second = first.substring(1, first.length())+first.substring(0,1);
+			qrcode = Encryption.aesBase64(second);
+			qrcode = qrcode.replace("+", "-");
+			qrcode = qrcode.replace("/", "_");
+			qrcode = qrcode.replace("\r", "");
+			qrcode = qrcode.replace("\n", "");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return qrcode;
+	}
+	
+	public static String products2Qrcode(String products,Integer shopId,Integer waiterId){
+
+		String param = "products="+products+"&shopId="+shopId+(waiterId==null?"":"&waiterId="+waiterId)+"&type=products";
+		String qrcode = null;
+		try {
+			String first = Encryption.aesBase64(param);
+			String second = first.substring(1, first.length())+first.substring(0,1);
+			qrcode = Encryption.aesBase64(second);
+			qrcode = qrcode.replace("+", "-");
+			qrcode = qrcode.replace("/", "_");
+			qrcode = qrcode.replace("\r", "");
+			qrcode = qrcode.replace("\n", "");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return qrcode;
+	}
+	
+	public static Map<String,String> qrcodeDecode(String qrcode){
+		String result=null;
+		try {
+			qrcode = qrcode.replace("-", "+");
+			qrcode = qrcode.replace("_", "/");
+			String fisrt = Encryption.decodeAesBase64(qrcode);
+			String second = fisrt.charAt(fisrt.length()-1)+fisrt.substring(0, fisrt.length()-1);
+			result = Encryption.decodeAesBase64(second);
+			System.out.println(result);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		Map<String,String> map = new HashMap<String, String>();
+		for(String param:result.split("&")){
+			map.put(param.split("=")[0],param.split("=")[1]);
+		}
+		return map;
+	}
+
+	public static String qrcodeEncode(Map<String,String> map){
+		String param = "";
+		for(Map.Entry<String, String> entry:map.entrySet()){
+			param += entry.getKey()+"="+entry.getValue()+"&";
+		}
+		param.substring(0, param.length()-1);
+		String qrcode = null;
+		try {
+			String first = Encryption.aesBase64(param);
+			String second = first.substring(1, first.length())+first.substring(0,1);
+			qrcode = Encryption.aesBase64(second);
+			qrcode = qrcode.replace("+", "-");
+			qrcode = qrcode.replace("/", "_");
+			qrcode = qrcode.replace("\r", "");
+			qrcode = qrcode.replace("\n", "");
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return qrcode;
+	}
+}

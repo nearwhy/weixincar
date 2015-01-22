@@ -1,0 +1,11 @@
+package com.aero.o2o.dao;
+
+import com.aero.o2o.model.AppClient;
+
+
+public interface AppClientDao extends BaseDao<AppClient> {
+
+	public void insert(AppClient ac);
+	
+	public AppClient queryByAppId(String appId);
+}

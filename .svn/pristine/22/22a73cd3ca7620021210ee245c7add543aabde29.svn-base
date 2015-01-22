@@ -1,0 +1,8 @@
+package com.aero.o2o.model;
+
+import com.alibaba.fastjson.JSONObject;
+
+public interface JSONPojo {
+
+	public JSONObject pojo2JSON(BasePojo pojo);
+}

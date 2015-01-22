@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="ShopOrder">
+	
+	<insert id="insert" parameterClass="com.aero.o2o.model.QueryParam">
+		insert into shoporder (orderNo,shopId,waiterId,cost,ctime,status)
+		values(#pojo.orderNo#,#pojo.shopId#,#pojo.waiterId#,#pojo.cost#,getdate(),1)
+	</insert>
+	
+	<update id="orderPay" parameterClass="com.aero.o2o.model.QueryParam">
+		update shoporder set userId = #pojo.userId#,ptime = getdate(),voucherId = #pojo.voucherId#,status = 0
+		<isNotEmpty property="pojo.cost">
+			,cost = #pojo.cost#
+		</isNotEmpty>
+		where orderNo = #pojo.orderNo#
+	</update>
+	
+	<select id="queryByOrderNo" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.ShopOrder">
+		select o.*,s.suppliername as shopName from shoporder o left join supplier s on s.supplierid = o.shopId
+		where o.orderNo = #orderNo#
+	</select>
+	
+	
+	<select id="queryList" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.ShopOrder">
+		select o.*,s.suppliername as shopName ,v.voucherName
+		from shoporder o left join supplier s on s.supplierid = o.shopId
+		left join vouchermember v on v.voucherid = o.voucherid
+		where o.status = 0
+		<isNotEmpty prepend="and" property="voucherId">
+			o.voucherId = #voucherId# 
+		</isNotEmpty>
+		<isNotEmpty prepend="and" property="userId">
+			o.userid = #userId# 
+		</isNotEmpty>
+	</select>
+	
+</sqlMap>

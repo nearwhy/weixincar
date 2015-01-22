@@ -1,0 +1,47 @@
+package com.aero.o2o.service.impl;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.aero.o2o.dao.ShopDao;
+import com.aero.o2o.dao.WaiterDao;
+import com.aero.o2o.model.Shop;
+import com.aero.o2o.model.Waiter;
+import com.aero.o2o.service.ShopService;
+
+@Service("ShopServiceImpl")
+public class ShopServiceImpl extends BaseServiceImpl implements ShopService{
+
+	@Autowired
+	private WaiterDao waiterDao;
+	
+	@Autowired
+	private ShopDao shopDao;
+	
+	
+	@Override
+	public Waiter login(String loginName, String password) {
+		Waiter waiter = new Waiter();
+		waiter.setLoginName(loginName);
+		waiter.setPassword(password);
+		return waiterDao.waiterLogin(waiter);
+	}
+
+	@Override
+	public Waiter queryWaiter(Integer waiterId) {
+		Waiter waiter = new Waiter();
+		waiter.setId(waiterId);
+		return (Waiter)waiterDao.queryDetail(waiter);
+	}
+
+	@Override
+	public void updateWaiter(Waiter waiter) {
+		waiterDao.update(waiter);
+	}
+
+	@Override
+	public Shop queryDetail(Shop shop) {
+		return (Shop)shopDao.queryDetail(shop);
+	}
+
+}

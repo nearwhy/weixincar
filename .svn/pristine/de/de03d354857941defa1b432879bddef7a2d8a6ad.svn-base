@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Promotions" >
+  
+  <resultMap id="PromotionsResult" class="com.palm360.airport.model.Promotions" >
+    <result column="PromotionsID" property="promotionsid" jdbcType="INTEGER" />
+    <result column="MerchantID" property="merchantid" jdbcType="INTEGER" />
+    <result column="PromotionsTitle" property="promotionstitle" jdbcType="VARCHAR" />
+    <result column="OldPrice" property="oldprice" jdbcType="REAL" />
+    <result column="NewPrice" property="newprice" jdbcType="REAL" />
+    <result column="DisCount" property="discount" jdbcType="REAL" />
+    <result column="RecoredTime" property="recoredtime" jdbcType="TIMESTAMP" />
+    <result column="Content" property="content" jdbcType="VARCHAR" />
+    <result column="OutOfDate" property="outofdate" jdbcType="TIMESTAMP" />
+  </resultMap>
+  
+  <select id="queryAllCount" resultClass="Integer" >
+      select count(*) from Promotions
+  </select>
+  
+  <select id="queryAll" resultMap="PromotionsResult" parameterClass="com.palm360.airport.util.AirportQueryP">
+      select * from Promotions limit #start#,#size#
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="PromotionsResult" parameterClass="com.palm360.airport.model.Promotions" >
+    select PromotionsID, MerchantID, PromotionsTitle, OldPrice, NewPrice, DisCount, RecoredTime,
+      Content, OutOfDate
+    from Promotions
+    where PromotionsID = #promotionsid:INTEGER#
+  </select>
+  
+  <delete id="deleteByPrimaryKey" parameterClass="com.palm360.airport.model.Promotions" >
+    delete from Promotions
+    where PromotionsID = #promotionsid:INTEGER#
+  </delete>
+ 
+  <insert id="insert" parameterClass="com.palm360.airport.model.Promotions" >
+    insert into Promotions (PromotionsID, MerchantID, PromotionsTitle, OldPrice, NewPrice, DisCount,
+      RecoredTime, Content, OutOfDate)
+    values (#promotionsid:INTEGER#, #merchantid:INTEGER#, #promotionstitle:VARCHAR#,
+      #oldprice:REAL#, #newprice:REAL#, #discount:REAL#, #recoredtime:TIMESTAMP#, #content:VARCHAR#,
+      #outofdate:TIMESTAMP#)
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterClass="com.palm360.airport.model.Promotions" >
+    update Promotions
+    set MerchantID = #merchantid:INTEGER#,
+      PromotionsTitle = #promotionstitle:VARCHAR#,
+      OldPrice = #oldprice:REAL#,
+      NewPrice = #newprice:REAL#,
+      DisCount = #discount:REAL#,
+      RecoredTime = #recoredtime:TIMESTAMP#,
+      Content = #content:VARCHAR#,
+      OutOfDate = #outofdate:TIMESTAMP#
+    where PromotionsID = #promotionsid:INTEGER#
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterClass="com.palm360.airport.model.Promotions" >
+    update Promotions
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="merchantid" >
+        MerchantID = #merchantid:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="promotionstitle" >
+        PromotionsTitle = #promotionstitle:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="oldprice" >
+        OldPrice = #oldprice:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="newprice" >
+        NewPrice = #newprice:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="discount" >
+        DisCount = #discount:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="recoredtime" >
+        RecoredTime = #recoredtime:TIMESTAMP#
+      </isNotNull>
+      <isNotNull prepend="," property="content" >
+        Content = #content:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="outofdate" >
+        OutOfDate = #outofdate:TIMESTAMP#
+      </isNotNull>
+    </dynamic>
+    where PromotionsID = #promotionsid:INTEGER#
+  </update>
+ 
+</sqlMap>

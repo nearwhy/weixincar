@@ -1,0 +1,43 @@
+package com.aero.o2o.util.msgsend;
+
+import java.io.IOException;
+import java.net.URLEncoder;
+
+public class Demo_Client {
+
+	public static void main(String[] args) throws IOException {
+
+		String sn = "SDK-XXX-XXX-XXXXX";
+		String pwd = "123456";
+		Client client = new Client(sn, pwd);
+
+		//短信发送
+		 String result_mdsmssend = client.mdsmssend("12345678987", "程序接口测试", "", "", "","");
+		 System.out.println(result_mdsmssend);
+		 //个性短信发送
+		String content1 = URLEncoder.encode("您好1","UTF-8"); 
+		String content2 = URLEncoder.encode("您好2","UTF-8"); 
+		String content3 = URLEncoder.encode("您好3","UTF-8"); 
+		//手机号不同 
+		String mobile1="111111111";
+		String mobile2="111111111";
+		String mobile3="111111111";
+		String content4=content1+","+content2+","+content3; 
+		String mobile4=mobile1+","+mobile2+","+mobile3; 
+		String result=client.mdgxsend(mobile4,content4,"","","","");
+		System.out.println(result);
+//				 
+		// 如为第一次使用，请先注册，注册方法如下，为方便在后来的合作成功客服人员给您提供服务请如实填写下列信息
+		// 只需注册一次即可
+		// 返回值说明：注册成功返回0 注册成功
+		/*
+		 * String result_register = client.register("省份", "城市", "服务", "公司名称",
+		 * "联系人", "88888888", "13910423404", "111@126.com", "88888888", "北京",
+		 * "123456"); if(result_register.startsWith("-")) {
+		 * System.out.print(result_register); }else {
+		 * System.out.print("恭喜您，注册成功！"); }
+		 */
+
+		
+	}
+}

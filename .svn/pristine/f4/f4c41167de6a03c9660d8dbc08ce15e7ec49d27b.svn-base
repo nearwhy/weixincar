@@ -1,0 +1,969 @@
+package com.aero.o2o.web.util;
+
+import java.lang.reflect.Array;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.json.JSONStringer;
+
+/**
+ * @author keane
+ * @version 1.0
+ * 
+ */
+public class JSONHelper {
+
+	private static JSONHelper m_instance = null;
+	private String terminals;
+
+	private JSONHelper() {
+	}
+
+	public static JSONHelper getInstance() {
+		if(m_instance==null){
+			m_instance = new JSONHelper();
+		}
+		return m_instance;
+	}
+
+	/**
+	 * 
+	 */
+	
+	public String MapToString(Map<String, Object> map){
+		 String  key=":";
+		 for(Map.Entry<String, Object> entry : map.entrySet())    
+		 { 
+			 if (!entry.getValue().equals("") && entry.getValue() != null){
+				 key += entry.getKey()+":"+entry.getValue()  ; 
+			 }
+		 } 
+		return key;
+	}
+	
+	/**
+	 * ������ת����Json�ַ�
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public  String toJSON(Object obj) {
+		JSONStringer js = new JSONStringer();
+		serialize(js, obj);
+		return js.toString();
+	}
+
+	/**
+	 * ���л�ΪJSON
+	 * 
+	 * @param js
+	 * @param o
+	 */
+	private  void serialize(JSONStringer js, Object o) {
+		if (isNull(o)) {
+			try {
+				js.value(null);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+			return;
+		}
+		Class<?> clazz = o.getClass();
+		if (isObject(clazz)) { // ����
+			serializeObject(js, o);
+		} else if (isArray(clazz)) { // ����
+			serializeArray(js, o);
+		} else if (isCollection(clazz)) { // ����
+			Collection<?> collection = (Collection<?>) o;
+			serializeCollect(js, collection);
+		} else { // ����ֵ
+			try {
+				js.value(o);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	/**
+	 * ���л�����
+	 * 
+	 * @param js
+	 * @param array
+	 */
+	private  void serializeArray(JSONStringer js, Object array) {
+		try {
+			js.array();
+			for (int i = 0; i < Array.getLength(array); ++i) {
+				Object o = Array.get(array, i);
+				serialize(js, o);
+			}
+			js.endArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * ���л�����
+	 * 
+	 * @param js
+	 * @param collection
+	 */
+	private  void serializeCollect(JSONStringer js,
+			Collection<?> collection) {
+		try {
+			js.array();
+			for (Object o : collection) {
+				serialize(js, o);
+			}
+			js.endArray();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * ���л�����
+	 * 
+	 * @param js
+	 * @param obj
+	 */
+	private  void serializeObject(JSONStringer js, Object obj) {
+		try {
+			js.object();
+			Class<? extends Object> objClazz = obj.getClass();
+			Method[] methods = objClazz.getDeclaredMethods();
+			Field[] fields = objClazz.getDeclaredFields();
+			for (Field field : fields) {
+				try {
+					String fieldType = field.getType().getSimpleName();
+					String fieldGetName = parseMethodName(field.getName(),
+							"get");
+					if (!haveMethod(methods, fieldGetName)) {
+						continue;
+					}
+					Method fieldGetMet = objClazz.getMethod(fieldGetName,
+							new Class[] {});
+					Object fieldVal = fieldGetMet.invoke(obj, new Object[] {});
+					String result = null;
+					if ("Date".equals(fieldType)) {
+						SimpleDateFormat sdf = new SimpleDateFormat(
+								"yyyy-MM-dd HH:mm:ss", Locale.US);
+						result = sdf.format((Date) fieldVal);
+
+					} else {
+						if (null != fieldVal) {
+							result = String.valueOf(fieldVal);
+						}
+					}
+					js.key(field.getName());
+					serialize(js, result);
+				} catch (Exception e) {
+					continue;
+				}
+			}
+			js.endObject();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * �ж��Ƿ����ĳ���Ե� get����
+	 * 
+	 * @param methods
+	 * @param fieldGetMet
+	 * @return boolean
+	 */
+	public  boolean haveMethod(Method[] methods, String fieldMethod) {
+		for (Method met : methods) {
+			if (fieldMethod.equals(met.getName())) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * ƴ��ĳ���Ե� get����set����
+	 * 
+	 * @param fieldName
+	 * @param methodType
+	 * @return
+	 */
+	public  String parseMethodName(String fieldName, String methodType) {
+		if (null == fieldName || "".equals(fieldName)) {
+			return null;
+		}
+		return methodType + fieldName.substring(0, 1).toUpperCase()
+				+ fieldName.substring(1);
+	}
+
+	/**
+	 * set���Ե�ֵ��Bean
+	 * 
+	 * @param obj
+	 * @param valMap
+	 */
+	public  void setFieldValue(Object obj, Map<String, String> valMap) {
+		Class<?> cls = obj.getClass();
+		// ȡ��bean������з���
+		Method[] methods = cls.getDeclaredMethods();
+		Field[] fields = cls.getDeclaredFields();
+
+		for (Field field : fields) {
+			try {
+				String setMetodName = parseMethodName(field.getName(), "set");
+				if (!haveMethod(methods, setMetodName)) {
+					continue;
+				}
+				Method fieldMethod = cls.getMethod(setMetodName,
+						field.getType());
+				String value = valMap.get(field.getName());
+				if (null != value && !"".equals(value)) {
+					String fieldType = field.getType().getSimpleName();
+					if ("String".equals(fieldType)) {
+						fieldMethod.invoke(obj, value);
+					} else if ("Date".equals(fieldType)) {
+						SimpleDateFormat sdf = new SimpleDateFormat(
+								"yyyy-MM-dd HH:mm:ss", Locale.US);
+						Date temp = sdf.parse(value);
+						fieldMethod.invoke(obj, temp);
+					} else if ("Integer".equals(fieldType)
+							|| "int".equals(fieldType)) {
+						Integer intval = Integer.parseInt(value);
+						fieldMethod.invoke(obj, intval);
+					} else if ("Long".equalsIgnoreCase(fieldType)) {
+						Long temp = Long.parseLong(value);
+						fieldMethod.invoke(obj, temp);
+					} else if ("Double".equalsIgnoreCase(fieldType)) {
+						Double temp = Double.parseDouble(value);
+						fieldMethod.invoke(obj, temp);
+					} else if ("Boolean".equalsIgnoreCase(fieldType)) {
+						Boolean temp = Boolean.parseBoolean(value);
+						fieldMethod.invoke(obj, temp);
+					} else {
+						System.out.println("setFieldValue not supper type:"
+								+ fieldType);
+					}
+				}
+			} catch (Exception e) {
+				continue;
+			}
+		}
+
+	}
+
+	/**
+	 * ����תMap
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	public  Map<String, String> getFieldValueMap(Object obj) {
+		Class<?> cls = obj.getClass();
+		Map<String, String> valueMap = new HashMap<String, String>();
+		// ȡ��bean������з���
+		Method[] methods = cls.getDeclaredMethods();
+		Field[] fields = cls.getDeclaredFields();
+		for (Field field : fields) {
+			try {
+				String fieldType = field.getType().getSimpleName();
+				String fieldGetName = parseMethodName(field.getName(), "get");
+				if (!haveMethod(methods, fieldGetName)) {
+					continue;
+				}
+				Method fieldGetMet = cls
+						.getMethod(fieldGetName, new Class[] {});
+				Object fieldVal = fieldGetMet.invoke(obj, new Object[] {});
+				String result = null;
+				if ("Date".equals(fieldType)) {
+					SimpleDateFormat sdf = new SimpleDateFormat(
+							"yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+					result = sdf.format((Date) fieldVal);
+
+				} else {
+					if (null != fieldVal) {
+						result = String.valueOf(fieldVal);
+					}
+				}
+				valueMap.put(field.getName(), result);
+			} catch (Exception e) {
+				continue;
+			}
+		}
+		return valueMap;
+
+	}
+
+	/**
+	 * �������ֶθ�ֵ
+	 * 
+	 * @param obj
+	 * @param fieldSetMethod
+	 * @param fieldType
+	 * @param value
+	 */
+	public  void setFiedlValue(Object obj, Method fieldSetMethod,
+			String fieldType, Object value) {
+
+		try {
+			if (null != value && !"".equals(value)) {
+				if ("String".equals(fieldType)) {
+					fieldSetMethod.invoke(obj, value.toString());
+				} else if ("Date".equals(fieldType)) {
+					SimpleDateFormat sdf = new SimpleDateFormat(
+							"yyyy-MM-dd HH:mm:ss", Locale.CHINA);
+					Date temp = sdf.parse(value.toString());
+					fieldSetMethod.invoke(obj, temp);
+				} else if ("Integer".equals(fieldType)
+						|| "int".equals(fieldType)) {
+					Integer intval = Integer.parseInt(value.toString());
+					fieldSetMethod.invoke(obj, intval);
+				} else if ("Long".equalsIgnoreCase(fieldType)) {
+					Long temp = Long.parseLong(value.toString());
+					fieldSetMethod.invoke(obj, temp);
+				} else if ("Double".equalsIgnoreCase(fieldType)) {
+					Double temp = Double.parseDouble(value.toString());
+					fieldSetMethod.invoke(obj, temp);
+				} else if ("Boolean".equalsIgnoreCase(fieldType)) {
+					Boolean temp = Boolean.parseBoolean(value.toString());
+					fieldSetMethod.invoke(obj, temp);
+				}else if ("Float".equalsIgnoreCase(fieldType)) {
+					Float temp = Float.parseFloat(value.toString());
+					fieldSetMethod.invoke(obj, temp);
+				}
+				else if ("Short".equalsIgnoreCase(fieldType)) {
+					Short temp = Short.valueOf(value.toString());
+					fieldSetMethod.invoke(obj, temp);
+				}
+				else {
+					fieldSetMethod.invoke(obj, value);
+
+				}
+			}
+
+		} catch (Exception e) {
+
+		}
+
+	}
+
+	/**
+	 * �����л��򵥶���
+	 * 
+	 * @param jo
+	 * @param clazz
+	 * @return
+	 * @throws JSONException
+	 */
+	public  <T> T parseObject(JSONObject jo, Class<T> clazz)
+			throws JSONException {
+		if (clazz == null || isNull(jo)) {
+			return null;
+		}
+
+		T obj = newInstance(clazz);
+		if (obj == null) {
+			return null;
+		}
+		if (isMap(clazz)) {
+			setField(obj, jo);
+		} else {
+			// ȡ��bean������з���
+			Method[] methods = clazz.getDeclaredMethods();
+			Field[] fields = clazz.getDeclaredFields();
+			for (Field f : fields) {
+				String setMetodName = parseMethodName(f.getName(), "set");
+				if (!haveMethod(methods, setMetodName)) {
+					continue;
+				}
+				try {
+					Method fieldMethod = clazz.getMethod(setMetodName,
+							f.getType());
+					setField(obj, fieldMethod, f, jo);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return obj;
+	}
+
+	/**
+	 * �����л��򵥶���
+	 * 
+	 * @param jsonString
+	 * @param clazz
+	 * @return
+	 * @throws JSONException
+	 */
+	public  <T> T parseObject(String jsonString, Class<T> clazz)
+			throws JSONException {
+		if (clazz == null || jsonString == null || jsonString.length() == 0) {
+			return null;
+		}
+
+		JSONObject jo = null;
+		jo = new JSONObject(jsonString);
+		if (isNull(jo)) {
+			return null;
+		}
+
+		return parseObject(jo, clazz);
+	}
+
+	/**
+	 * �����л��������
+	 * 
+	 * @param ja
+	 * @param clazz
+	 * @return
+	 */
+	public  <T> T[] parseArray(JSONArray ja, Class<T> clazz) {
+		if (clazz == null || isNull(ja)) {
+			return null;
+		}
+
+		int len = ja.length();
+
+		@SuppressWarnings("unchecked")
+		T[] array = (T[]) Array.newInstance(clazz, len);
+
+		for (int i = 0; i < len; ++i) {
+			try {
+				JSONObject jo = ja.getJSONObject(i);
+				T o = parseObject(jo, clazz);
+				array[i] = o;
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return array;
+	}
+
+	/**
+	 * �����л��������
+	 * 
+	 * @param jsonString
+	 * @param clazz
+	 * @return
+	 */
+	public  <T> T[] parseArray(String jsonString, Class<T> clazz) {
+		if (clazz == null || jsonString == null || jsonString.length() == 0) {
+			return null;
+		}
+		JSONArray jo = null;
+		try {
+			jo = new JSONArray(jsonString);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		if (isNull(jo)) {
+			return null;
+		}
+
+		return parseArray(jo, clazz);
+	}
+
+	/**
+	 * �����л����ͼ���
+	 * 
+	 * @param ja
+	 * @param collectionClazz
+	 * @param genericType
+	 * @return
+	 * @throws JSONException
+	 */
+	@SuppressWarnings("unchecked")
+	public  <T> Collection<T> parseCollection(JSONArray ja,
+			Class<?> collectionClazz, Class<T> genericType)
+			throws JSONException {
+
+		if (collectionClazz == null || genericType == null || isNull(ja)) {
+			return null;
+		}
+
+		Collection<T> collection = (Collection<T>) newInstance(collectionClazz);
+
+		for (int i = 0; i < ja.length(); ++i) {
+			try {
+				JSONObject jo = ja.getJSONObject(i);
+				T o = parseObject(jo, genericType);
+				collection.add(o);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return collection;
+	}
+
+	/**
+	 * �����л����ͼ���
+	 * 
+	 * @param jsonString
+	 * @param collectionClazz
+	 * @param genericType
+	 * @return
+	 * @throws JSONException
+	 */
+	public  <T> Collection<T> parseCollection(String jsonString,
+			Class<?> collectionClazz, Class<T> genericType)
+			throws JSONException {
+		if (collectionClazz == null || genericType == null
+				|| jsonString == null || jsonString.length() == 0) {
+			return null;
+		}
+		JSONArray jo = null;
+		try {
+			jo = new JSONArray(jsonString);
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+
+		if (isNull(jo)) {
+			return null;
+		}
+
+		return parseCollection(jo, collectionClazz, genericType);
+	}
+
+	/**
+	 * ������ʹ�������
+	 * 
+	 * @param clazz
+	 * @return
+	 * @throws JSONException
+	 */
+	private  <T> T newInstance(Class<T> clazz) throws JSONException {
+		if (clazz == null)
+			return null;
+		T obj = null;
+		if (clazz.isInterface()) {
+			if (clazz.equals(Map.class)) {
+				obj = (T) new HashMap();
+			} else if (clazz.equals(List.class)) {
+				obj = (T) new ArrayList();
+			} else if (clazz.equals(Set.class)) {
+				obj = (T) new HashSet();
+			} else {
+				throw new JSONException("unknown interface: " + clazz);
+			}
+		} else {
+			try {
+				obj = clazz.newInstance();
+			} catch (Exception e) {
+				throw new JSONException("unknown class type: " + clazz);
+			}
+		}
+		return obj;
+	}
+
+	/**
+	 * �趨Map��ֵ
+	 * 
+	 * @param obj
+	 * @param jo
+	 */
+	private  void setField(Object obj, JSONObject jo) {
+		try {
+			@SuppressWarnings("unchecked")
+			Iterator<String> keyIter = jo.keys();
+			String key;
+			Object value;
+			@SuppressWarnings("unchecked")
+			Map<String, Object> valueMap = (Map<String, Object>) obj;
+			while (keyIter.hasNext()) {
+				key = (String) keyIter.next();
+				value = jo.get(key);
+				valueMap.put(key, value);
+
+			}
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * �趨�ֶε�ֵ
+	 * 
+	 * @param obj
+	 * @param fieldSetMethod
+	 * @param f
+	 * @param jo
+	 */
+	private  void setField(Object obj, Method fieldSetMethod, Field f,
+			JSONObject jo) {
+		String name = f.getName();
+		Class<?> clazz = f.getType();
+		try {
+			if (isArray(clazz)) { // ����
+				Class<?> c = clazz.getComponentType();
+				JSONArray ja = jo.optJSONArray(name);
+				if (!isNull(ja)) {
+					Object array = parseArray(ja, c);
+					setFiedlValue(obj, fieldSetMethod, clazz.getSimpleName(),
+							array);
+				}
+			} else if (isCollection(clazz)) { // ���ͼ���
+				// ��ȡ����ķ�������
+				Class<?> c = null;
+				Type gType = f.getGenericType();
+				if (gType instanceof ParameterizedType) {
+					ParameterizedType ptype = (ParameterizedType) gType;
+					Type[] targs = ptype.getActualTypeArguments();
+					if (targs != null && targs.length > 0) {
+						Type t = targs[0];
+						c = (Class<?>) t;
+					}
+				}
+
+				JSONArray ja = jo.optJSONArray(name);
+				if (!isNull(ja)) {
+					Object o = parseCollection(ja, clazz, c);
+					setFiedlValue(obj, fieldSetMethod, clazz.getSimpleName(), o);
+				}
+			} else if (isSingle(clazz)) { // ֵ����
+				Object o = jo.opt(name);
+				if (o != null) {
+					setFiedlValue(obj, fieldSetMethod, clazz.getSimpleName(), o);
+				}
+			} else if (isObject(clazz)) { // ����
+				JSONObject j = jo.optJSONObject(name);
+				if (!isNull(j)) {
+					Object o = parseObject(j, clazz);
+					setFiedlValue(obj, fieldSetMethod, clazz.getSimpleName(), o);
+				}
+			} else if (isList(clazz)) { // �б�
+			// JSONObject j = jo.optJSONObject(name);
+			// if (!isNull(j)) {
+			// Object o = parseObject(j, clazz);
+			// f.set(obj, o);
+			// }
+			} else {
+				throw new Exception("unknow type!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * �趨�ֶε�ֵ
+	 * 
+	 * @param obj
+	 * @param f
+	 * @param jo
+	 */
+	private  void setField(Object obj, Field f, JSONObject jo) {
+		String name = f.getName();
+		Class<?> clazz = f.getType();
+		try {
+			if (isArray(clazz)) { // ����
+				Class<?> c = clazz.getComponentType();
+				JSONArray ja = jo.optJSONArray(name);
+				if (!isNull(ja)) {
+					Object array = parseArray(ja, c);
+					f.set(obj, array);
+				}
+			} else if (isCollection(clazz)) { // ���ͼ���
+				// ��ȡ����ķ�������
+				Class<?> c = null;
+				Type gType = f.getGenericType();
+				if (gType instanceof ParameterizedType) {
+					ParameterizedType ptype = (ParameterizedType) gType;
+					Type[] targs = ptype.getActualTypeArguments();
+					if (targs != null && targs.length > 0) {
+						Type t = targs[0];
+						c = (Class<?>) t;
+					}
+				}
+
+				JSONArray ja = jo.optJSONArray(name);
+				if (!isNull(ja)) {
+					Object o = parseCollection(ja, clazz, c);
+					f.set(obj, o);
+				}
+			} else if (isSingle(clazz)) { // ֵ����
+				Object o = jo.opt(name);
+				if (o != null) {
+					f.set(obj, o);
+				}
+			} else if (isObject(clazz)) { // ����
+				JSONObject j = jo.optJSONObject(name);
+				if (!isNull(j)) {
+					Object o = parseObject(j, clazz);
+					f.set(obj, o);
+				}
+			} else if (isList(clazz)) { // �б�
+				JSONObject j = jo.optJSONObject(name);
+				if (!isNull(j)) {
+					Object o = parseObject(j, clazz);
+					f.set(obj, o);
+				}
+			} else {
+				throw new Exception("unknow type!");
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	/**
+	 * �ж϶����Ƿ�Ϊ��
+	 * 
+	 * @param obj
+	 * @return
+	 */
+	private  boolean isNull(Object obj) {
+		if (obj instanceof JSONObject) {
+			return JSONObject.NULL.equals(obj);
+		}
+		return obj == null;
+	}
+
+	/**
+	 * �ж��Ƿ���ֵ����
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	private  boolean isSingle(Class<?> clazz) {
+		return isBoolean(clazz) || isNumber(clazz) || isString(clazz);
+	}
+
+	/**
+	 * �Ƿ񲼶�ֵ
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public  boolean isBoolean(Class<?> clazz) {
+		return (clazz != null)
+				&& ((Boolean.TYPE.isAssignableFrom(clazz)) || (Boolean.class
+						.isAssignableFrom(clazz)));
+	}
+
+	/**
+	 * �Ƿ���ֵ
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public  boolean isNumber(Class<?> clazz) {
+		return (clazz != null)
+				&& ((Byte.TYPE.isAssignableFrom(clazz))
+						|| (Short.TYPE.isAssignableFrom(clazz))
+						|| (Integer.TYPE.isAssignableFrom(clazz))
+						|| (Long.TYPE.isAssignableFrom(clazz))
+						|| (Float.TYPE.isAssignableFrom(clazz))
+						|| (Double.TYPE.isAssignableFrom(clazz)) || (Number.class
+							.isAssignableFrom(clazz)));
+	}
+
+	/**
+	 * �ж��Ƿ����ַ�
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public  boolean isString(Class<?> clazz) {
+		return (clazz != null)
+				&& ((String.class.isAssignableFrom(clazz))
+						|| (Character.TYPE.isAssignableFrom(clazz)) || (Character.class
+							.isAssignableFrom(clazz)));
+	}
+
+	/**
+	 * �ж��Ƿ��Ƕ���
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	private  boolean isObject(Class<?> clazz) {
+		return clazz != null && !isSingle(clazz) && !isArray(clazz)
+				&& !isCollection(clazz);
+	}
+
+	/**
+	 * �ж��Ƿ�������
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public  boolean isArray(Class<?> clazz) {
+		return clazz != null && clazz.isArray();
+	}
+
+	/**
+	 * �ж��Ƿ��Ǽ���
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public  boolean isCollection(Class<?> clazz) {
+		return clazz != null && Collection.class.isAssignableFrom(clazz);
+	}
+
+	/**
+	 * �ж��Ƿ���Map
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public  boolean isMap(Class<?> clazz) {
+		return clazz != null && Map.class.isAssignableFrom(clazz);
+	}
+
+	
+	
+	
+	public String toJSONArray(List<?> list){
+		
+		 StringBuilder json = new StringBuilder();
+	        json.append("[");
+	        if (list != null && list.size() > 0) {
+	            for (Object obj : list) {
+	                json.append(toJSON(obj));
+	                json.append(",");
+	            }
+	            json.setCharAt(json.length() - 1, ']');
+	        } else {
+	            json.append("]");
+	        }
+	        return json.toString();
+		
+		  
+	}
+	
+	
+	/**
+	 * �ж��Ƿ����б�
+	 * 
+	 * @param clazz
+	 * @return
+	 */
+	public  boolean isList(Class<?> clazz) {
+		return clazz != null && List.class.isAssignableFrom(clazz);
+	}
+
+	public  String parseJson(String jsonData, String getstrin)
+			throws JSONException {
+		JSONObject dataJson = new JSONObject(jsonData);
+
+		return dataJson.getString(getstrin);
+	}
+
+	public  String getReturnString(String str) throws JSONException {
+		//{"result":{"errMessage":"email格式不正确","code":4105}}
+		String ruString = "";
+		// //ȥ��result
+		String sont = parseJson(str, "result");
+		// //ȥ�� rsObject
+		ruString = parseJson(sont, "rsObject");
+		// //����json
+		return ruString ;
+	}
+	public  String getReturncOOD(String str) throws JSONException {
+		//{"result":{"errMessage":"email格式不正确","code":4105}}
+		String ruString = "";
+		// //ȥ��result
+		String sont = parseJson(str, "result");
+		// //ȥ�� rsObject
+		ruString = parseJson(sont, "code");
+		// //����json
+		return ruString ;
+	}
+	public  String getReturnTrue(String str) throws JSONException {
+		//{"result":{"errMessage":"email格式不正确","code":4105}}
+		String ruString = "";
+		// //ȥ��result
+		String sont = parseJson(str, "result");
+		// //ȥ�� rsObject
+		ruString = parseJson(sont, "rsObject");
+		// //����json
+		return ruString ;
+	}
+	public  String getReturnString_replace(String str) throws JSONException {
+		String ruString = "";
+		// //ȥ��result
+		String sont = parseJson(str, "result");
+		 
+		// //����json
+		return sont;
+	}
+	public  String getReturnStringEdition(String str) throws JSONException {
+		String ruString = "";
+		// //ȥ��result
+		String sont = parseJson(str, "android");
+	 
+		// //����json
+		return sont;
+	}
+
+	public  String getReturnCount(String str) throws JSONException {
+		//{"result":{"errMessage":"email鏍煎紡涓嶆纭?,"code":4105}}
+		String ruString = "";
+		// //去锟斤拷result
+		String sont = parseJson(str, "result");
+		// //去锟斤拷 rsObject
+		ruString = parseJson(sont, "count");
+		// //锟斤拷锟斤拷json
+		return ruString ;
+	}
+
+	public  String getReturnCode(String str) throws JSONException {
+		//{"result":{"errMessage":"email鏍煎紡涓嶆纭?,"code":4105}}
+		String ruString = "";
+		// //去锟斤拷result
+		String sont = parseJson(str, "result");
+		// //去锟斤拷 rsObject
+		ruString = parseJson(sont, "code");
+		// //锟斤拷锟斤拷json
+		return ruString ;
+	}
+
+	public String getFlooReturnString(String rerun) {
+		if(rerun==null){
+			return null;
+		}else{
+			JSONObject rujog;
+			try {
+				rujog=new JSONObject(rerun);
+			String rsObject=rujog.getString("result");
+				JSONObject rejog = new JSONObject(rsObject);
+				String rObject=rejog.getString("rsObject");
+				JSONObject rsjob=new JSONObject(rObject);
+				terminals=rsjob.getString("terminals");
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		return terminals;
+	}
+
+ 
+}

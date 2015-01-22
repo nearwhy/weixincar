@@ -1,0 +1,53 @@
+package com.aero.o2o.util.exception;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.log4j.Logger;
+import org.springframework.web.servlet.HandlerExceptionResolver;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.aero.o2o.AirportConstant;
+import com.aero.o2o.model.O2OResult;
+import com.aero.o2o.util.AirportResult;
+import com.aero.o2o.util.O2OConstant;
+
+/**
+ * 
+ * 截获异常处理模块
+ * 
+ * @author zhangtong
+ * 
+ */
+public class AirportExceptionResolver implements HandlerExceptionResolver {
+	private static Logger logger = Logger
+			.getLogger(AirportExceptionResolver.class);
+
+	@Override
+	public ModelAndView resolveException(HttpServletRequest request,
+			HttpServletResponse response, Object handler, Exception ex) {
+		// logger.error("Catch Exception: ",ex);//把漏网的异常信息记入日志
+		// Map<String,Object> map = new HashMap<String,Object>();
+		// if(ex instanceof AirportRuntimeException){
+		// AirportRuntimeException e = (AirportRuntimeException) ex;
+		// request.setAttribute("err", e.getMessage());
+		// request.setAttribute("errCode", e.getCode());
+		//
+		// }
+		//
+		O2OResult result = new O2OResult();
+		if (ex instanceof AirportRuntimeException) {
+			AirportRuntimeException e = (AirportRuntimeException) ex;
+			result.setCode(-1);
+			result.setMsg(e.getMessage());
+			// request.setAttribute("err", e.getMessage());
+			// request.setAttribute("errCode", e.getCode());
+			logger.error(e.getMessage());
+		} else {
+			result.setCode(-1);
+			result.setMsg("系统错误,请稍后重试！");
+			logger.error(ex.getMessage());
+		}
+		return new ModelAndView("", O2OConstant.JSON, result);
+	}
+}

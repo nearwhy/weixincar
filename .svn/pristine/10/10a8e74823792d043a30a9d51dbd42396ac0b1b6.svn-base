@@ -1,0 +1,155 @@
+package com.aero.o2o.service.impl;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import com.aero.o2o.dao.ProductDao;
+import com.aero.o2o.dao.ShopDao;
+import com.aero.o2o.model.Content;
+import com.aero.o2o.model.Product;
+import com.aero.o2o.model.QueryParam;
+import com.aero.o2o.redis.RedisUtilEx;
+import com.aero.o2o.service.ProductService;
+
+@Service("ProductServiceImpl")
+public class ProductServiceImpl extends BaseServiceImpl implements ProductService {
+
+	@Autowired
+	protected RedisUtilEx redisUtilEx;
+	
+	@Autowired
+	private ProductDao productDao;
+	
+	@Autowired
+	private ShopDao shopDao;
+	
+
+	@Override
+	public Product queryDetail(Integer productId) {
+		Product product = new Product();
+		product.setId(productId);
+		product = (Product)productDao.queryDetail(product);
+		product.shop2Product();
+		List<String> pics = productDao.queryPics(productId);
+		product.setPics(pics);
+		/**
+		 * 
+		if(redisUtilEx.isExists(RedisKeys.PRODUCT_KEY+productId)){
+			product.getFromRedis(redisUtilEx);
+		}else{
+			product = (Product)productDao.queryDetail(redisUtilEx, product);
+		}
+		Shop shop = new Shop();
+		shop.setId(product.getShopId());
+		if(redisUtilEx.isExists(RedisKeys.SHOP_KEY+product.getShopId())){
+			shop.getFromRedis(redisUtilEx);
+		}else{
+			shop = (Shop)shopDao.queryDetail(redisUtilEx,shop);
+		}
+		shop.shop2Product(product);
+		if(!redisUtilEx.isExists(RedisKeys.PRODUCT_PIC+productId)){
+			List<String> pics = productDao.queryPics(productId);
+			product.setPics(pics);
+			redisUtilEx.delKey(RedisKeys.PRODUCT_PIC+productId);
+			for(String pic:pics){
+				redisUtilEx.rpushList(RedisKeys.PRODUCT_PIC+productId, pic);
+			}
+		}else{
+			product.setPics(redisUtilEx.lrangeList(RedisKeys.PRODUCT_PIC+productId, 0,-1));
+		}
+		 */
+		return product;
+	}
+
+
+	@Override
+	public List<Content> queryAllContent(QueryParam qp) {
+		List<Content> result = new ArrayList<Content>();
+		/**
+		//以查询条件为key
+		String key = RedisKeys.CONTENT_KEY+qp.get("airportId")+"_"+qp.get("airterminalId")+"_"+qp.get("pageIndex")+"_"+qp.get("pageSize");
+		if(redisUtilEx.isExists(key)){
+			List<String> ids = redisUtilEx.lrangeList(key, 0,-1);
+			for(String value:ids){
+				if("0".equals(value.split(",")[1])){
+					String pKey = RedisKeys.PRODUCT_KEY+value.split(",")[0];
+					Product product = new Product();
+					product.setId(Integer.valueOf(value.split(",")[0]));
+					if(redisUtilEx.isExists(pKey)){
+						product.getFromRedis(redisUtilEx);
+					}else{
+						product = (Product)productDao.queryDetail(redisUtilEx, product);
+					}
+					Shop shop = new Shop();
+					shop.setId(product.getShopId());
+					if(redisUtilEx.isExists(RedisKeys.SHOP_KEY+product.getShopId())){
+						product.setAddress(redisUtilEx.hgetHash(RedisKeys.SHOP_KEY+product.getShopId(), "address"));
+					}else{
+						shop = (Shop)shopDao.queryDetail(redisUtilEx,shop);
+						product.setAddress(shop.getAddress());
+					}
+					result.add(Content.product2Content(product));
+				}else{
+					String aKey = RedisKeys.ACTIVITY_KEY+value.split(",")[0];
+
+					Activity activity = new Activity();
+					activity.setId(Integer.valueOf(value.split(",")[0]));
+					if(redisUtilEx.isExists(aKey)){
+						activity.setName(redisUtilEx);
+						activity.setDescription(redisUtilEx);
+						activity.setDiscount(redisUtilEx);
+						activity.setIcon(redisUtilEx);
+						activity.setAddress(redisUtilEx);
+						result.add(Content.activity2Content(activity));
+					}else{
+						result.add(Content.activity2Content((Activity)activityDao.queryDetail(redisUtilEx,activity)));
+					}
+				}
+			}
+		}else{
+			result = productDao.queryAllContent(qp);
+			redisUtilEx.delKey(key);
+			for(Content content:result){
+				redisUtilEx.rpushList(key, content.getContentId()+","+content.getType());
+			}
+		}
+		 * 
+		 */
+		result = productDao.queryAllContent(qp);
+		return result;
+	}
+
+
+	@Override
+	public int queryContentCount(QueryParam qp) {
+		return productDao.queryListCount("Product.queryContentCount", qp);
+	}
+
+
+	@Override
+	public List<Product> queryCollection(QueryParam qp) {
+		return productDao.queryCollection(qp);
+	}
+
+
+	@Override
+	public List<Product> queryProductByShop(QueryParam qp) {
+		return productDao.queryProductByShop(qp);
+	}
+
+
+	@Override
+	public List<Product> queryProductsByQrcode(QueryParam qp) {
+		return productDao.queryProductsByQrcode(qp);
+	}
+
+
+	@Override
+	public int queryCount(QueryParam qp) {
+		return productDao.queryListCount("Product.queryProductByShopCount", qp);
+	}
+
+}

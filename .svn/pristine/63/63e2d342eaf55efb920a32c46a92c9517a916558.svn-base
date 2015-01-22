@@ -1,0 +1,6 @@
+package com.aero.o2o.pay.tenpay;
+
+public class TenpayConfig {
+
+	
+}

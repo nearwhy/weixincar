@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="TerminalMaps" >
+
+  <resultMap id="TerminalmapsResult" class="com.palm360.airport.model.Terminalmaps" >
+    <result column="TerminalMapsID" property="terminalmapsid" jdbcType="INTEGER" />
+    <result column="AirTerminalID" property="airterminalid" jdbcType="INTEGER" />
+    <result column="Floor" property="floor" jdbcType="INTEGER" />
+    <result column="Map" property="map" jdbcType="VARCHAR" />
+    <result column="x" property="x" jdbcType="REAL" />
+    <result column="y" property="y" jdbcType="REAL" />
+    <result column="width" property="width" jdbcType="REAL" />
+    <result column="height" property="height" jdbcType="REAL" />
+  </resultMap>
+  
+  <select id="queryAllCount" resultClass="Integer" >
+      select count(*) from TerminalMaps
+  </select>
+  
+  <select id="queryAll" resultMap="TerminalmapsResult" parameterClass="com.palm360.airport.util.AirportQueryP">
+      select * from TerminalMaps limit #start#,#size#
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="TerminalmapsResult" parameterClass="com.palm360.airport.model.Terminalmaps" >
+    select TerminalMapsID, AirTerminalID, Floor, Map, x, y, width, height
+    from TerminalMaps
+    where TerminalMapsID = #terminalmapsid:INTEGER#
+  </select>
+ 
+  <delete id="deleteByPrimaryKey" parameterClass="com.palm360.airport.model.Terminalmaps" >
+    delete from TerminalMaps
+    where TerminalMapsID = #terminalmapsid:INTEGER#
+  </delete>
+  
+  <insert id="insert" parameterClass="com.palm360.airport.model.Terminalmaps" >
+    insert into TerminalMaps (TerminalMapsID, AirTerminalID, Floor, Map, x, y, width, height)
+    values (#terminalmapsid:INTEGER#, #airterminalid:INTEGER#, #floor:INTEGER#, #map:VARCHAR#,
+      #x:REAL#, #y:REAL#, #width:REAL#, #height:REAL#)
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterClass="com.palm360.airport.model.Terminalmaps" >
+    update TerminalMaps
+    set AirTerminalID = #airterminalid:INTEGER#,
+      Floor = #floor:INTEGER#,
+      Map = #map:VARCHAR#,
+      x = #x:REAL#,
+      y = #y:REAL#,
+      width = #width:REAL#,
+      height = #height:REAL#
+    where TerminalMapsID = #terminalmapsid:INTEGER#
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterClass="com.palm360.airport.model.Terminalmaps" >
+    update TerminalMaps
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="airterminalid" >
+        AirTerminalID = #airterminalid:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="floor" >
+        Floor = #floor:INTEGER#
+      </isNotNull>
+      <isNotNull prepend="," property="map" >
+        Map = #map:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="x" >
+        x = #x:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="y" >
+        y = #y:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="width" >
+        width = #width:REAL#
+      </isNotNull>
+      <isNotNull prepend="," property="height" >
+        height = #height:REAL#
+      </isNotNull>
+    </dynamic>
+    where TerminalMapsID = #terminalmapsid:INTEGER#
+  </update>
+  
+</sqlMap>

@@ -1,0 +1,777 @@
+package com.aero.o2o.redis;
+
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import redis.clients.jedis.Jedis;
+import redis.clients.jedis.Pipeline;
+import redis.clients.jedis.Response;
+
+import com.aero.o2o.util.AirPortUtil;
+
+/**
+ * note:
+ * 	1.这个类对jedis驱动方法做了基础封装，包含了reids操作的常规方法
+ * 	2.删除了依赖注解的方法，检查了连接释放问题
+ * 	3.工具类在获取连接后请记得关闭
+ * @since 2013-06-15
+ * modified by tanzhou
+ */
+@Service("redisEx")
+public class RedisUtilEx {
+	Logger log = Logger.getLogger(getClass());
+	public static final String split = "_";
+	@Autowired
+	@Qualifier("redis")
+	private RedisUtil edis;
+
+	protected long getKeyLength(String key) {
+		long lengthb = 0;
+		Jedis redis = null;
+		try {
+			redis = edis.getConnection();
+			lengthb = redis.llen(key);
+			edis.returnResource(redis);
+		} catch (Exception e) {
+			log.error(e);
+			e.printStackTrace();
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+		return lengthb;
+	}
+
+	public void setSortSet(String key, double score, String mem) {
+		Jedis redis = null;
+		try {
+			redis = edis.getConnection();
+			redis.zadd(key, score, mem);
+			edis.returnResource(redis);
+		} catch (Exception e) {
+			log.error(e);
+			e.printStackTrace();
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+	}
+
+	/**
+	 * 得到某一个sort set通过其中的值
+	 * 
+	 * @param key
+	 * @param score
+	 * @return
+	 */
+	public List<String> getSortSet(String key, double score) {
+		List<String> list = null;
+		Jedis redis = null;
+		try {
+			redis = edis.getConnection();
+			Set<String> set = redis.zrangeByScore(key, score + "", score + "");
+			edis.returnResource(redis);
+			list = new ArrayList<String>();
+			list.addAll(set);
+		} catch (Exception e) {
+			log.error(e);
+			e.printStackTrace();
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return list;
+	}
+
+	/**
+	 * 判断当前key是否存在
+	 * 
+	 * @param key
+	 * @return
+	 */
+	public boolean isExists(String key) {
+		Jedis redis = null;
+		boolean ret = false;
+		try {
+			redis = edis.getConnection();
+			ret = redis.exists(key);
+			edis.returnResource(redis);
+		} catch (Exception e) {
+			log.error(e);
+			e.printStackTrace();
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+		return ret;
+	}
+
+	/**
+	 * 根据key和member添加有序集<br>
+	 * 如果没有就自动创建<br>
+	 * 譬如：ZINCRBY merchant_clickCount 1 id_1
+	 * 
+	 * @param key
+	 *            要存储的key名称，例如：merchant_clickCount
+	 * @param member
+	 *            要存储的一项内容，例如：id_1
+	 */
+	public void addScoreByKeyAndMember(String key, String member) {
+		Jedis redis = null;
+		try {
+			redis = edis.getConnection();
+			if (null == key || null == member) {
+				return;
+			}
+			redis.zincrby(key, 1, member);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+	}
+
+	/**
+	 * 根据范围获取score中最多的N项<br>
+	 * 譬如:ZREVRANGE merchant_clickCount start end
+	 * 
+	 * @param key
+	 *            要存储的key名称，例如：merchant_clickCount
+	 * @param start
+	 *            起始的位置
+	 * @param end
+	 *            结束的位置（包含）
+	 */
+	public Set<String> getScoreListByRange(String key, long start, long end) {
+		Jedis redis = null;
+		Set<String> sets = null;
+		try {
+			redis = edis.getConnection();
+			sets = redis.zrevrange(key, start, end);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return sets;
+	}
+
+	/**
+	 * 根据key和member进行增加或者减少的操作
+	 * 
+	 * @param key
+	 *            存储的key值
+	 * @param member
+	 *            存储的member值
+	 * @param offset
+	 *            偏移量，可以为正或者负值
+	 * @return
+	 */
+	public Long reduceScoreByKeyAndMember(String key, String member,
+			Double offset) {
+		Jedis redis = null;
+		Long num = null;
+		try {
+			redis = edis.getConnection();
+			Double d = getScoreByMember(key, member);
+			if (null == d || d <= 0.0) {
+				return 0L;
+			}
+			Double z = d + offset;
+			if (null == z || z < 0.0) {
+				z = 0.0;
+			}
+			num = redis.zadd(key, z, member);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return num;
+	}
+
+	/**
+	 * 根据key和member获取score
+	 * 
+	 * @param key
+	 *            存储的key值
+	 * @param member
+	 *            存储的member值
+	 * @return Double score值
+	 */
+	public Double getScoreByMember(String key, String member) {
+		Jedis redis = null;
+		Double d = null;
+		try {
+			redis = edis.getConnection();
+			d = redis.zscore(key, member);
+			return d;
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return d;
+	}
+
+	/**
+	 * 通过保存的临时数据进行交集运算（sorted set）
+	 * 
+	 * @param keys
+	 * @return
+	 * @see saveSortedSetForGis
+	 */
+	public Set interStoreForGis(String... keys) {
+		Jedis redis = null;
+		Response<Set<String>> set = null;
+		try {
+			redis = edis.getConnection();
+			Pipeline pe = redis.pipelined();
+			String tempkey = AirPortUtil.randomString(32);
+			pe.zinterstore(tempkey, keys);
+			pe.expire(tempkey, 60 * 1);
+			set = pe.zrange(tempkey, 0, -1);
+			pe.sync();
+		} catch (Exception e) {
+			log.error(e);
+			e.printStackTrace();
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return set != null ? set.get() : null;
+	}
+
+	
+	/**
+	 * 
+	 * @param key
+	 * @param fieldName
+	 * @param min
+	 * @param max
+	 * @return
+	 * @since 1.3.4
+	 * @see saveSortedSetForGis
+	 */
+	public String saveSortedSetForGis(String key, String fieldName, double min,
+			double max) {
+		return this.saveSortedSetForGis(key, fieldName, min + "", max + "");
+	}
+
+	/**
+	 * 获得gis中的 最大最小的区间并保存成临时数据 临时数据 过期时间为1分钟
+	 * 
+	 * @param key
+	 * @param fieldName
+	 * @param min
+	 * @param max
+	 */
+	public String saveSortedSetForGis(String key, String fieldName, String min,
+			String max) {
+		Jedis redis = null;
+		String temp = null;
+		try {
+			redis = edis.getConnection();
+			Set<String> set = redis.zrangeByScore(key + split + fieldName, min,
+					max);
+			Iterator<String> it = set.iterator();
+			Pipeline pi = redis.pipelined();
+			temp = AirPortUtil.randomString(16);
+			while (it.hasNext()) {
+				pi.zadd(key + split + fieldName + temp, 0, it.next());
+			}
+			pi.expire(key + split + fieldName + temp, 60 * 1);
+			pi.sync();
+		} catch (Exception e) {
+			log.error(e);
+			e.printStackTrace();
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+		return key + split + fieldName + temp;
+	}
+
+	/**
+	 * 保存数据库 bgsave
+	 */
+	public void saveDB() {
+		Jedis redis = null;
+		try {
+			redis = edis.getConnection();
+			redis.bgsave();
+			edis.returnResource(redis);
+		} catch (Exception e) {
+			log.error(e);
+			e.printStackTrace();
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+	}
+
+	/**
+	 * 选择当前是哪个数据库 ，默认数据库有0~16
+	 * 
+	 * @param dbIndex
+	 */
+	public void selectDB(int dbIndex) {
+		Jedis redis = null;
+		try {
+			redis = edis.getConnection();
+			redis.select(dbIndex);
+			edis.returnResource(redis);
+		} catch (Exception e) {
+			log.error(e);
+			e.printStackTrace();
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+	}
+
+	/**
+	 * 清空当前DB
+	 */
+	public void flushDB() {
+		Jedis redis = null;
+		try {
+			redis = edis.getConnection();
+			redis.flushDB();
+		} catch (Exception e) {
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+	}
+
+	/**
+	 * 删除count个key的list中值为value的元素
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	public void delFromList(String key, String value) {
+		Jedis redis = null;
+		try {
+			redis = edis.getConnection();
+			redis.lrem(key, -1, value);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+	}
+
+	/**
+	 * 删除名称为key的hash中键为field的域
+	 * 
+	 * @param key
+	 * @param field
+	 */
+	public void delFromHash(String key, String field) {
+		Jedis redis = null;
+		try {
+			if (field != null) {
+				redis = edis.getConnection();
+				redis.hdel(key, field);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			edis.returnResource(redis);
+		}
+	}
+
+	/**
+	 * 删除一个key
+	 * 
+	 * @param key
+	 */
+	public void delKey(String key) {
+		Jedis redis = null;
+		try {
+			redis = edis.getConnection();
+			redis.exists(key);
+			if (redis.exists(key)) {
+				redis.del(key);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			edis.returnResource(redis);
+		}
+	}
+
+	/**
+	 * 获取list LRANGE key start stop
+	 * 
+	 * @param key
+	 *            key值
+	 * @param start
+	 *            开始位置（从0开始）
+	 * @param end
+	 *            结束位置（-1代表倒数第一个，-2代表倒数第二个）
+	 * @return 返回列表
+	 */
+	public List<String> lrangeList(String key, long start, long end) {
+		Jedis redis = null;
+		List<String> list = null;
+		if (null == key || "".equals(key)) {
+			return null;
+		}
+		try {
+			redis = edis.getConnection();
+			list = redis.lrange(key, start, end);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return list;
+	}
+
+	/**
+	 * 添加一个K,V到list末尾 RPUSH key value [value ...]
+	 * 
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public Long rpushList(String key, String... values) {
+		Jedis redis = null;
+		Long num = null;
+		if (null == key) {
+			return null;
+		}
+		try {
+			redis = edis.getConnection();
+			num = redis.rpush(key, values);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return num;
+	}
+
+	/**
+	 * 删除key
+	 * 
+	 * @param keys
+	 *            一个或者多个key值
+	 * @return 被删除 key 的数量
+	 */
+	public Long delKey(String... keys) {
+		Jedis redis = null;
+		Long num = null;
+		try {
+			redis = edis.getConnection();
+			redis.del(keys);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+		return num;
+	}
+
+	/**
+	 * 同时将多个 field-value (域-值)对设置到哈希表 key 中。 HMSET key field value [field value
+	 * ...]
+	 * 
+	 * @param key
+	 *            key值
+	 * @param hash
+	 *            Map<field, value>值
+	 */
+	public String hmsetHash(String key, Map<String, String> hash) {
+		Jedis redis = null;
+		String value = null;
+		try {
+			redis = edis.getConnection();
+			value = redis.hmset(key, hash);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return value;
+	}
+	
+	/**
+	 * 向reids中保存序列化对象到map
+	 * @param key
+	 * @param filed
+	 * @param values
+	 * @return
+	 */
+	public Long saveObjectToHash(String key ,String field, Object obj){
+		Jedis redis = null;
+		Long result = null;
+		try {
+			redis = edis.getConnection();
+			result = redis.hset(key.getBytes(), field.getBytes(), RedisUtil.serialize(obj));
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return result;
+	}
+	
+	/**
+	 * 从map中获得序列化对象
+	 * @param key
+	 * @param filed
+	 * @return
+	 */
+	public  Object getObjectFromHash(String key, String field){
+		Jedis redis = null;
+		Object result = null;
+		try {
+			redis = edis.getConnection();
+			byte[] obj = redis.hget(key.getBytes(), field.getBytes());
+			result = RedisUtil.unserialize(obj);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return result;
+	}
+
+	/**
+	 * 向reids中保存序列化对象
+	 * @param key
+	 * @param filed
+	 * @param values
+	 * @return
+	 */
+	public String setValue(String key ,String value){
+		Jedis redis = null;
+		String result = null;
+		try {
+			redis = edis.getConnection();
+			result = redis.set(key, value);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return result;
+	}
+	
+	/**
+	 * 向reids中保存序列化对象
+	 * @param key
+	 * @param filed
+	 * @param values
+	 * @return
+	 */
+	public String setObject(String key ,Object obj){
+		Jedis redis = null;
+		String result = null;
+		try {
+			redis = edis.getConnection();
+			result = redis.set(key.getBytes(), RedisUtil.serialize(obj));
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return result;
+	}
+	
+	/**
+	 * 从map中获得序列化对象
+	 * @param key
+	 * @param filed
+	 * @return
+	 */
+	public  Object getObject(String key){
+		Jedis redis = null;
+		Object result = null;
+		try {
+			redis = edis.getConnection();
+			byte[] obj = redis.get(key.getBytes());
+			result = obj == null ? null : RedisUtil.unserialize(obj);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return result;
+	}
+	/**
+	 * 从map中获得序列化对象
+	 * @param key
+	 * @param filed
+	 * @return
+	 */
+	public  String getValue(String key){
+		Jedis redis = null;
+		String result = null;
+		try {
+			redis = edis.getConnection();
+			result = redis.get(key);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+
+		return result;
+	}
+	
+	/**
+	 * 返回哈希表 key 中，一个或多个给定域的值。 HMGET key field [field ...]
+	 * 
+	 * @param key
+	 *            key值
+	 * @param fields
+	 *            field值
+	 * @return
+	 */
+	public List<String> hmgetHash(String key, String... fields) {
+		Jedis redis = null;
+		List<String> list = null;
+		try {
+			redis = edis.getConnection();
+			list = redis.hmget(key, fields);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+		return list;
+	}
+
+	
+	/**
+	 * 保存值到redis hash
+	 */
+	public Long hsetHash(String key, String field, String value) {
+		Jedis redis = null;
+		Long result = null;
+		try {
+			redis = edis.getConnection();
+			result = redis.hset(key, field, value);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+		return result;
+	}
+	
+	
+	/**
+	 * 从redis hash获取值
+	 */
+	public String hgetHash(String key, String field) {
+		Jedis redis = null;
+		String result = null;
+		try {
+			redis = edis.getConnection();
+			result = redis.hget(key, field);
+		} catch (Exception e) {
+			e.printStackTrace();
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+		return result;
+	}
+	
+	/**
+	 * 
+	 * @param key
+	 *            key值
+	 * @param seconds
+	 *            多少秒后过期
+	 */
+	public void expire(String key, int seconds) {
+		Jedis redis = null;
+		try {
+			redis = edis.getConnection();
+			redis.expire(key, seconds);
+		} catch (Exception e) {
+			log.error(e);
+		} finally {
+			if (redis != null)
+				edis.returnResource(redis);
+		}
+	}
+
+	// getters and setters=================================
+	public void setEdis(RedisUtil edis) {
+		this.edis = edis;
+	}
+
+	public RedisUtil getEdis() {
+		return edis;
+	}
+	
+}

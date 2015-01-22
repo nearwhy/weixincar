@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE sqlMapConfig      
+    PUBLIC "-//ibatis.apache.org//DTD SQL Map Config 2.0//EN"      
+    "http://ibatis.apache.org/dtd/sql-map-config-2.dtd">
+
+<sqlMapConfig>
+	<settings cacheModelsEnabled="false" enhancementEnabled="false" 
+		lazyLoadingEnabled="false" maxRequests="3000" maxSessions="3000" 
+			maxTransactions="3000" useStatementNamespaces="true"
+			errorTracingEnabled="true" 
+			/> 
+	
+		<sqlMap resource="com/aero/o2o/dbconfig/Product_SqlMap.xml"/>
+<!-- 	<sqlMap resource="com/aero/o2o/dbconfig/Content_SqlMap.xml"/> -->
+<!-- 	<sqlMap resource="com/aero/o2o/dbconfig/Waiter_SqlMap.xml"/> -->
+<!-- 	<sqlMap resource="com/aero/o2o/dbconfig/User_SqlMap.xml"/> -->
+<!-- 	<sqlMap resource="com/aero/o2o/dbconfig/Shop_SqlMap.xml"/> -->
+<!-- 	<sqlMap resource="com/aero/o2o/dbconfig/ShopOrder_SqlMap.xml"/> -->
+</sqlMapConfig>

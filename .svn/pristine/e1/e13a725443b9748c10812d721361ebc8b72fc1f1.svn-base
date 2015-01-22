@@ -1,0 +1,73 @@
+package com.aero.o2o.model;
+
+import java.io.Serializable;
+
+public class Airterminal extends BasePojo implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1197579180629481248L;
+	
+	private Integer id;
+	
+	private String airterminal;
+	
+    private Double llongitude;
+
+    private Double llatitude;
+
+    private Double rlongitude;
+
+    private Double rlatitude;
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getAirterminal() {
+		return airterminal;
+	}
+
+	public void setAirterminal(String airterminal) {
+		this.airterminal = airterminal;
+	}
+
+	public Double getLlongitude() {
+		return llongitude;
+	}
+
+	public void setLlongitude(Double llongitude) {
+		this.llongitude = llongitude;
+	}
+
+	public Double getLlatitude() {
+		return llatitude;
+	}
+
+	public void setLlatitude(Double llatitude) {
+		this.llatitude = llatitude;
+	}
+
+	public Double getRlongitude() {
+		return rlongitude;
+	}
+
+	public void setRlongitude(Double rlongitude) {
+		this.rlongitude = rlongitude;
+	}
+
+	public Double getRlatitude() {
+		return rlatitude;
+	}
+
+	public void setRlatitude(Double rlatitude) {
+		this.rlatitude = rlatitude;
+	}
+
+	
+}

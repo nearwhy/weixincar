@@ -1,0 +1,5 @@
+package com.aero.o2o.util.stereotype;
+
+public interface Create {
+
+}

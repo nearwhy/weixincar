@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="CommodityType" >
+
+  <resultMap id="CommodityTypeResult" class="com.palm360.airport.model.CommodityType" >
+    <result column="ctID" property="ctid" jdbcType="INTEGER" />
+    <result column="TypeName" property="typeName" jdbcType="VARCHAR" />
+    <result column="ctParentID" property="ctParentId" jdbcType="INTEGER" />
+  </resultMap>
+  
+  <select id="queryAllCount" resultClass="Integer" >
+      select count(*) from CommodityType
+  </select>
+  
+  <select id="queryAll" resultMap="CommodityTypeResult" parameterClass="com.palm360.airport.util.AirportQueryP">
+      select * from CommodityType limit #start#,#size#
+  </select>
+  
+  <select id="selectByPrimaryKey" resultMap="CommodityTypeResult" parameterClass="com.palm360.airport.model.CommodityType" >
+    select ctID, TypeName, ctParentID
+    from CommodityType
+    where ctID = #ctid:INTEGER#
+  </select>
+
+  <delete id="deleteByPrimaryKey" parameterClass="com.palm360.airport.model.CommodityType" >
+    delete from CommodityType
+    where ctID = #ctid:INTEGER#
+  </delete>
+ 
+  <insert id="insert" parameterClass="com.palm360.airport.model.CommodityType" >
+    insert into CommodityType (ctID, TypeName, ctParentID)
+    values (#ctid:INTEGER#, #typeName:VARCHAR#, #ctParentId:INTEGER#)
+  </insert>
+  
+  <update id="updateByPrimaryKey" parameterClass="com.palm360.airport.model.CommodityType" >
+    update CommodityType
+    set TypeName = #typeName:VARCHAR#,
+    ctParentID = #ctParentId:INTEGER#
+    where ctID = #ctid:INTEGER#
+  </update>
+  
+  <update id="updateByPrimaryKeySelective" parameterClass="com.palm360.airport.model.CommodityType" >
+    update CommodityType
+    <dynamic prepend="set" >
+      <isNotNull prepend="," property="typeName" >
+        TypeName = #typeName:VARCHAR#
+      </isNotNull>
+      <isNotNull prepend="," property="ctParentID" >
+        ctParentID = #ctParentId:VARCHAR#
+      </isNotNull>
+    </dynamic>
+    where mtID = #ctid:INTEGER#
+  </update>
+  
+</sqlMap>

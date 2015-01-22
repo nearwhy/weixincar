@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/resources"/>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="con" path="org.eclipse.jst.j2ee.internal.web.container"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.6">
+		<attributes>
+			<attribute name="owner.project.facets" value="java"/>
+		</attributes>
+	</classpathentry>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/antlr-2.7.6.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/aopalliance-1.0.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/aspectjrt.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/aspectjweaver.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/cglib-2.2.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/commons-collections-3.1.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/commons-fileupload-1.0.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/commons-io.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/commons-logging-1.1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/dom4j-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/ejb3-persistence.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/hibernate-jpa-2.0-api-1.0.1.Final.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/hibernate3.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/javassist-3.12.0.GA.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/jstl-1.1.2.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/jta-1.1.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/mysql-connector-java-5.1.8-bin.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.aop-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.asm-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.aspects-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.beans-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.context-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.context.support-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.core-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.expression-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.jdbc-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.jms-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.orm-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.oxm-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.transaction-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.web-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/org.springframework.web.servlet-3.1.1.RELEASE.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/slf4j-api-1.6.1.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/slf4j-api-1.7.3.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/slf4j-log4j12-1.7.3.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/apache-tomcat-6.0.43/lib/servlet-api.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/ibatis-2.3.0.677.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/json-lib-2.4-jdk15.jar"/>
+	<classpathentry kind="lib" path="/Users/caidi/Documents/work/SpringMVC需要的jar包/jdom.jar"/>
+	<classpathentry kind="output" path="build/classes"/>
+</classpath>

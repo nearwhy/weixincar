@@ -1,0 +1,85 @@
+package com.aero.o2o.model;
+
+import java.io.Serializable;
+import java.util.List;
+
+public class Airport extends BasePojo implements Serializable{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -4653500991170289535L;
+
+	private Integer id;
+	
+	private String airport;
+		
+	private String city;
+	
+	private List<Airterminal> airterminals;
+	
+	private Integer isHot;
+	
+	private String threeCode;
+	
+	private String englishName;
+	
+
+	public Integer getId() {
+		return id;
+	}
+
+	public void setId(Integer id) {
+		this.id = id;
+	}
+
+	public String getAirport() {
+		return airport;
+	}
+
+	public void setAirport(String airport) {
+		this.airport = airport;
+	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public List<Airterminal> getAirterminals() {
+		return airterminals;
+	}
+
+	public void setAirterminals(List<Airterminal> airterminals) {
+		this.airterminals = airterminals;
+	}
+
+	public Integer getIsHot() {
+		return isHot;
+	}
+
+	public void setIsHot(Integer isHot) {
+		this.isHot = isHot;
+	}
+
+	public String getThreeCode() {
+		return threeCode;
+	}
+
+	public void setThreeCode(String threeCode) {
+		this.threeCode = threeCode;
+	}
+
+	public String getEnglishName() {
+		return englishName;
+	}
+
+	public void setEnglishName(String englishName) {
+		this.englishName = englishName;
+	}
+	
+	
+}

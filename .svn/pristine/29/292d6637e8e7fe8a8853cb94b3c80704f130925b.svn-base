@@ -1,0 +1,36 @@
+package com.aero.o2o.dao.impl;
+
+import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import com.aero.o2o.dao.UserDao;
+import com.aero.o2o.model.Airport;
+import com.aero.o2o.model.QueryParam;
+import com.aero.o2o.model.User;
+
+@Repository("UserDaoImpl")
+public class UserDaoImpl extends BaseDaoImpl implements UserDao{
+
+	@Override
+	public List<Airport> queryAllAirport(QueryParam qp) {
+		return this.getSqlMapClientTemplate().queryForList("User.queryAllAirport", qp);
+	}
+
+	@Override
+	public User userLogin(User user) {
+		return (User)this.getSqlMapClientTemplate().queryForObject("User.userLogin", user);
+	}
+
+	@Override
+	public User thirdUserLogin(User user) {
+		
+		return (User)this.getSqlMapClientTemplate().queryForObject("User.thirdUserLogin", user);
+	}
+
+	@Override
+	public void insertThird(User user) {
+		this.getSqlMapClientTemplate().insert("User.insertThird", user);
+	}
+
+}

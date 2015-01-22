@@ -1,0 +1,58 @@
+package com.aero.o2o.util.stereotype;
+
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
+
+
+/**
+ * 主要用于生成redis 外键对应的类
+ * 可以描述多个field
+ * @author zhangtong
+ * @since 1.1 追加关于当天航班的一个属性，标记以后取得当前日期 yyyyMMdd
+ *
+ */
+@Target({ElementType.FIELD, ElementType.ANNOTATION_TYPE})
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+public @interface ForeignKeyList {
+	/**
+	 * key的名字
+	 * @return
+	 */
+	String keyName() default "";
+	/**
+	 * 类型
+	 * @return
+	 */
+	Class fkClass();
+	/**
+	 * 外键名
+	 * @return
+	 */
+	String fkField();
+	/**
+	 * 对应的外键的内容
+	 * @return
+	 */
+	String fkValue();
+	/**
+	 * key+部分 如飞机部分，需要标志为当天的航班
+	 * @return
+	 */
+	String keyplusdate() default "";
+	
+	/**
+	 * 指定要哪个属性
+	 * @return
+	 */
+	String specificField() default "";
+	
+	/**
+	 * 指定要哪个属性的什么值
+	 * @return
+	 */
+	String specificValue() default "";
+}

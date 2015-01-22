@@ -1,0 +1,608 @@
+
+package com.aero.o2o.web.controller;
+
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+
+import com.aero.o2o.model.Airport;
+import com.aero.o2o.model.Airterminal;
+import com.aero.o2o.model.BasePojo;
+import com.aero.o2o.model.JSONPojo;
+import com.aero.o2o.model.O2OResult;
+import com.aero.o2o.model.QueryParam;
+import com.aero.o2o.model.Shop;
+import com.aero.o2o.model.ShopOrder;
+import com.aero.o2o.model.User;
+import com.aero.o2o.model.Voucher;
+import com.aero.o2o.pay.tenpay.util.TenpayUtil;
+import com.aero.o2o.redis.RedisKeys;
+import com.aero.o2o.redis.RedisUtilEx;
+import com.aero.o2o.service.ProductService;
+import com.aero.o2o.service.UserService;
+import com.aero.o2o.util.ArithmeticUtil;
+import com.aero.o2o.util.O2OConstant;
+import com.aero.o2o.util.QrcodeUtil;
+import com.aero.o2o.util.json.PojoJSONUtil;
+import com.alibaba.fastjson.JSONArray;
+import com.alibaba.fastjson.JSONObject;
+
+@Controller("UserController")
+public class UserController  extends BaseController {
+	
+	@Autowired
+	protected RedisUtilEx redisUtilEx;
+
+	@Autowired
+	private UserService userService;
+
+	@Autowired
+	private ProductService productService;
+
+	@RequestMapping(value = "test", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView test(HttpServletRequest request) throws NoSuchAlgorithmException{
+		
+		try {
+			String path = "http://115.28.49.160:7171/?";
+			Map<String,String> map = new HashMap<String, String>();
+//			map.put("action", "reg");
+//			map.put("family", "com.aero-com.airportmerchant");
+//			map.put("uid", "user_"+1);
+//			map.put("token", "6a27e97fa75d1c32ca34a09c2f22d930413b97bce1dc21914ce93d5cbef1c7ae");
+//			map.put("type","ios");
+//			pushGetMessage(path,map);
+			map.put("action", "send");
+			map.put("family", "com.aero-com.airportmerchant");
+			map.put("uid", "user_"+1);
+			map.put("token", "6a27e97fa75d1c32ca34a09c2f22d930413b97bce1dc21914ce93d5cbef1c7ae");
+			map.put("type","ios");
+			map.put("sound","default");
+			map.put("badge","1");
+			map.put("text","成功支付订单");
+			pushGetMessage(path,map);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	@RequestMapping(value = "userLogin", method = RequestMethod.POST)
+	public ModelAndView userLogin(HttpServletRequest request) throws NoSuchAlgorithmException{
+		O2OResult result = new O2OResult();
+		String name = fetchStringParameterNotNull("userName", request);
+		String password = fetchStringParameterNotNull("password", request);
+		String deviceToken = request.getParameter("deviceToken");
+		String deviceType = request.getParameter("deviceType");
+		QueryParam qp = new QueryParam();
+		qp.put("password", "password");
+		qp.put("name",name);
+		User user = (User)o2oDao.queryForObject("User.userLogin", qp);
+		if(user!=null){
+			result.put("user", user);
+//			redisUtilEx.setValue(RedisKeys.LOGIN_USER+user.getId(), "true");
+//			redisUtilEx.expire(RedisKeys.LOGIN_USER+user.getId(), 2592000);
+//			try {
+//				if(deviceToken!=null&&!"".equals(deviceToken.trim())&&deviceType!=null&&!"".equals(deviceType.trim())){
+//					user.setDeviceToken(deviceToken);
+//					user.setDeviceType(deviceType);
+//					user.setAppId(request.getParameter("appId"));
+//					userService.updateUser(user);
+//				}
+//				String path = super.pushMsgUrl;
+//				Map<String,String> map = new HashMap<String, String>();
+//				map.put("action", "reg");
+//				map.put("family", request.getParameter("appId"));
+//				map.put("uid", "user_"+user.getId());
+//				map.put("token", deviceToken);
+//				map.put("type",deviceType);
+//				pushGetMessage(path,map);
+//			} catch (IOException e) {
+//				log.error(e.getMessage());
+//			}
+		}else{
+			result.setResult(1);
+			result.setMsg("错误的用户名或者密码");
+		}
+		
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+//
+//	@RequestMapping(value = "thirdUserLogin", method = RequestMethod.POST)
+//	public ModelAndView thirdUserLogin(HttpServletRequest request) throws NoSuchAlgorithmException{
+//		O2OResult result = new O2OResult();
+//		String third = fetchStringParameterNotNull("third", request);
+//		String usid = fetchStringParameterNotNull("usid", request);
+//		String deviceToken = request.getParameter("deviceToken");
+//		String deviceType = request.getParameter("deviceType");
+//		String image = request.getParameter("image");
+//		String nickName = request.getParameter("nickName");
+//		User param = new User();
+//		param.setThirdId(usid);
+//		param.setThird(third);
+//		param.setUserName(nickName);
+//		param.setRealName(nickName);
+//		param.setImage(image);
+//		User user = userService.thirdUserLogin(param);
+//		if(user!=null){
+//			redisUtilEx.setValue(RedisKeys.LOGIN_USER+user.getId(), "true");
+//			redisUtilEx.expire(RedisKeys.LOGIN_USER+user.getId(), 2592000);
+//			try {
+//				if(deviceToken!=null&&!"".equals(deviceToken.trim())&&deviceType!=null&&!"".equals(deviceType.trim())){
+//					user.setDeviceToken(deviceToken);
+//					user.setDeviceType(deviceType);
+//					user.setAppId(request.getParameter("appId"));
+//					String path = super.pushMsgUrl;
+//					Map<String,String> map = new HashMap<String, String>();
+//					map.put("action", "reg");
+//					map.put("family", request.getParameter("appId"));
+//					map.put("uid", "user_"+user.getId());
+//					map.put("token", deviceToken);
+//					map.put("type",deviceType);
+//					pushGetMessage(path,map);
+//				}
+//			} catch (IOException e) {
+//				log.error(e.getMessage());
+//			}
+//			result.put("user", user);
+//			result.put("result", 0);
+//		}else{
+//			result.setResult(1);
+//			result.setCode(1);
+//			result.setMsg("无效的用户");
+//		}
+//		
+//		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+//		
+//	}
+	
+	@RequestMapping(value = "userRegister", method = RequestMethod.POST)
+	public ModelAndView userRegister(HttpServletRequest request) throws NoSuchAlgorithmException{
+		O2OResult result = new O2OResult();
+		Long mobileNumber = Long.valueOf(fetchStringParameterNotNull("mobileNumber", request));
+		String password = fetchStringParameterNotNull("password", request);
+		if(mobileNumber>=10000000000L&&mobileNumber<=19999999999L){
+			User param = new User();
+			param.setMobileNumber(mobileNumber);
+			User user = userService.queryUser(param);
+			if(user!=null){
+				result.setResult(1);
+				result.setMsg("此手机号已注册");
+			}else{
+				param.setPassword(password);
+				User loginUser = userService.userRegister(param);
+				redisUtilEx.setValue(RedisKeys.LOGIN_USER+loginUser.getId(), "true");
+				redisUtilEx.expire(RedisKeys.LOGIN_USER+loginUser.getId(), 2592000);
+				result.put("user", loginUser);
+			}
+		}else{
+			result.setResult(1);
+			result.setMsg("手机号不合法");
+		}
+		
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+		
+	}
+	
+
+	@RequestMapping(value = "userLogout", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView userLogout(HttpServletRequest request) throws NoSuchAlgorithmException{
+		O2OResult result = new O2OResult();
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		redisUtilEx.delKey(RedisKeys.LOGIN_USER+userId);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+	
+	@RequestMapping(value = "suggest", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView suggest(HttpServletRequest request) throws NoSuchAlgorithmException{
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		Integer content = Integer.valueOf(fetchStringParameterNotNull("content", request));
+		Integer email = Integer.valueOf(fetchStringParameterNotNull("email", request));
+		
+		O2OResult result = new O2OResult();
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+	
+	@RequestMapping(value = "checkVersion", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView checkVersion(HttpServletRequest request) throws NoSuchAlgorithmException{
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		Integer content = Integer.valueOf(fetchStringParameterNotNull("content", request));
+		Integer email = Integer.valueOf(fetchStringParameterNotNull("email", request));
+		
+		O2OResult result = new O2OResult();
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+	
+
+	
+	@RequestMapping(value = "useHelp", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView useHelp(HttpServletRequest request) throws NoSuchAlgorithmException{
+		
+		O2OResult result = new O2OResult();
+		result.put("help","");
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	
+	@RequestMapping(value = "dutyDocument", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView dutyDocument(HttpServletRequest request) throws NoSuchAlgorithmException{
+		
+		O2OResult result = new O2OResult();
+		result.put("dutyDocument","");
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	
+	@RequestMapping(value = "aboutUs", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView aboutUs(HttpServletRequest request) throws NoSuchAlgorithmException{
+		O2OResult result = new O2OResult();
+		result.put("aboutUs","");
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "currentAirterminal", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView currentAirterminal(HttpServletRequest request){
+
+		String longitude = request.getParameter("longitude");
+		String latitude = request.getParameter("latitude");
+		O2OResult result = new O2OResult();
+		List<Airport> list = userService.queryAllAirport(new QueryParam());
+		Double near = null;
+		JSONObject t = new JSONObject();
+		for(Airport airport:list){
+			for(Airterminal airterminal:airport.getAirterminals()){
+
+				if(longitude!=null&&latitude!=null&&(near==null||near!=0)){
+					double distance = ArithmeticUtil.isInner(Double.valueOf(longitude),Double.valueOf(latitude), airterminal.getLlongitude(), airterminal.getLlatitude(), airterminal.getRlongitude(), airterminal.getRlatitude());
+					if(near==null||distance<near){
+						t = new JSONObject();
+						t.put("airterminalId", airterminal.getId());
+						t.put("airterminal", airport.getAirport()+airterminal.getAirterminal());
+						t.put("name", airterminal.getAirterminal());
+						t.put("airportId", airport.getId());
+						t.put("threeCode",airport.getThreeCode());
+						near = distance;
+					}
+				}
+			}
+		}
+		if(near!=null&&near<=500){
+			result.setCode(0);
+		}else{
+			result.setCode(1);
+		}
+		result.put("airterminal", t);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "getCity", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView getCity(HttpServletRequest request,HttpServletResponse response) throws Exception{
+		O2OResult result = new O2OResult();
+		String longitude = request.getParameter("longitude");
+		String latitude = request.getParameter("latitude");
+		
+		QueryParam qp = new QueryParam();
+		List<Airport> list = userService.queryAllAirport(qp);
+		JSONArray hot = new JSONArray();
+		List<JSONObject> all = new ArrayList<JSONObject>();
+		Map<String,Integer> firstMap = new HashMap<String, Integer>();
+		Map<String,Map<String,Integer>> cityMap = new HashMap<String, Map<String,Integer>>();
+		Map<String,Integer> hotcityMap = new HashMap<String, Integer>();
+		Map<String,JSONArray> cityArray = new HashMap<String, JSONArray>();
+		int index = 0;
+		int hotcityIndex = 0;
+		Double near = null;
+		String nearCity = null;
+		Integer currentAirterminal = null;
+		for(Airport airport:list){
+			String first = airport.getEnglishName().substring(0,1).toUpperCase();
+			JSONArray citys = new JSONArray();
+			if(!firstMap.containsKey(first)){
+				JSONObject word = new JSONObject();
+				word.put("alphaName", first);
+				word.put("cityAndAirport", citys);
+				all.add( word);
+				firstMap.put(first, index++);
+				cityMap.put(first, new HashMap<String, Integer>());
+			}else{
+				citys = all.get(firstMap.get(first)).getJSONArray("cityAndAirport");
+			}
+
+			JSONArray airports = new JSONArray();
+			JSONObject json = new JSONObject();
+			if(!cityMap.get(first).containsKey(airport.getCity())){
+				json.put("city", airport.getCity());
+				citys.add(json);
+				json.put("airport", airports);
+				cityMap.get(first).put(airport.getCity(), 0);
+			}else{
+				json = citys.getJSONObject(cityMap.get(first).get(airport.getCity()));
+				airports = json.getJSONArray("airport");
+				cityMap.get(first).put(airport.getCity(), cityMap.get(first).get(airport.getCity()+1));
+			}
+			
+			for(Airterminal airterminal:airport.getAirterminals()){
+				JSONObject t = new JSONObject();
+				t.put("airterminalId", airterminal.getId());
+				t.put("airterminal", airport.getThreeCode().equals("SZX")?airport.getAirport():airport.getAirport()+airterminal.getAirterminal());
+				t.put("name", airterminal.getAirterminal());
+				t.put("airportId", airport.getId());
+				t.put("threeCode",airport.getThreeCode());
+				airports.add(t);
+				if(longitude!=null&&latitude!=null&&(near==null||near!=0)){
+					double distance = ArithmeticUtil.isInner(Double.valueOf(longitude),Double.valueOf(latitude), airterminal.getLlongitude(), airterminal.getLlatitude(), airterminal.getRlongitude(), airterminal.getRlatitude());
+					if (distance==0) {
+						near = 0d;
+						nearCity = airport.getCity();
+						currentAirterminal = airterminal.getId();
+					}else if(near==null||distance<near){
+						near = distance;
+						nearCity = airport.getCity();
+						currentAirterminal = airterminal.getId();
+					}
+				}
+				
+			}
+			if(airport.getIsHot()==0){
+				if(!hotcityMap.containsKey(airport.getCity())){
+					JSONObject c = new JSONObject();
+					c.put("city", airport.getCity());
+					c.put("airport", airports.clone());
+					hot.add(c);
+					hotcityMap.put(airport.getCity(), hotcityIndex++);
+				}else{
+					hot.getJSONObject(hotcityMap.get(airport.getCity())).put("airport", airports.clone());
+				}
+			}
+//			if(airport.getCity().equals("北京")){
+//				pek.put("airport", airports);
+//			}
+			cityArray.put(airport.getCity(),airports);
+		}
+		JSONObject currentCity = new JSONObject();
+		currentCity.put("city", nearCity);
+		currentCity.put("airport", cityArray.get(nearCity));
+		java.util.Collections.sort(all, new Comparator<JSONObject>() {   
+		    public int compare(JSONObject o1, JSONObject o2) {     
+		        return (o1.get("alphaName").toString()).compareTo(o2.get("alphaName").toString());
+		    }
+		}); 
+		result.put("currentAirterminal",currentAirterminal);
+		result.put("currentCity", currentCity);
+		result.put("hotCity", hot);
+		result.put("allCity", all);
+		result.setCode(0);
+//		response.getOutputStream().write(result.getBytes("utf-8"));
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+
+	@RequestMapping(value = "userDetail", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView userDetail(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		User user = userService.queryUser(userId);
+		if(user!=null){
+			user.setQrcode(QrcodeUtil.user2Qrcode(userId));
+			result.put("user", user);
+			result.setCode(0);
+		}else{
+			result.setCode(1);
+			result.setMsg("没有此用户");
+		}
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "payScan", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView payScan(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		String qrcode = fetchStringParameterNotNull("qrcode", request);
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		Map<String,String> map = QrcodeUtil.qrcodeDecode(qrcode);
+		QueryParam qp = new QueryParam();
+		qp.put("supplierId", Integer.valueOf(map.get("shopId")));
+		Shop shop = (Shop)o2oDao.queryForObject("Shop.queryShop4Pay", qp);
+		result.put("icon", shop.getLogo());
+		result.put("shopName", shop.getShopName());
+		result.put("price", map.get("price")==null?"":map.get("price"));
+		result.put("orderNo", map.get("orderNo"));
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "payClick", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView payClick(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		QueryParam qp = new QueryParam();
+		qp.put("userId", userId);
+		List<BasePojo> list = o2oDao.queryForList("User.queryVoucherByUser", qp);
+		JSONArray account = PojoJSONUtil.list2Array(list, new JSONPojo() {
+			@Override
+			public JSONObject pojo2JSON(BasePojo pojo) {
+				return PojoJSONUtil.voucher2JSON((Voucher)pojo);
+			}
+		});
+		result.put("account",account);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "paySubmit", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView paySubmit(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		Integer accountId = Integer.valueOf(fetchStringParameterNotNull("accountId", request));
+		String orderNo = fetchStringParameterNotNull("orderNo", request);
+		String price = request.getParameter("price");
+		String password = fetchStringParameterNotNull("password", request);
+		QueryParam qp = new QueryParam();
+		qp.put("orderNo",orderNo);
+		ShopOrder order = (ShopOrder)o2oDao.queryForObject("ShopOrder.queryByOrderNo", qp);
+		if(order!=null&&order.getStatus()==1){
+			qp.put("userId", userId);
+			qp.put("payPassword", password);
+			User user = (User)o2oDao.queryForObject("User.PayValidate", qp);
+			if((price==null||Double.valueOf(price)==0)&&(order.getCost()==null||order.getCost()==0)){
+				result.setCode(1);
+				result.setMsg("请输入价格");
+			}else if(order.getCost()!=null&&order.getCost()>0&&price!=null&&!order.getCost().equals(Double.valueOf(price))){
+				result.setCode(1);
+				result.setMsg("输入价格有误");
+			}else{
+				if(order.getCost()==null||order.getCost()==0){
+					order.setCost(Double.valueOf(price));
+				}
+
+				if(user!=null&&password.equals(user.getPassword())){
+					qp.put("voucherId", accountId);
+					Voucher voucher = (Voucher)o2oDao.queryForObject("User.queryVoucherByUser", qp);
+					if(voucher!=null){
+						if(voucher.getBalance()>=order.getCost()){
+							order.setUserId(userId);
+							order.setVoucherId(accountId);
+							voucher.setBalance(voucher.getBalance()-order.getCost());
+							voucher.setMemberId(userId);
+							userService.orderPayByUser(order, voucher);
+							result.put("price", price!=null?price:order.getCost());
+							result.put("shopName",order.getShopName());
+						}else{
+							result.setCode(4);
+							result.setMsg("余额不足");
+						}
+					}else{
+						result.setCode(3);
+						result.setMsg("没有此储值卡");
+					}
+				}else{
+					result.setMsg("密码错误");
+					result.setCode(2);
+				}
+			}
+		}else{
+			result.setMsg("此订单无效");
+			result.setCode(1);
+		}
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "myWallet", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView myWallet(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		QueryParam qp = new QueryParam();
+		qp.put("userId", userId);
+		List<BasePojo> list = o2oDao.queryForList("User.queryVoucherByUser", qp);
+		JSONArray account = PojoJSONUtil.list2Array(list, new JSONPojo() {
+			@Override
+			public JSONObject pojo2JSON(BasePojo pojo) {
+				return PojoJSONUtil.voucher2JSON((Voucher)pojo);
+			}
+		});
+		result.put("account",account);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+
+	@RequestMapping(value = "walletDetail", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView walletDetail(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		Integer accountId = Integer.valueOf(fetchStringParameterNotNull("accountId", request));
+		QueryParam qp = new QueryParam();
+		qp.put("userId", userId);
+		qp.put("voucherId", accountId);
+		List<BasePojo> list = o2oDao.queryForList("ShopOrder.queryList", qp);
+		JSONArray history = PojoJSONUtil.list2Array(list, new JSONPojo() {
+			@Override
+			public JSONObject pojo2JSON(BasePojo pojo) {
+				return PojoJSONUtil.shopOrder2JSON((ShopOrder)pojo);
+			}
+		});
+		Voucher voucher = (Voucher)o2oDao.queryForObject("User.queryVoucherByUser", qp);
+		result.put("history",history);
+		result.put("balance",voucher.getBalance());
+		result.put("accountName",voucher.getVoucherName());
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+	
+	@RequestMapping(value = "voucherHistory", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView voucherHistory(HttpServletRequest request){
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		QueryParam qp = new QueryParam();
+		qp.put("userId", userId);
+		List<BasePojo> list = o2oDao.queryForList("ShopOrder.queryList", qp);
+		JSONArray history = PojoJSONUtil.list2Array(list, new JSONPojo() {
+			@Override
+			public JSONObject pojo2JSON(BasePojo pojo) {
+				return PojoJSONUtil.shopOrder2JSON((ShopOrder)pojo);
+			}
+		});
+		O2OResult result = new O2OResult();
+		result.put("history", history);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	
+	@RequestMapping(value = "getMobileCode", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView getMobileCode(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "confirmMobileCode", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView confirmMobileCode(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		Integer code = Integer.valueOf(fetchStringParameterNotNull("code", request));
+		String key = TenpayUtil.buildRandom(4) + "";
+		redisUtilEx.setValue("user="+userId, key);
+		redisUtilEx.expire("user="+userId, 300);
+		result.put("key", key);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "resetPayPassword", method = RequestMethod.GET,produces="text/plain;charset=UTF-8")
+	public ModelAndView resetPayPassword(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		String payPassword = fetchStringParameterNotNull("password", request);
+		String key = fetchStringParameterNotNull("key", request);
+		String userKey = redisUtilEx.getValue("user="+userId);
+		if(key.equals(userKey)){
+			QueryParam qp = new QueryParam();
+			User user = new User();
+			user.setPayPassword(payPassword);
+			user.setId(userId);
+			qp.setPojo(user);
+			o2oDao.update("User.update", qp);
+		}else{
+			result.setCode(1);
+			result.setMsg("请获取验证码");
+		}
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+	@RequestMapping(value = "updatePassword", method = RequestMethod.POST,produces="text/plain;charset=UTF-8")
+	public ModelAndView updatePassword(HttpServletRequest request){
+		O2OResult result = new O2OResult();
+		Integer userId = Integer.valueOf(fetchStringParameterNotNull("userId", request));
+		String oPassword = fetchStringParameterNotNull("oPassword", request);
+		String nPassword = fetchStringParameterNotNull("nPassword", request);
+		String rPassword = fetchStringParameterNotNull("rPassword", request);
+		return new ModelAndView("jsonView").addObject(O2OConstant.JSON,result);
+	}
+
+
+
+}

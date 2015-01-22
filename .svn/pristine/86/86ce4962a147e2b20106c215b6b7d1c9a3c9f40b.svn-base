@@ -1,0 +1,29 @@
+package com.aero.o2o.dao.impl;
+
+import java.util.List;
+import java.util.Map;
+
+import org.springframework.stereotype.Repository;
+
+import com.aero.o2o.dao.AirportDao;
+import com.aero.o2o.model.Airport;
+import com.aero.o2o.util.AirportQueryP;
+import com.aero.o2o.util.stereotype.EntityKeyName;
+
+/**
+ * 
+ * @author xq
+ * @since 1.1 追加queryByCity查询出一个城市下所属的机场
+ * @since 1.2 追加queryByIsShow是否显示 前台使用  2012-09-14
+ * @since 1.3 追加了queryBylongitudeLatitude根据当前的经纬度查询对应的机场 xq 2012-10-12
+ */
+@Repository("AirportDaoImpl") 
+@EntityKeyName(entity=Airport.class, keyName="Airport")
+public class AirportDaoImpl extends BaseDaoImpl implements AirportDao {
+
+	@Override
+	public List<Airport> query4AppInit() {
+		return this.getSqlMapClientTemplate().queryForList("Airport.query4AppInit");
+	}
+
+}
