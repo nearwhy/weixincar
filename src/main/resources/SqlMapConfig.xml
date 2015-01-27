@@ -12,6 +12,7 @@
 			/> 
 	
 		<sqlMap resource="com/aero/o2o/dbconfig/Product_SqlMap.xml"/>
+		<sqlMap resource="com/aero/o2o/dbconfig/Car_SqlMap.xml"/>
 <!-- 	<sqlMap resource="com/aero/o2o/dbconfig/Content_SqlMap.xml"/> -->
 <!-- 	<sqlMap resource="com/aero/o2o/dbconfig/Waiter_SqlMap.xml"/> -->
 <!-- 	<sqlMap resource="com/aero/o2o/dbconfig/User_SqlMap.xml"/> -->

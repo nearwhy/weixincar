@@ -59,31 +59,6 @@ public abstract class BaseController implements ServletContextAware {
 
 	}
 
-	public void pushGetMessage(String path, Map<String, String> param)
-			throws IOException {
-		for (Map.Entry<String, String> entry : param.entrySet()) {
-			path += entry.getKey() + "=" + entry.getValue() + "&";
-		}
-		path = path.substring(0, path.length() - 1);
-		System.out.println("url=========="+path);
-		URL url = new URL(path);
-		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-		connection.setDoInput(true);
-		connection.setDoOutput(true);
-		connection.setRequestMethod("GET");
-		connection.setRequestProperty("ContentType","text/xml;charset=utf-8");
-		BufferedReader reader = new BufferedReader(new InputStreamReader(
-				connection.getInputStream()));
-		// String lines;
-		// while ((lines = reader.readLine()) != null) {
-		// System.out.println(lines);
-		// }
-		System.out.println("url==========over");
-		reader.close();
-		// 断开连接
-		connection.disconnect();
-	}
-
 	/**
 	 * 将一个图片，按照比例缩放到固定大小 并保存成另外一个名称 同时保存两个图片 一个大图一个小图
 	 * 

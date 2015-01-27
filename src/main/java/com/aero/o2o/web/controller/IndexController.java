@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.aero.o2o.model.Product;
 import com.aero.o2o.model.QueryParam;
+import com.aero.o2o.util.ConstantData;
 
 @Controller("IndexController")
 public class IndexController  extends BaseController {
@@ -61,6 +62,7 @@ public class IndexController  extends BaseController {
 	
 	@RequestMapping(value = "/carBrand", method = RequestMethod.GET)
 	public String carBrand(HttpServletRequest request, Map<String, Object> map) throws Exception{
+		map.put("letters", ConstantData.getInstance(o2oDao).getLetters());
 		return "carBrand";
 	}
 	

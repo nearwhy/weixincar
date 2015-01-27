@@ -47,8 +47,8 @@
 		<div class="panel-group" id="accordion" role="tablist"
 			aria-multiselectable="true">
 			<div class="panel panel-default">
-				<div class="panel-heading" role="tab" id="headingOne"
-					onclick="zhankai1();">
+				<div class="panel-heading" role="tab" id="headingOne" data-toggle="collapse" data-target="#collapse1"
+				aria-expanded="false" aria-controls="collapse1" >
 					<table>
 						<tr>
 							<td width="20%"><img src="img/client_1.png" width="100%"
@@ -82,8 +82,8 @@
 			</div>
 			
 			<div class="panel panel-default">
-				<div class="panel-heading" role="tab" id="headingOne"
-					onclick="zhankai2();">
+				<div class="panel-heading" role="tab" id="headingOne"  data-toggle="collapse" data-target="#collapse2"
+				aria-expanded="false" aria-controls="collapse2" >
 					<table>
 						<tr>
 							<td width="20%"><img src="img/client_1.png" width="100%"
@@ -117,8 +117,8 @@
 			</div>
 			
 			<div class="panel panel-default">
-				<div class="panel-heading" role="tab" id="headingOne"
-					onclick="zhankai3();">
+				<div class="panel-heading" role="tab" id="headingOne"  data-toggle="collapse" data-target="#collapse3" 
+				aria-expanded="false" aria-controls="collapse3">
 					<table>
 						<tr>
 							<td width="20%"><img src="img/client_1.png" width="100%"
@@ -200,17 +200,17 @@
 
 		function zhankai1(){
 			$(".collapse").collapse('hide');
-			$("#collapse1").collapse('toggle');
+			$("#collapse1").collapse('show');
 			
 		}
 		function zhankai2(){
 			$(".collapse").collapse('hide');
-			$("#collapse2").collapse('toggle');
+			$("#collapse2").collapse('show');
 			
 		}
 		function zhankai3(){
 			$(".collapse").collapse('hide');
-			$("#collapse3").collapse('toggle');
+			$("#collapse3").collapse('show');
 			
 		}
 	</script>

@@ -18,6 +18,7 @@
 	<mvc:default-servlet-handler />
 	
 	<mvc:resources location="/resources/" mapping="/resources/**"/>
+	<mvc:resources location="/my/" mapping="/my/**"/>
 	
 	<import resource="spring-interceptor.xml"/>
 

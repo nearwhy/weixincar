@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Car">
+	
+	<select id="queryAll" resultClass="com.aero.o2o.model.Car" parameterClass="com.aero.o2o.model.QueryParam">
+		select * from car
+	</select>
+</sqlMap>
