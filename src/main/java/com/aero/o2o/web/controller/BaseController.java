@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -189,5 +190,22 @@ public abstract class BaseController implements ServletContextAware {
 		}
 		return new ModelAndView(viewName, resultMap);
 	}
+	
+	/**
+	 * 返回ajax数据
+	 * 
+	 * @param response HttpServletResponse
+	 * @param str 返回ajax字符串
+	 */
+	protected void renderAjaxData(HttpServletResponse response, String str) {
+		try {
+			PrintWriter pw = response.getWriter();
+			pw.write(str);
+			pw.flush();
+			pw.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	} 
 
 }
