@@ -1,7 +1,7 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8" isELIgnored="false"
-	pageEncoding="UTF-8"%>
-	
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	isELIgnored="false" pageEncoding="UTF-8"%>
+
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -46,13 +46,36 @@
 <!-- BEGIN BODY -->
 <body class="page-header-fixed">
 	<div class="page-container">
+
+		<!-- 		<nav class="navbar navbar-default navbar-fixed-top" role="navigation"> -->
+		<!-- 			<br> -->
+		<!-- 			<div class="container"> -->
+		<!-- 				<div class="input-group input-group-lg"> -->
+
+		<!-- 					<input type="text" class="form-control" placeholder="车型搜索" id="keyword" -->
+		<!-- 						aria-describedby="sizing-addon1"><span -->
+		<!-- 						class="input-group-btn"><button data-toggle="collapse" -->
+		<!-- 						data-target="#bs-example-navbar-collapse-1" -->
+		<!-- 						class="btn btn-lg btn-primary" type="button" onclick="search();"> <span -->
+		<!-- 							class="glyphicon glyphicon-search" id="sizing-addon1"></span> -->
+		<!-- 					</button> </span> -->
+		<!-- 				</div> -->
+		<!-- 			</div> -->
+		<!-- 			<div class="collapse navbar-collapse" -->
+		<!-- 				id="bs-example-navbar-collapse-1" style="background-color: #fff"> -->
+		<!-- 				<div class="list-group" id="result"> -->
+		<!-- 				</div> -->
+		<!-- 			</div> -->
+		<!-- 			<br> -->
+		<!-- 		</nav> -->
+		<!-- 		<br> <br> <br> <br> -->
 		<div class="list-group">
 			<a href="#" class="list-group-item disabled">常见品牌</a>
 			<div class="list-group-item" data-toggle="modal"
 				data-target=".bs-example-modal-sm" align="center">
 				<table style="width: 100%">
 					<tr>
-						<td width="25%"><a href="#"> <img
+						<td width="25%"><a href="#"><img
 								src="https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=4045731028,2567955621&fm=58"
 								width="30" height="30" /> <span style="font-size: small;">大众</span>
 						</a></td>
@@ -74,29 +97,25 @@
 
 			<c:forEach items="${letters }" var="letter">
 				<a href="#" class="list-group-item disabled">${letter.key}</a>
-				
-				<c:forEach items="${letter.value}" var="brand">
-					<a href="#" onclick="carType();" class="list-group-item" data-toggle="modal"
-						data-target=".bs-example-modal-sm"> <img
-						src="https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3922137418,2189335648&fm=58"
-						width="30" height="30" /><span>&nbsp;&nbsp;${brand}</span></a>
+				<c:forEach items="${letter.value}" var="brand" varStatus="i">
+					<c:if test="${i.index % 3 == 0}">
+						<div class="list-group-item" data-toggle="modal"
+							data-target=".bs-example-modal-sm" align="center">
+							<table style="width: 100%">
+								<tr>
+									</c:if>
+
+									<td width="33%" onclick="carType('${brand}');"><img
+										src="https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3922137418,2189335648&fm=58"
+										width="30" height="30" /><span>&nbsp;&nbsp;${brand}</span></td>
+
+									<c:if test="${i.index % 3 == 2 or i.last}">
+								</tr>
+							</table>
+						</div>
+					</c:if>
 				</c:forEach>
 			</c:forEach>
-<!-- 			<a href="#" class="list-group-item disabled">A</a> <a href="#" -->
-<!-- 				onclick="carType();" class="list-group-item" data-toggle="modal" -->
-<!-- 				data-target=".bs-example-modal-sm"> <img -->
-<!-- 				src="https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3922137418,2189335648&fm=58" -->
-<!-- 				width="30" height="30" /><span>&nbsp;&nbsp;奥迪</span> -->
-<!-- 			</a> <a href="#" class="list-group-item disabled">B</a> <a href="#" -->
-<!-- 				class="list-group-item" data-toggle="modal" -->
-<!-- 				data-target=".bs-example-modal-sm"> <img -->
-<!-- 				src="https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=3848676162,2275127538&fm=58" -->
-<!-- 				width="30" height="30" /><span>&nbsp;&nbsp;宝马</span> -->
-<!-- 			</a> <a href="#" class="list-group-item" data-toggle="modal" -->
-<!-- 				data-target=".bs-example-modal-sm"> <img -->
-<!-- 				src="https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=4046265244,2439220531&fm=58" -->
-<!-- 				width="30" height="30" /><span>&nbsp;&nbsp;奔驰</span> -->
-			</a>
 		</div>
 	</div>
 
@@ -125,12 +144,35 @@
 	<!-- Analytics
 ================================================== -->
 	<script type="text/javascript">
-var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fbdb993b828cbe079a7fbc1a951f44726' type='text/javascript'%3E%3C/script%3E"));
+		var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://"
+				: " http://");
+		document
+				.write(unescape("%3Cscript src='"
+						+ _bdhmProtocol
+						+ "hm.baidu.com/h.js%3Fbdb993b828cbe079a7fbc1a951f44726' type='text/javascript'%3E%3C/script%3E"));
 
-	function carType(){ 
-		window.location.href="carType.html" 
-	} 
-</script>
+		function carType(brand) {
+			window.location.href = "carType.html?brand=" + brand;
+		}
+
+		function search() {
+			$("#result").empty();
+			$.ajax({
+				async : false,
+				url : "searchCar.html?keyword=" + $("#keyword").val(),
+				type : "get",
+				dataType : "json",
+				success : function(data) {
+					$.each(data, function(index, value) {
+						product = value.product;
+						var item = "<a href='#' class='list-group-item'>"
+								+ value.type + value.model + "</a>";
+						$("#result").append(item);
+					});
+
+				}
+			});
+		}
+	</script>
 </body>
 </html>

@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,36 +46,16 @@
 <body class="page-header-fixed">
 	<div class="page-container">
 		<div class="list-group">
-			<a href="#" class="list-group-item disabled">一汽-大众奥迪</a> 
-			<a href="#" class="list-group-item" data-toggle="modal" onclick="carModel();"
-				data-target=".bs-example-modal-sm">
-				<img src="img/a3.jpg" width="60" height="40"/><span>&nbsp;&nbsp;奥迪A3</span>
-			</a> 
-			<a href="#" class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<img src="img/a4.jpg" width="60" height="40"/><span>&nbsp;&nbsp;奥迪A4L</span>
-			</a> 
-			<a href="#" class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<img src="img/a6.jpg" width="60" height="40"/><span>&nbsp;&nbsp;奥迪A6</span>
-			</a> 
-			<a href="#"
-				class="list-group-item disabled">奥迪(进口)</a> 
-			<a href="#"
-				class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<img src="img/a1.jpg" width="60" height="40"/><span>&nbsp;&nbsp;奥迪A1</span>
-			</a> 
-			<a href="#"
-				class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<img src="img/q3.jpg" width="60" height="40"/><span>&nbsp;&nbsp;奥迪Q3(进口)</span>
-			</a> 
-			<a href="#"
-				class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<img src="img/a4road.jpg" width="60" height="40"/><span>&nbsp;&nbsp;奥迪A4旅行版</span>
-			</a> 
+		<c:forEach items="${firms}" var="firm">
+				<a href="#" class="list-group-item disabled">${firm.key}</a>
+				
+				<c:forEach items="${firm.value}" var="type">
+					<a href="#" onclick="carModel('${type}');" class="list-group-item" data-toggle="modal"
+						data-target=".bs-example-modal-sm"> <img
+						src="https://ss1.baidu.com/6ONXsjip0QIZ8tyhnq/it/u=3922137418,2189335648&fm=58"
+						width="30" height="30" /><span>&nbsp;&nbsp;${type}</span></a>
+				</c:forEach>
+			</c:forEach>
 		</div>
 	</div>
 
@@ -106,8 +87,8 @@
 var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
 document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fbdb993b828cbe079a7fbc1a951f44726' type='text/javascript'%3E%3C/script%3E"));
 
-	function carModel(){ 
-		window.location.href="carModel.html" 
+	function carModel(type){ 
+		window.location.href="carModel.html?type="+type; 
 	} 
 </script>
 </body>

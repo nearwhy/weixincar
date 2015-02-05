@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,36 +46,16 @@
 <body class="page-header-fixed">
 	<div class="page-container">
 		<div class="list-group">
-			<a href="#" class="list-group-item disabled">2014</a> 
-			<a href="#" class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<span>&nbsp;&nbsp;2014款 1.4TFSI 双离合 35TFSI 时尚型</span>
-			</a> 
-			<a href="#" class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<span>&nbsp;&nbsp;2014款 1.4TFSI 双离合 35TFSI 舒适型</span>
-			</a> 
-			<a href="#" class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<span>&nbsp;&nbsp;2014款 1.4TFSI 双离合 35TFSI 豪华型</span>
-			</a> 
-			<a href="#"
-				class="list-group-item disabled">2013</a> 
-			<a href="#"
-				class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<span>&nbsp;&nbsp;2013款 1.4TFSI 双离合 30TFSI 技术型</span>
-			</a> 
-			<a href="#"
-				class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<span>&nbsp;&nbsp;2013款 1.4TFSI 双离合 30TFSI 舒适型</span>
-			</a> 
-			<a href="#"
-				class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<span>&nbsp;&nbsp;2013款 1.4TFSI 双离合 30TFSI 豪华型</span>
-			</a> 
+			
+		<c:forEach items="${years}" var="year">
+				<a href="#" class="list-group-item disabled">${year.key}</a>
+				
+				<c:forEach items="${year.value}" var="car">
+					<a href="#" onclick="choose('${car.model}','${car.id}');" class="list-group-item" data-toggle="modal"
+						data-target=".bs-example-modal-sm">
+						<span>&nbsp;&nbsp;${car.model}</span></a>
+				</c:forEach>
+			</c:forEach>
 		</div>
 	</div>
 	<div class="modal fade bs-example-modal-sm" tabindex="-1"
@@ -86,15 +67,18 @@
 							<button type="button" class="close" data-dismiss="modal">
 								<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 							</button>
-							<h4 class="modal-title" id="mySmallModalLabel">mini cooper</h4>
+							<h4 class="modal-title" id="carModel"></h4>
 						</div>
 						<div class="modal-body">
 							<div class="row">
 								<div class="col-xs-6" align="center">
-									<button type="button" class="btn btn-lg btn-success">新增此车型</button>
+									<form action="chooseCar.html" method="post" id="carForm">
+										<input type="hidden" value="" id="carId" name="carId"/>
+										<button type="button" class="btn btn-lg btn-success" onclick="confirm()">新增此车型</button>
+									</form>
 								</div>
 								<div class="col-xs-6" align="center">
-									<button type="button" class="btn btn-lg btn-danger">取消</button>
+       								 <button type="button" class="btn btn-lg btn-danger" data-dismiss="modal">取消</button>
 								</div>
 							</div>
 						</div>
@@ -130,6 +114,16 @@
 	<script type="text/javascript">
 var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
 document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fbdb993b828cbe079a7fbc1a951f44726' type='text/javascript'%3E%3C/script%3E"));
+			
+			function choose(model,id){
+				$("#carId").val(id);
+				$("#carModel").text(model);
+			}
+			
+			function confirm(){
+				$("#carForm").submit();
+			}
+			
 </script>
 </body>
 </html>
