@@ -5,4 +5,30 @@
 	<select id="queryAll" resultClass="com.aero.o2o.model.Car" parameterClass="com.aero.o2o.model.QueryParam">
 		select * from car
 	</select>
+	
+	<insert id="insertUserCar" parameterClass="com.aero.o2o.model.QueryParam">
+		insert into usercar (userid,carid,isused) values(#userId#,#carId#,1)
+	</insert>
+	
+	<update id="updateUserCar" >
+		update usercar set isused = 0
+	</update>
+	
+	<update id="updateUserCarUsed" parameterClass="com.aero.o2o.model.QueryParam">
+		update usercar set isused = 1 
+		where carid = #carId# and userId = #userId#
+	</update>
+	
+	<delete id="deleteUserCar" parameterClass="com.aero.o2o.model.QueryParam">
+		delete from usercar where userid = #userId# and carid = #carId#
+	</delete>
+	
+	<select id="queryMyCar" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Car">
+		select c.*,u.isused from car c inner join usercar u on u.carid = c.id and u.userid = #userId#
+	</select>
+	
+	
+	<select id="queryCar" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Car">
+		select * from car where lower(concat(type,model)) like concat('%',lower(#keyword#),'%');
+	</select>
 </sqlMap>
