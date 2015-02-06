@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -22,21 +23,9 @@
 <!-- Documentation extras -->
 <link href="bootstrap-3.3.0/docs/asstes/css/src/docs.min.css"
 	rel="stylesheet">
-
-
-<!-- BEGIN THEME STYLES -->
-<!--    <link href="assets/css/style-metronic.css" rel="stylesheet" type="text/css"/> -->
-<!--[if lt IE 9]><script src="bootstrap-3.3.0/docs/asstes/js/ie8-responsive-file-warning.js"></script><![endif]-->
 <script
 	src="bootstrap-3.3.0/docs/asstes/js/ie-emulation-modes-warning.js"></script>
 
-<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-<!--[if lt IE 9]>
-  <script src="http://cdn.bootcss.com/html5shiv/3.7.0/html5shiv.js"></script>
-  <script src="http://cdn.bootcss.com/respond.js/1.4.2/respond.min.js"></script>
-<![endif]-->
-
-<!-- Favicons -->
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="icon" href="/favicon.ico">
 </head>
@@ -44,56 +33,70 @@
 <!-- BEGIN BODY -->
 <body class="page-header-fixed">
 	<div class="page-container">
-		<div class="list-group">
-			<a href="#" class="list-group-item active">我的车型库</a> <a href="#"
-				class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<div class="row">
-					<div class="col-xs-4 col-md-4">
-						<img src="img/mini.jpg" alt="" width="100" height="80"></img>
+
+		<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+			<br>
+			<div class="container">
+				<div class="btn-group btn-group-justified" role="group"
+					aria-label="...">
+					<div class="btn-group" role="group">
+						<a href="index.html" type="button" class="btn btn-lg btn-default">返回首页</a>
 					</div>
-					<div class="col-xs-7 col-md-6">
-						<h5>Mini Cooper clubman自动1.6 2010cheer</h5>
-					</div>
-					<div class="col-xs-1 col-md-2">
-						<span class="glyphicon glyphicon-ok"></span>
-					</div>
-				</div>
-			</a> <a href="#" class="list-group-item" data-toggle="modal"
-				data-target=".bs-example-modal-sm">
-				<div class="row" align="right">
-					<div class="col-xs-4 col-md-4">
-						<img src="img/macan.jpg" alt="" width="100" height="70"></img>
-					</div>
-					<div class="col-xs-8 col-md-8">
-						<h5>2014款 3.6L Macan Turbo</h5>
+					<div class="btn-group" role="group">
+						<a href="carBrand.html" type="button"
+							class="btn btn-primary btn-lg">新增一种车型</a>
 					</div>
 				</div>
-			</a>
-		</div>
-		
-		<div class="container-fluid">
-			<div align="center">
-				<a href="carBrand.html" type="button" class="btn btn-primary btn-lg btn-block">新增一种车型</a>
 			</div>
+		</nav>
+		<br>
+		<div class="list-group">
+			<a href="#" class="list-group-item disabled">我的车型库</a>
+
+			<c:forEach items="${cars}" var="car">
+				<a href="#" onclick="choose('${car.model}','${car.id}');"
+					class="list-group-item" data-toggle="modal"
+					data-target=".bs-example-modal-sm">
+					<div class="row">
+						<div class="col-xs-4 col-md-4">
+							<img src="img/mini.jpg" alt="" width="100" height="80"></img>
+						</div>
+						<div class="col-xs-7 col-md-6">
+							<p>${car.type}</p>
+							<h5>${car.model}</h5>
+						</div>
+						<c:if test="${car.isused==1}">
+							<div class="col-xs-1 col-md-2">
+								<span class="glyphicon glyphicon-ok"></span>
+							</div>
+						</c:if>
+					</div>
+				</a>
+			</c:forEach>
+		</div>
+
+		<div class="container-fluid">
 			<div class="modal fade bs-example-modal-sm" tabindex="-1"
 				role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
 				<div class="modal-dialog modal-sm">
 					<div class="modal-content">
-	
+
 						<div class="modal-header">
 							<button type="button" class="close" data-dismiss="modal">
 								<span aria-hidden="true">&times;</span><span class="sr-only">Close</span>
 							</button>
-							<h4 class="modal-title" id="mySmallModalLabel">mini cooper</h4>
+							<h4 class="modal-title" id="mySmallModalLabel"></h4>
 						</div>
 						<div class="modal-body">
 							<div class="row">
+								<input type="hidden" id="carId" name="carId" value="" />
 								<div class="col-xs-6" align="center">
-									<button type="button" class="btn btn-lg btn-success">设为当前车型</button>
+									<button type="button" class="btn btn-lg btn-success"
+										onclick="setMyCar();">设为当前车型</button>
 								</div>
 								<div class="col-xs-6" align="center">
-									<button type="button" class="btn btn-lg btn-danger">移除此车型</button>
+									<button type="button" class="btn btn-lg btn-danger"
+										onclick="removeMyCar();">移除此车型</button>
 								</div>
 							</div>
 						</div>
@@ -102,7 +105,7 @@
 				</div>
 				<!-- /.modal-dialog -->
 			</div>
-		<!-- /.modal -->
+			<!-- /.modal -->
 		</div>
 	</div>
 
@@ -131,8 +134,37 @@
 	<!-- Analytics
 ================================================== -->
 	<script type="text/javascript">
-var _bdhmProtocol = (("https:" == document.location.protocol) ? " https://" : " http://");
-document.write(unescape("%3Cscript src='" + _bdhmProtocol + "hm.baidu.com/h.js%3Fbdb993b828cbe079a7fbc1a951f44726' type='text/javascript'%3E%3C/script%3E"));
-</script>
+		document.addEventListener("WeixinJSBridgeReady", function() {
+			WeixinJSBridge.call("showToolbar")
+		});
+
+		function choose(model, id) {
+			$("#carId").val(id);
+			$("#mySmallModalLabel").text(model);
+		}
+
+		function setMyCar() {
+			// 			$("#setForm").submit();
+			$.ajax({
+				type : "POST",
+				url : "setMyCar.html",
+				data : "carId=" + $("#carId").val(),
+				success : function(msg) {
+					window.location.reload();
+				}
+			});
+		}
+
+		function removeMyCar() {
+			$.ajax({
+				type : "POST",
+				url : "removeMyCar.html",
+				data : "carId=" + $("#carId").val(),
+				success : function(msg) {
+					window.location.reload();
+				}
+			});
+		}
+	</script>
 </body>
 </html>

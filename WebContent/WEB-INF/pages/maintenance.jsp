@@ -49,24 +49,25 @@
 		<div class="jumbotron" style="background-color: #428bca">
 			<h1 style="color: #ffffff">帮您节省￥200</h1>
 			<p style="color: #ffffff">
-				目前行驶10000公里，我们建议您进行<a href="#" tabindex="0"
-					class="btn btn-danger bs-docs-popover" role="button"
-					data-toggle="popover" data-trigger="focus"
-					title="Dismissible popover"
-					data-content="And here's some amazing content. It's very engaging. Right?"><u>常规保养</u></a>
+				目前行驶10000公里，我们建议您进行<span class="label label-success" style="font-size: large">常规保养</span>
 			</p>
 
 			<span style="color: #ffffff">您也可以选择其他保养方式</span> <br>
-			<div class="btn-group">
-				<button type="button" class="btn btn-danger">
-					<span class="glyphicon glyphicon-wrench">深度保养</span>
-				</button>
-				<button type="button" class="btn btn-success">
-					<span class="glyphicon glyphicon-zoom-in">大保养</span>
-				</button>
-				<button type="button" class="btn btn-warning" onclick="self();">
-					<span class="glyphicon glyphicon-cog">自助保养</span>
-				</button>
+			<div class="container" style="witdh:100%">
+				<div class="btn-group btn-group-justified" role="group"
+					aria-label="...">
+					<div class="btn-group" role="group">
+						<a href="index.html" type="button" class="btn btn-lg btn-danger">深度保养</a>
+					</div>
+					<div class="btn-group" role="group">
+						<a href="carBrand.html" type="button"
+							class="btn btn-info btn-lg">大保养</a>
+					</div>
+					<div class="btn-group" role="group">
+						<a href="self.html" type="button"
+							class="btn btn-warning btn-lg">自助保养</a>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -79,18 +80,16 @@
 					<div>
 						<table style="width: 100%">
 							<tr>
-								<td width="5%" style="vertical-align: center">
-									 <label> <input type="checkbox"
-										value="">
-									</label>
-								</td>
-								<td width="45%" style="vertical-align: center">
-								<img src="img/qiaopai.jpg" width="100%" class="img-responsive"
+								<td width="5%" style="vertical-align: center"><label>
+										<input type="checkbox" value="">
+								</label></td>
+								<td width="45%" style="vertical-align: center"><img
+									src="img/qiaopai.jpg" width="100%" class="img-responsive"
 									alt="Responsive image" /></td>
 								<td width="50%">
 									<h4 class="media-heading">更换发动机机油</h4>
 									<p>工时费:￥50</p> <span style="color: red; font-size: large">￥138.0</span>
-								<del>￥168.0</del>
+									<del>￥168.0</del>
 									<div>
 										建议购买:
 										<div class="btn-group">
@@ -116,7 +115,7 @@
 
 					</div>
 					<div align="right">
-						<span style="color:red">还有5件同类商品，您可以选择</span>
+						<span style="color: red">还有5件同类商品，您可以选择</span>
 						<button type="button" class="btn btn-primary" onclick="change();">更换</button>
 
 					</div>
@@ -125,18 +124,16 @@
 					<div>
 						<table style="width: 100%">
 							<tr>
-								<td width="5%" style="vertical-align: center">
-									 <label> <input type="checkbox"
-										value="">
-									</label>
-								</td>
-								<td width="45%" style="vertical-align: center">
-								<img src="img/baohuji.jpg" width="100%" class="img-responsive"
+								<td width="5%" style="vertical-align: center"><label>
+										<input type="checkbox" value="">
+								</label></td>
+								<td width="45%" style="vertical-align: center"><img
+									src="img/baohuji.jpg" width="100%" class="img-responsive"
 									alt="Responsive image" /></td>
 								<td width="50%">
 									<h4 class="media-heading">发动机油泥清洗</h4>
 									<p>工时费:￥20</p> <span style="color: red; font-size: large">￥138.0</span>
-								<del>￥168.0</del>
+									<del>￥168.0</del>
 									<div>
 										建议购买:
 										<div class="btn-group">
@@ -157,11 +154,12 @@
 					</div>
 
 					<div>
-						<a href="productDetail.html"><span style="font-size:medium;">发动机曲轴箱&油底壳清洗油 (赠送滤芯)</span></a>
+						<a href="productDetail.html"><span style="font-size: medium;">发动机曲轴箱&油底壳清洗油
+								(赠送滤芯)</span></a>
 
 					</div>
 					<div align="right">
-						<span style="color:red">还有3件同类商品，您可以选择</span>
+						<span style="color: red">还有3件同类商品，您可以选择</span>
 						<button type="button" class="btn btn-primary" onclick="change();">更换</button>
 
 					</div>
@@ -254,7 +252,9 @@
 				.write(unescape("%3Cscript src='"
 						+ _bdhmProtocol
 						+ "hm.baidu.com/h.js%3Fbdb993b828cbe079a7fbc1a951f44726' type='text/javascript'%3E%3C/script%3E"));
-			function self(){
+			
+		
+		function self(){
 				window.location.href="self.html";
 			}
 			

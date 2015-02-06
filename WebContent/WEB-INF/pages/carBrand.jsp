@@ -96,7 +96,7 @@
 			</div>
 
 			<c:forEach items="${letters }" var="letter">
-				<a href="#" class="list-group-item disabled">${letter.key}</a>
+				<a href="#" class="list-group-item disabled"><b>${letter.key}</b></a>
 				<c:forEach items="${letter.value}" var="brand" varStatus="i">
 					<c:if test="${i.index % 3 == 0}">
 						<div class="list-group-item" data-toggle="modal"
