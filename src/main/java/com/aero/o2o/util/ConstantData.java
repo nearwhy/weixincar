@@ -15,23 +15,24 @@ public class ConstantData {
 	private static ConstantData data;
 
 	private List<Map.Entry<String, List<String>>> letters;
-	private List<Map.Entry<String, List<String>>> brands;
-	private List<Map.Entry<String, List<String>>> firms;
-	private List<Map.Entry<String, List<Integer>>> types;
-	private List<Map.Entry<Integer, List<String>>> years;
+//	private List<Map.Entry<String, List<String>>> brands;
+//	private List<Map.Entry<String, List<String>>> firms;
+//	private List<Map.Entry<String, List<Integer>>> types;
+//	private List<Map.Entry<Integer, List<String>>> years;
+
+	private Map<String, List<String>> brandMap;
+	private Map<String, List<String>> firmMap;
+	private Map<String, List<Integer>> typeMap;
+	private Map<String, List<Car>> yearMap;
 
 	private ConstantData(O2ODao o2oDao) {
 		Map<String, List<String>> letterMap;
-		Map<String, List<String>> brandMap;
-		Map<String, List<String>> firmMap;
-		Map<String, List<Integer>> typeMap;
-		Map<Integer, List<String>> yearMap;
 		List<Car> carList = o2oDao.queryForList("Car.queryAll", null);
 		letterMap = new HashMap<String, List<String>>();
 		brandMap = new HashMap<String, List<String>>();
 		firmMap = new HashMap<String, List<String>>();
 		typeMap = new HashMap<String, List<Integer>>();
-		yearMap = new HashMap<Integer, List<String>>();
+		yearMap = new HashMap<String, List<Car>>();
 
 		for (Car car : carList) {
 			if (!letterMap.containsKey(car.getLetter())) {
@@ -57,7 +58,6 @@ public class ConstantData {
 			} else if (!firmMap.get(car.getFirm()).contains(car.getType())) {
 				firmMap.get(car.getFirm()).add(car.getType());
 			}
-			firmMap.get(car.getFirm()).add(car.getType());
 
 			if (!typeMap.containsKey(car.getType())) {
 				List<Integer> list = new ArrayList<Integer>();
@@ -67,12 +67,12 @@ public class ConstantData {
 				typeMap.get(car.getType()).add(car.getYear());
 			}
 
-			if (!yearMap.containsKey(car.getYear())) {
-				List<String> list = new ArrayList<String>();
-				list.add(car.getModel());
-				yearMap.put(car.getYear(), list);
-			} else if (!yearMap.get(car.getYear()).contains(car.getModel())) {
-				yearMap.get(car.getYear()).add(car.getModel());
+			if (!yearMap.containsKey(car.getYear()+"-"+car.getType())) {
+				List<Car> list = new ArrayList<Car>();
+				list.add(car);
+				yearMap.put(car.getYear()+"-"+car.getType(), list);
+			} else if (!yearMap.get(car.getYear()+"-"+car.getType()).contains(car)) {
+				yearMap.get(car.getYear()+"-"+car.getType()).add(car);
 			}
 		}
 
@@ -86,45 +86,45 @@ public class ConstantData {
 					}
 				});
 
-		brands = new ArrayList<Map.Entry<String, List<String>>>(
-				brandMap.entrySet());
-		Collections.sort(brands,
-				new Comparator<Map.Entry<String, List<String>>>() {
-					public int compare(Map.Entry<String, List<String>> o1,
-							Map.Entry<String, List<String>> o2) {
-						return (o1.getKey().compareTo(o2.getKey()));
-					}
-				});
-
-		firms = new ArrayList<Map.Entry<String, List<String>>>(
-				firmMap.entrySet());
-		Collections.sort(firms,
-				new Comparator<Map.Entry<String, List<String>>>() {
-					public int compare(Map.Entry<String, List<String>> o1,
-							Map.Entry<String, List<String>> o2) {
-						return (o1.getKey().compareTo(o2.getKey()));
-					}
-				});
-
-		types = new ArrayList<Map.Entry<String, List<Integer>>>(
-				typeMap.entrySet());
-		Collections.sort(types,
-				new Comparator<Map.Entry<String, List<Integer>>>() {
-					public int compare(Map.Entry<String, List<Integer>> o1,
-							Map.Entry<String, List<Integer>> o2) {
-						return (o1.getKey().compareTo(o2.getKey()));
-					}
-				});
-
-		years = new ArrayList<Map.Entry<Integer, List<String>>>(
-				yearMap.entrySet());
-		Collections.sort(years,
-				new Comparator<Map.Entry<Integer, List<String>>>() {
-					public int compare(Map.Entry<Integer, List<String>> o1,
-							Map.Entry<Integer, List<String>> o2) {
-						return (o1.getKey().compareTo(o2.getKey()));
-					}
-				});
+//		brands = new ArrayList<Map.Entry<String, List<String>>>(
+//				brandMap.entrySet());
+//		Collections.sort(brands,
+//				new Comparator<Map.Entry<String, List<String>>>() {
+//					public int compare(Map.Entry<String, List<String>> o1,
+//							Map.Entry<String, List<String>> o2) {
+//						return (o1.getKey().compareTo(o2.getKey()));
+//					}
+//				});
+//
+//		firms = new ArrayList<Map.Entry<String, List<String>>>(
+//				firmMap.entrySet());
+//		Collections.sort(firms,
+//				new Comparator<Map.Entry<String, List<String>>>() {
+//					public int compare(Map.Entry<String, List<String>> o1,
+//							Map.Entry<String, List<String>> o2) {
+//						return (o1.getKey().compareTo(o2.getKey()));
+//					}
+//				});
+//
+//		types = new ArrayList<Map.Entry<String, List<Integer>>>(
+//				typeMap.entrySet());
+//		Collections.sort(types,
+//				new Comparator<Map.Entry<String, List<Integer>>>() {
+//					public int compare(Map.Entry<String, List<Integer>> o1,
+//							Map.Entry<String, List<Integer>> o2) {
+//						return (o1.getKey().compareTo(o2.getKey()));
+//					}
+//				});
+//
+//		years = new ArrayList<Map.Entry<Integer, List<String>>>(
+//				yearMap.entrySet());
+//		Collections.sort(years,
+//				new Comparator<Map.Entry<Integer, List<String>>>() {
+//					public int compare(Map.Entry<Integer, List<String>> o1,
+//							Map.Entry<Integer, List<String>> o2) {
+//						return (o1.getKey().compareTo(o2.getKey()));
+//					}
+//				});
 	}
 
 	public static ConstantData getInstance(O2ODao o2oDao) {
@@ -150,37 +150,38 @@ public class ConstantData {
 		this.letters = letters;
 	}
 
-	public List<Map.Entry<String, List<String>>> getBrands() {
-		return brands;
+	public Map<String, List<String>> getBrandMap() {
+		return brandMap;
 	}
 
-	public void setBrands(List<Map.Entry<String, List<String>>> brands) {
-		this.brands = brands;
+	public void setBrandMap(Map<String, List<String>> brandMap) {
+		this.brandMap = brandMap;
 	}
 
-	public List<Map.Entry<String, List<String>>> getFirms() {
-		return firms;
+	public Map<String, List<String>> getFirmMap() {
+		return firmMap;
 	}
 
-	public void setFirms(List<Map.Entry<String, List<String>>> firms) {
-		this.firms = firms;
+	public void setFirmMap(Map<String, List<String>> firmMap) {
+		this.firmMap = firmMap;
 	}
 
-	public List<Map.Entry<String, List<Integer>>> getTypes() {
-		return types;
+	public Map<String, List<Integer>> getTypeMap() {
+		return typeMap;
 	}
 
-	public void setTypes(List<Map.Entry<String, List<Integer>>> types) {
-		this.types = types;
+	public void setTypeMap(Map<String, List<Integer>> typeMap) {
+		this.typeMap = typeMap;
 	}
 
-	public List<Map.Entry<Integer, List<String>>> getYears() {
-		return years;
+	public Map<String, List<Car>> getYearMap() {
+		return yearMap;
 	}
 
-	public void setYears(List<Map.Entry<Integer, List<String>>> years) {
-		this.years = years;
+	public void setYearMap(Map<String, List<Car>> yearMap) {
+		this.yearMap = yearMap;
 	}
+
 
 	
 

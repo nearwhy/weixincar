@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import com.aero.o2o.model.Product;
 import com.aero.o2o.model.QueryParam;
+import com.aero.o2o.model.User;
 import com.aero.o2o.util.ConstantData;
 
 @Controller("IndexController")
@@ -18,13 +19,11 @@ public class IndexController  extends BaseController {
 
 	@RequestMapping(value = "/index", method = RequestMethod.GET)
 	public String index(HttpServletRequest request, Map<String, Object> map) throws Exception{
+		User user = new User();
+		user.setId(1);
+		user.setCarId(10);
+		request.getSession().setAttribute("user", user);
 		return "index";
-	}
-
-	
-	@RequestMapping(value = "/mycar", method = RequestMethod.GET)
-	public String mycar(HttpServletRequest request, Map<String, Object> map) throws Exception{
-		return "mycar";
 	}
 
 	
@@ -59,28 +58,6 @@ public class IndexController  extends BaseController {
 		return "maintenance";
 	}
 
-	
-	@RequestMapping(value = "/carBrand", method = RequestMethod.GET)
-	public String carBrand(HttpServletRequest request, Map<String, Object> map) throws Exception{
-		map.put("letters", ConstantData.getInstance(o2oDao).getLetters());
-		return "carBrand";
-	}
-	
-	@RequestMapping(value = "/carType", method = RequestMethod.GET)
-	public String carType(HttpServletRequest request, Map<String, Object> map) throws Exception{
-		return "carType";
-	}
-	
-	@RequestMapping(value = "/carModel", method = RequestMethod.GET)
-	public String carModel(HttpServletRequest request, Map<String, Object> map) throws Exception{
-		return "carModel";
-	}
-	
-	@RequestMapping(value = "/self", method = RequestMethod.GET)
-	public String self(HttpServletRequest request, Map<String, Object> map) throws Exception{
-		return "self";
-	}
-	
 	@RequestMapping(value = "/change", method = RequestMethod.GET)
 	public String change(HttpServletRequest request, Map<String, Object> map) throws Exception{
 		return "changeList";

@@ -19,6 +19,8 @@ public class Car {
 	private Double price;
 	
 	private String img;
+	
+	private Integer isused;
 
 	public Integer getId() {
 		return id;
@@ -90,6 +92,14 @@ public class Car {
 
 	public void setImg(String img) {
 		this.img = img;
+	}
+
+	public Integer getIsused() {
+		return isused;
+	}
+
+	public void setIsused(Integer isused) {
+		this.isused = isused;
 	}
 	
 	
