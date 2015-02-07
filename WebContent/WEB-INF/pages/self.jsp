@@ -63,10 +63,10 @@
 								data-target=".bs-example-modal-sm">
 					<div class="row">
 						<div class="col-xs-8" align="left"><input
-												type="checkbox" value="${item.id}" id="check${item.id}" name="${item.name}"/><span>&nbsp;&nbsp;${item.name}</span>
+												type="checkbox" value="${item.id}" id="check${item.id}" name="${item.manhourprice}"/><span>&nbsp;&nbsp;${item.name}</span>
 						</div>
 						<div class="col-xs-4" align="right">
-							<span>工时费：￥50</span>
+							<span>工时费：￥${item.manhourprice}</span>
 						</div>
 					</div>
 					</a>
@@ -82,7 +82,7 @@
 				<tr>
 					<td
 						style="background-color: #428bca; width: 50%; text-align: center">
-						<span  style="color: #ffffff;font-size: large">工时费:￥0</span>
+						<span  style="color: #ffffff;font-size: large" id="totalCost">工时费:￥0</span>
 					</td>
 					<td
 						style="width: 50%; text-align: center; background-color: #d9534f">
@@ -139,11 +139,15 @@
 			} else {
 				$("#"+id).prop("checked", true);
 			}
+			var cost = 0;
+			$("input:checked").each(function(i){
+				   cost += parseFloat($(this).attr("name"));
+			});
+			$("#totalCost").text("工时费：￥"+cost);
 		}
 		function regular() {
 			window.location.href = "maintenance.html";
 		}
-		
 	</script>
 </body>
 </html>
