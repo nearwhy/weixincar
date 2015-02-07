@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="Upkeep">
+	<resultMap id="UpkeepResult" class="com.aero.o2o.model.UpkeepCategory">
+		<result column="categoryid" property="id" jdbcType="INTEGER" />
+		<result column="categoryname" property="name" jdbcType="VARCHAR" />
+		<result column="categoryid" property="items" select="Upkeep.queryByCategory"/>
+	</resultMap>
+	
+	<select id="querySelf" resultMap="UpkeepResult"
+		parameterClass="com.aero.o2o.model.QueryParam">
+		select * from upkeepcategory
+	</select>
+	
+	<select id="queryByCategory" parameterClass="java.lang.Integer" resultClass="com.aero.o2o.model.UpkeepItem">
+		select itemid as id,itemname as name,manhourprice from upkeepitem where categoryid = #categoryid#
+	</select>
+	
+</sqlMap>
