@@ -1,6 +1,11 @@
 package com.aero.o2o.model;
 
-public class Product {
+import java.io.Serializable;
+import java.util.List;
+
+public class Product extends BasePojo implements Serializable {
+	
+	private static final long serialVersionUID = -2338026421066624924L;
 
 	private Integer id;
 	
@@ -9,6 +14,18 @@ public class Product {
 	private Double price;
 	
 	private Double oldPrice;
+	
+	private String description;
+	
+	private Integer upkeepItemId;
+	
+	private Integer categoryId;
+	
+	private String categoryName;
+	
+	private String image;
+	
+	private List<ProductPic> productPics;
 
 	public Integer getId() {
 		return id;
@@ -41,6 +58,53 @@ public class Product {
 	public void setOldPrice(Double oldPrice) {
 		this.oldPrice = oldPrice;
 	}
-	
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+
+	public Integer getUpkeepItemId() {
+		return upkeepItemId;
+	}
+
+	public void setUpkeepItemId(Integer upkeepItemId) {
+		this.upkeepItemId = upkeepItemId;
+	}
+
+	public String getCategoryName() {
+		return categoryName;
+	}
+
+	public void setCategoryName(String categoryName) {
+		this.categoryName = categoryName;
+	}
+
+	public String getImage() {
+		return image;
+	}
+
+	public void setImage(String image) {
+		this.image = image;
+	}
+
+	public List<ProductPic> getProductPics() {
+		return productPics;
+	}
+
+	public void setProductPics(List<ProductPic> productPics) {
+		this.productPics = productPics;
+	}
+
+	public Integer getCategoryId() {
+		return categoryId;
+	}
+
+	public void setCategoryId(Integer categoryId) {
+		this.categoryId = categoryId;
+	}
 	
 }

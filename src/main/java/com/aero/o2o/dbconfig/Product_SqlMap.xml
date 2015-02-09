@@ -3,7 +3,20 @@
 <sqlMap namespace="Product">
 	
 	<select id="queryById" resultClass="com.aero.o2o.model.Product" parameterClass="com.aero.o2o.model.QueryParam">
-		select productname as name,price,oldPrice from product 
-		where productid = #id#
+		SELECT p.productid AS id, p.productname AS name, p.oldprice AS oldPrice, p.price, p.description, p.upkeepitemid AS upkeepItemId, 
+		 p.productcategoryid AS categoryId, p.image, pc.pcategoryname AS categoryName FROM product p 
+		 LEFT JOIN productcategory pc ON pc.productcategoryid = p.productcategoryid
+		where p.productid = #productId#
+	</select>
+	
+	<select id="queryProductParam" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.StandardParam">
+		SELECT sp.paramid AS id, sp.paramkey AS paramKey, sp.paramvalue AS paramValue, sp.productid AS productId FROM standardparam sp WHERE productid=#productId#
+	</select>
+	
+	<select id="queryByCategoryId" parameterClass="com.aero.o2o.model.QueryParam" resultClass="com.aero.o2o.model.Product">
+		 SELECT p.productid AS id, p.productname AS NAME, p.oldprice AS oldPrice, p.price, p.description, p.upkeepitemid AS upkeepItemId, 
+		 p.productcategoryid AS categoryId, p.image, pc.pcategoryname AS categoryName FROM product p 
+		 LEFT JOIN productcategory pc ON pc.productcategoryid = p.productcategoryid 
+		 where p.productcategoryid=#categoryId#
 	</select>
 </sqlMap>

@@ -63,18 +63,4 @@ public class IndexController  extends BaseController {
 		return "changeList";
 	}
 	
-	@RequestMapping(value = "/productType", method = RequestMethod.GET)
-	public String productType(HttpServletRequest request, Map<String, Object> map) throws Exception{
-		return "productType";
-	}
-	
-	@RequestMapping(value = "/productDetail", method = RequestMethod.GET)
-	public String productDetail(HttpServletRequest request, Map<String, Object> map) throws Exception{
-		QueryParam qp = new QueryParam();
-		qp.put("id",1);
-		Product product = (Product)o2oDao.queryForObject("Product.queryById", qp);
-		System.out.println("name==="+product.getName());
-		System.out.println("price==="+product.getPrice());
-		return "productDetail";
-	}
 }
