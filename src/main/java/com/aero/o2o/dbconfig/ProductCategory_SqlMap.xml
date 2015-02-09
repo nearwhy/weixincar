@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE sqlMap PUBLIC "-//ibatis.apache.org//DTD SQL Map 2.0//EN" "http://ibatis.apache.org/dtd/sql-map-2.dtd" >
+<sqlMap namespace="ProductCategory">
+
+	<resultMap class="com.aero.o2o.model.ProductCategory" id="categoryResult">
+		<result property="pCategoryId" column="productcategoryid"/>
+		<result property="pCategoryName" column="pcategoryname"/>
+		<result property="pCategoryDepth" column="pcategorydepth"/>
+		<result property="parentId" column="parentid"/>
+		<result property="childCategorys" column="productcategoryid" select="ProductCategory.querySecCategory"/>
+	</resultMap>
+	
+	<resultMap class="com.aero.o2o.model.ProductCategory" id="secCategoryResult">
+		<result property="pCategoryId" column="productcategoryid"/>
+		<result property="pCategoryName" column="pcategoryname"/>
+		<result property="pCategoryDepth" column="pcategorydepth"/>
+		<result property="parentId" column="parentid"/>
+	</resultMap>
+	
+	<select id="queryParentCategory" resultMap="categoryResult" parameterClass="com.aero.o2o.model.QueryParam">
+		SELECT productcategoryid,pcategoryname,pcategorydepth, parentid
+		 FROM productcategory WHERE parentid=0
+	</select>
+	
+	<select id="querySecCategory" parameterClass="java.lang.Integer" resultMap="secCategoryResult">
+		SELECT productcategoryid,pcategoryname,pcategorydepth, parentid
+		 FROM productcategory WHERE parentid=#productcategoryid#
+	</select>
+	
+</sqlMap>
