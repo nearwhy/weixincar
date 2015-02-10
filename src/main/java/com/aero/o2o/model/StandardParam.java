@@ -56,4 +56,14 @@ public class StandardParam extends BasePojo implements Serializable {
 		this.product = product;
 	}
 
+	public StandardParam() {
+		super();
+	}
+
+	public StandardParam(Integer id) {
+		super();
+		this.id = id;
+	}
+
+	
 }
