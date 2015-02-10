@@ -66,5 +66,14 @@ public class ProductCategory extends BasePojo implements Serializable {
 	public void setHotCategory(String hotCategory) {
 		this.hotCategory = hotCategory;
 	}
+
+	public ProductCategory() {
+		super();
+	}
+
+	public ProductCategory(Integer pCategoryId) {
+		super();
+		this.pCategoryId = pCategoryId;
+	}
 	
 }
