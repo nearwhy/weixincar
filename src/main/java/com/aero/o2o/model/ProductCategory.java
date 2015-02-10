@@ -1,7 +1,6 @@
 package com.aero.o2o.model;
 
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.util.List;
 
 public class ProductCategory extends BasePojo implements Serializable {
